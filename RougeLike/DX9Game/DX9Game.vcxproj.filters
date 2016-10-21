@@ -1,0 +1,620 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="UI関連">
+      <UniqueIdentifier>{521d04b3-025b-47fd-90de-454e67b54917}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\2DTexture">
+      <UniqueIdentifier>{2b593226-2fde-4daa-a46e-dcf333b29cd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\2DWindow">
+      <UniqueIdentifier>{169bd88b-5647-46fe-8987-f4999f1e6e58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="アイテム">
+      <UniqueIdentifier>{cf412d11-771f-4c37-85a5-75a161a9802b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="アイテム\Item">
+      <UniqueIdentifier>{c3f52619-d4ea-4ac5-9c65-305563ccf655}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="アイテム\ItemGenerator">
+      <UniqueIdentifier>{53a29b66-54b6-43dd-b363-117f2a494c2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム">
+      <UniqueIdentifier>{683e7430-17a2-4061-a495-f098117f3f75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\Turn">
+      <UniqueIdentifier>{8fe5b6ea-6c03-4366-ad68-0140c5f01803}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\Input">
+      <UniqueIdentifier>{31cf2828-221f-4d11-a1bb-c5544826905f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\Battle">
+      <UniqueIdentifier>{584baec3-c081-4840-bd85-8adfad228bff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\define">
+      <UniqueIdentifier>{c84a85fe-452c-4277-a42c-426a4a0b8167}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\GameState">
+      <UniqueIdentifier>{94198f23-d145-42f7-9d5d-a57d80d48817}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\GameWnd">
+      <UniqueIdentifier>{cfac0e2e-a4a7-4716-86f0-989a551cd5a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\Graphics">
+      <UniqueIdentifier>{3466f2b8-512a-4227-9c2c-f72641df7fe1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\Mesh">
+      <UniqueIdentifier>{58045da4-3cd3-449f-84a9-30c658f79127}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\MeshObj">
+      <UniqueIdentifier>{970d28e0-a048-4258-9144-4a90801309cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="フィールド">
+      <UniqueIdentifier>{fa300f9c-ec25-4481-9e0b-abee369faf2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="フィールド\FieldItem">
+      <UniqueIdentifier>{a982fa52-fdf6-4b44-b1ad-5e1c9b419f68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="フィールド\FieldObj">
+      <UniqueIdentifier>{22c05b21-a2b1-4536-93af-76def0153730}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="フィールド\FieldObjMaker">
+      <UniqueIdentifier>{3864327a-e0b3-4468-86d9-8e600d54fa7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="フィールド\MapData">
+      <UniqueIdentifier>{32b3139a-d70a-4c95-bbc0-38771e76e97c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\ModelManager">
+      <UniqueIdentifier>{493e30e8-5c27-471b-b443-eb8e6df85e25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\MessageWindow">
+      <UniqueIdentifier>{52fbf56e-1fe6-4ea8-ab9d-90d3ce0f7920}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3Dモデル">
+      <UniqueIdentifier>{1ad07555-4329-4f40-90bb-04f6215c2a75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3Dモデル\ユニット">
+      <UniqueIdentifier>{82fa7df6-bace-4954-9954-4414178bc17e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3Dモデル\ユニット\Enemy">
+      <UniqueIdentifier>{c1054b4f-7140-42d0-8905-feb097436047}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3Dモデル\ユニット\EnemyGenerator">
+      <UniqueIdentifier>{f1b9b2b2-4f6c-4447-9a4e-fb00b4332a08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3Dモデル\ユニット\Unit">
+      <UniqueIdentifier>{dd71b8b1-7125-4f3f-83b6-43d5e615acdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3Dモデル\ユニット\Player">
+      <UniqueIdentifier>{cdce68e7-9cf4-4cf1-b5ea-7740c8dfb827}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3Dモデル\C3DObj">
+      <UniqueIdentifier>{da901667-7f96-49ed-8119-0b397e3fa62f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3Dモデル\DeleteObj">
+      <UniqueIdentifier>{50f00e16-de5b-4c9e-a8d4-70f5f55bf568}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3Dモデル\HitObj">
+      <UniqueIdentifier>{a72968ec-6143-4c51-ae3e-a1149ddb583a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3Dモデル\Circle">
+      <UniqueIdentifier>{eaf4e0d9-2cfa-4035-87f9-83460bafc0fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\Camera">
+      <UniqueIdentifier>{77fe15ae-1cd3-4919-83f5-35cb76ab8aa9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\Main">
+      <UniqueIdentifier>{afcc31b2-5530-4a45-975a-56b4f50d6eb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\Structure">
+      <UniqueIdentifier>{4e69db97-66b0-4e8b-ad1d-cb7819f095c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\TextureManager">
+      <UniqueIdentifier>{ec0ef751-212b-4993-b1d9-072d3507abf0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\Window">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="UI関連\ステータス">
+      <UniqueIdentifier>{25a43a7e-db7f-4cd1-b9a8-9ef28b3ee245}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\ステータス\StatesFont">
+      <UniqueIdentifier>{68a0fb7b-9d7e-4a12-9400-22bf95413eee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\ステータス\StatesCharacter">
+      <UniqueIdentifier>{4ad91628-4864-4962-8edf-09e1c672da1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\ステータス\StatesWindow">
+      <UniqueIdentifier>{76c6536e-3b20-44b4-b273-5e80d5215fa4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\メニュー">
+      <UniqueIdentifier>{b4457049-6901-4b15-84cf-3000e4143a2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\メニュー\MenuSelect">
+      <UniqueIdentifier>{7a0e94fb-6fdb-4246-a77b-089adfd7b209}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\メニュー\MenuWindow">
+      <UniqueIdentifier>{0fb3143a-4d3c-4f8e-bf60-e2c12999123c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\メニュー\MenuWindow_Back">
+      <UniqueIdentifier>{06150dab-a28a-43b7-9327-050135244f06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\アイテムウィンドウ">
+      <UniqueIdentifier>{cf11aecb-3b16-481a-9927-d7ecaa774258}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\アイテムウィンドウ\ItemCommandWindow">
+      <UniqueIdentifier>{a3e6aa06-ecbc-4a50-8073-e8711b30ee12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\アイテムウィンドウ\ItemWindow">
+      <UniqueIdentifier>{87cb1e5f-f0e5-49e3-bdf3-48b6c966281f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3Dモデル\Sky">
+      <UniqueIdentifier>{2cc1b99d-06e2-4080-8bac-a61d0f7ca19b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\Fade">
+      <UniqueIdentifier>{ad924a05-5d6f-4dd9-8833-ed85517c0035}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\ステータス\StatesValue">
+      <UniqueIdentifier>{88bb120c-71f2-426c-9417-aa424ccd965a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="タイトル、リザルト画面">
+      <UniqueIdentifier>{b822a884-ebd5-4c9e-8cb7-51942ec81133}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="タイトル、リザルト画面\タイトル">
+      <UniqueIdentifier>{87caedc0-3776-4f63-8f27-57a8e189e158}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="タイトル、リザルト画面\タイトル\Title">
+      <UniqueIdentifier>{d7c11a91-2063-427a-8901-a18fc4e5d922}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="タイトル、リザルト画面\タイトル\TitleScene">
+      <UniqueIdentifier>{f8ff4c1c-97ca-4a79-b829-71ab979bf8ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="タイトル、リザルト画面\リザルト">
+      <UniqueIdentifier>{9f8ef15e-0c73-4a98-a42e-5ad9fc98f439}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="タイトル、リザルト画面\リザルト\Result">
+      <UniqueIdentifier>{e0e4753d-807b-45fa-94ef-7c36ff6aa64e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="タイトル、リザルト画面\リザルト\ResultScene">
+      <UniqueIdentifier>{5eb8a9ee-e4bb-49e9-8a37-53561043e951}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="タイトル、リザルト画面\PressSpace">
+      <UniqueIdentifier>{15cf3889-df57-4b9d-b160-7bcb6fc75051}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\Opration">
+      <UniqueIdentifier>{25ca0a52-8a4c-4145-a66d-a037d2c1b0d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\装備ウィンドウ">
+      <UniqueIdentifier>{a29e469e-9f25-4cd3-8ae9-da25dd7a46c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\装備ウィンドウ\EquopmentCommandWindow">
+      <UniqueIdentifier>{8129c0a5-4a7e-4395-9b4b-18861007dc2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\装備ウィンドウ\EquipmentWindow">
+      <UniqueIdentifier>{e579c32a-a9c2-4b6b-92e9-129dba276abb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\装備ウィンドウ\EquipmentWindowCursor">
+      <UniqueIdentifier>{1b6a456d-b7ac-4a76-92a0-550102e6f8d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\装備ウィンドウ\EquipmentCommandCursor">
+      <UniqueIdentifier>{727c0b69-dc5d-45d9-8d36-c238f9023819}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\アイテムウィンドウ\ITemCommandCursor">
+      <UniqueIdentifier>{1fb74671-91a6-40d1-b52b-294fc77ca743}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\アイテムウィンドウ\ItemWindowCursor">
+      <UniqueIdentifier>{44493663-90fa-47c8-801a-78e5de0b0df6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\LevelUp">
+      <UniqueIdentifier>{ae5b642c-f928-4fe3-b05d-0b427713001c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\Particle">
+      <UniqueIdentifier>{8b8f2b99-3149-42f9-8435-abc2e69443a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\ステータス\HPDraw">
+      <UniqueIdentifier>{6d2e627a-15c1-485c-9336-17635555ec6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\技">
+      <UniqueIdentifier>{cfc0a166-90f5-4323-91e3-89c5118099c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\技\Trick">
+      <UniqueIdentifier>{cfbda94b-ab2c-4b65-9b85-39760fcfcafd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\技\TrickWindowCursor">
+      <UniqueIdentifier>{1685767a-76fd-45fd-a259-1f2d6a6212a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\技\TrickWindow">
+      <UniqueIdentifier>{29ec5f4d-ecec-4d56-84fb-85661e9cc4e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\GameScene">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="3Dモデル\EffectObj">
+      <UniqueIdentifier>{f4906b1f-f6fd-4eab-8b2f-e4643608c43b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\MiniMap">
+      <UniqueIdentifier>{53ea2996-b498-4877-998c-66e8c2b252cf}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="GameWnd.cpp">
+      <Filter>システム\GameWnd</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics.cpp">
+      <Filter>システム\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>システム\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>システム\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>システム\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>システム\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="C3DObj.cpp">
+      <Filter>3Dモデル\C3DObj</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshObj.cpp">
+      <Filter>システム\MeshObj</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>3Dモデル\ユニット\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>システム\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="MessageWindow.cpp">
+      <Filter>UI関連\MessageWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="MapData.cpp">
+      <Filter>フィールド\MapData</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>3Dモデル\ユニット\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit.cpp">
+      <Filter>3Dモデル\ユニット\Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="Turn.cpp">
+      <Filter>システム\Turn</Filter>
+    </ClCompile>
+    <ClCompile Include="Battle.cpp">
+      <Filter>システム\Battle</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>アイテム\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="FieldItem.cpp">
+      <Filter>フィールド\FieldItem</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyGenerator.cpp">
+      <Filter>3Dモデル\ユニット\EnemyGenerator</Filter>
+    </ClCompile>
+    <ClCompile Include="FieldObj.cpp">
+      <Filter>フィールド\FieldObj</Filter>
+    </ClCompile>
+    <ClCompile Include="FieldObjMaker.cpp">
+      <Filter>フィールド\FieldObjMaker</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemGenerator.cpp">
+      <Filter>アイテム\ItemGenerator</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelManager.cpp">
+      <Filter>システム\ModelManager</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>システム\TextureManager</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState.cpp">
+      <Filter>システム\GameState</Filter>
+    </ClCompile>
+    <ClCompile Include="Result.cpp">
+      <Filter>タイトル、リザルト画面\リザルト\Result</Filter>
+    </ClCompile>
+    <ClCompile Include="C2DTexture.cpp">
+      <Filter>UI関連\2DTexture</Filter>
+    </ClCompile>
+    <ClCompile Include="Title.cpp">
+      <Filter>タイトル、リザルト画面\タイトル\Title</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleScene.cpp">
+      <Filter>タイトル、リザルト画面\タイトル\TitleScene</Filter>
+    </ClCompile>
+    <ClCompile Include="DeleteObj.cpp">
+      <Filter>3Dモデル\DeleteObj</Filter>
+    </ClCompile>
+    <ClCompile Include="HitObj.cpp">
+      <Filter>3Dモデル\HitObj</Filter>
+    </ClCompile>
+    <ClCompile Include="HPDraw.cpp">
+      <Filter>UI関連\ステータス\HPDraw</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemCommandWindow.cpp">
+      <Filter>UI関連\アイテムウィンドウ\ItemCommandWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemWindow.cpp">
+      <Filter>UI関連\アイテムウィンドウ\ItemWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuWindow.cpp">
+      <Filter>UI関連\メニュー\MenuWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="2DWindow.cpp">
+      <Filter>UI関連\2DWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="Circle.cpp">
+      <Filter>3Dモデル\Circle</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuWindow_Back.cpp">
+      <Filter>UI関連\メニュー\MenuWindow_Back</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuSelect.cpp">
+      <Filter>UI関連\メニュー\MenuSelect</Filter>
+    </ClCompile>
+    <ClCompile Include="StatesWindow.cpp">
+      <Filter>UI関連\ステータス\StatesWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="StatesCharacter.cpp">
+      <Filter>UI関連\ステータス\StatesCharacter</Filter>
+    </ClCompile>
+    <ClCompile Include="StatesFont.cpp">
+      <Filter>UI関連\ステータス\StatesFont</Filter>
+    </ClCompile>
+    <ClCompile Include="StatesValue.cpp">
+      <Filter>UI関連\ステータス\StatesValue</Filter>
+    </ClCompile>
+    <ClCompile Include="Sky.cpp">
+      <Filter>3Dモデル\Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="Fade.cpp">
+      <Filter>システム\Fade</Filter>
+    </ClCompile>
+    <ClCompile Include="PressSpace.cpp">
+      <Filter>タイトル、リザルト画面\PressSpace</Filter>
+    </ClCompile>
+    <ClCompile Include="ResultScene.cpp">
+      <Filter>タイトル、リザルト画面\リザルト\ResultScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Operation.cpp">
+      <Filter>UI関連\Opration</Filter>
+    </ClCompile>
+    <ClCompile Include="EquipmentCommandWindow.cpp">
+      <Filter>UI関連\装備ウィンドウ\EquopmentCommandWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="EquipmentWindow.cpp">
+      <Filter>UI関連\装備ウィンドウ\EquipmentWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="EquipmentCommandCursor.cpp">
+      <Filter>UI関連\装備ウィンドウ\EquipmentCommandCursor</Filter>
+    </ClCompile>
+    <ClCompile Include="EquipmentWindowCursor.cpp">
+      <Filter>UI関連\装備ウィンドウ\EquipmentWindowCursor</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemCommandCursor.cpp">
+      <Filter>UI関連\アイテムウィンドウ\ITemCommandCursor</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemWindowCursor.cpp">
+      <Filter>UI関連\アイテムウィンドウ\ItemWindowCursor</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelUp.cpp">
+      <Filter>UI関連\LevelUp</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle.cpp">
+      <Filter>システム\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="TrickWindowCursor.cpp">
+      <Filter>UI関連\技\TrickWindowCursor</Filter>
+    </ClCompile>
+    <ClCompile Include="Trick.cpp">
+      <Filter>UI関連\技\Trick</Filter>
+    </ClCompile>
+    <ClCompile Include="TrickWindow.cpp">
+      <Filter>UI関連\技\TrickWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>システム\GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectObj.cpp">
+      <Filter>3Dモデル\EffectObj</Filter>
+    </ClCompile>
+    <ClCompile Include="MiniMap.cpp">
+      <Filter>UI関連\MiniMap</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Window.h">
+      <Filter>システム\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="GameWnd.h">
+      <Filter>システム\GameWnd</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics.h">
+      <Filter>システム\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>システム\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>システム\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="define.h">
+      <Filter>システム\define</Filter>
+    </ClInclude>
+    <ClInclude Include="C3DObj.h">
+      <Filter>3Dモデル\C3DObj</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshObj.h">
+      <Filter>システム\MeshObj</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>3Dモデル\ユニット\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>システム\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageWindow.h">
+      <Filter>UI関連\MessageWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="MapData.h">
+      <Filter>フィールド\MapData</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>3Dモデル\ユニット\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Unit.h">
+      <Filter>3Dモデル\ユニット\Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="Turn.h">
+      <Filter>システム\Turn</Filter>
+    </ClInclude>
+    <ClInclude Include="Battle.h">
+      <Filter>システム\Battle</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>アイテム\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="FieldItem.h">
+      <Filter>フィールド\FieldItem</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyGenerator.h">
+      <Filter>3Dモデル\ユニット\EnemyGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="FieldObj.h">
+      <Filter>フィールド\FieldObj</Filter>
+    </ClInclude>
+    <ClInclude Include="FieldObjMaker.h">
+      <Filter>フィールド\FieldObjMaker</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemGenerator.h">
+      <Filter>アイテム\ItemGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelManager.h">
+      <Filter>システム\ModelManager</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>システム\TextureManager</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState.h">
+      <Filter>システム\GameState</Filter>
+    </ClInclude>
+    <ClInclude Include="Structure.h">
+      <Filter>システム\Structure</Filter>
+    </ClInclude>
+    <ClInclude Include="Result.h">
+      <Filter>タイトル、リザルト画面\リザルト\Result</Filter>
+    </ClInclude>
+    <ClInclude Include="C2DTexture.h">
+      <Filter>UI関連\2DTexture</Filter>
+    </ClInclude>
+    <ClInclude Include="Title.h">
+      <Filter>タイトル、リザルト画面\タイトル\Title</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleScene.h">
+      <Filter>タイトル、リザルト画面\タイトル\TitleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="DeleteObj.h">
+      <Filter>3Dモデル\DeleteObj</Filter>
+    </ClInclude>
+    <ClInclude Include="HitObj.h">
+      <Filter>3Dモデル\HitObj</Filter>
+    </ClInclude>
+    <ClInclude Include="HPDraw.h">
+      <Filter>UI関連\ステータス\HPDraw</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemCommandWindow.h">
+      <Filter>UI関連\アイテムウィンドウ\ItemCommandWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemWindow.h">
+      <Filter>UI関連\アイテムウィンドウ\ItemWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuWindow.h">
+      <Filter>UI関連\メニュー\MenuWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="2DWindow.h">
+      <Filter>UI関連\2DWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="Circle.h">
+      <Filter>3Dモデル\Circle</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuWindow_Back.h">
+      <Filter>UI関連\メニュー\MenuWindow_Back</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuSelect.h">
+      <Filter>UI関連\メニュー\MenuSelect</Filter>
+    </ClInclude>
+    <ClInclude Include="StatesWindow.h">
+      <Filter>UI関連\ステータス\StatesWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="StatesCharacter.h">
+      <Filter>UI関連\ステータス\StatesCharacter</Filter>
+    </ClInclude>
+    <ClInclude Include="StatesFont.h">
+      <Filter>UI関連\ステータス\StatesFont</Filter>
+    </ClInclude>
+    <ClInclude Include="StatesValue.h">
+      <Filter>UI関連\ステータス\StatesValue</Filter>
+    </ClInclude>
+    <ClInclude Include="Sky.h">
+      <Filter>3Dモデル\Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="Fade.h">
+      <Filter>システム\Fade</Filter>
+    </ClInclude>
+    <ClInclude Include="PressSpace.h">
+      <Filter>タイトル、リザルト画面\PressSpace</Filter>
+    </ClInclude>
+    <ClInclude Include="ResultScene.h">
+      <Filter>タイトル、リザルト画面\リザルト\ResultScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Operation.h">
+      <Filter>UI関連\Opration</Filter>
+    </ClInclude>
+    <ClInclude Include="EquipmentCommandWindow.h">
+      <Filter>UI関連\装備ウィンドウ\EquopmentCommandWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="EquipmentWindow.h">
+      <Filter>UI関連\装備ウィンドウ\EquipmentWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="EquipmentCommandCursor.h">
+      <Filter>UI関連\装備ウィンドウ\EquipmentCommandCursor</Filter>
+    </ClInclude>
+    <ClInclude Include="EquipmentWindowCursor.h">
+      <Filter>UI関連\装備ウィンドウ\EquipmentWindowCursor</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemCommandCursor.h">
+      <Filter>UI関連\アイテムウィンドウ\ITemCommandCursor</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemWindowCursor.h">
+      <Filter>UI関連\アイテムウィンドウ\ItemWindowCursor</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelUp.h">
+      <Filter>UI関連\LevelUp</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle.h">
+      <Filter>システム\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="TrickWindow.h">
+      <Filter>UI関連\技\TrickWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="TrickWindowCursor.h">
+      <Filter>UI関連\技\TrickWindowCursor</Filter>
+    </ClInclude>
+    <ClInclude Include="Trick.h">
+      <Filter>UI関連\技\Trick</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene.h">
+      <Filter>システム\GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectObj.h">
+      <Filter>3Dモデル\EffectObj</Filter>
+    </ClInclude>
+    <ClInclude Include="MiniMap.h">
+      <Filter>UI関連\MiniMap</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
