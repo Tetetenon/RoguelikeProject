@@ -70,7 +70,15 @@ void CEnemyGenerator::Update()
 	}
 
 	//デバッグコマンド(エネミー生成)
-	if(CInput::GetKeyPress(DIK_Z) && m_FieldEnemyCounter < m_MaxFieldEnemy)
+	//if(CInput::GetKeyPress(DIK_Z) && m_FieldEnemyCounter < m_MaxFieldEnemy)
+	//{
+	//	CEnemy::Generation(this);
+	//	
+	//	//生成数加算
+	//	m_FieldEnemyCounter++;
+	//}
+	//デバッグコマンド(エネミー生成)
+	if(m_FieldEnemyCounter < m_MaxFieldEnemy)
 	{
 		CEnemy::Generation(this);
 		
@@ -92,7 +100,6 @@ void CEnemyGenerator::SumMakeEnemyNum()
 void CEnemyGenerator::SetMaxGenerator (int nMaxCount)
 {
 	m_MaxFieldEnemy = nMaxCount;
-	m_MaxFieldEnemy = 15;
 }
 //---------------------------------------------------------------------------------------
 //エネミー生成数を再設定

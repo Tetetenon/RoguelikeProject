@@ -1,5 +1,5 @@
-﻿2016/10/20 22:56:11 にビルドを開始しました。
-     1>ノード 2 上のプロジェクト "D:\DeskTop\RougeLikeVer0.521\DX9Game\DX9Game.vcxproj" (build ターゲット)。
+﻿2016/10/24 22:29:11 にビルドを開始しました。
+     1>ノード 2 上のプロジェクト "C:\Users\40029\Documents\RoguelikeProject\RougeLike\DX9Game\DX9Game.vcxproj" (build ターゲット)。
      1>InitializeBuildStatus:
          "AlwaysCreate" が指定されたため "Debug\DX9Game.unsuccessfulbuild" を作成しています。
        ClCompile:
@@ -13,8 +13,8 @@
        FinalizeBuildStatus:
          ファイル "Debug\DX9Game.unsuccessfulbuild" を削除しています。
          "Debug\DX9Game.lastbuildstate" のタッチ タスクを実行しています。
-     1>プロジェクト "D:\DeskTop\RougeLikeVer0.521\DX9Game\DX9Game.vcxproj" (build ターゲット) のビルドが完了しました。
+     1>プロジェクト "C:\Users\40029\Documents\RoguelikeProject\RougeLike\DX9Game\DX9Game.vcxproj" (build ターゲット) のビルドが完了しました。
 
 ビルドに成功しました。
 
-経過時間 00:00:00.12
+経過時間 00:00:00.09
