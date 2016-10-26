@@ -106,7 +106,7 @@ void CTrickWindow::UpDate()
 			CTurn::AddCount(GAME_STATE_ATTACK);
 			
 			//自身のフラグを倒す
-			DrawFlgChange();
+			m_bDrawFlg = false;
 
 			//メニューの描画フラグを倒す
 			CMenuWindow::ChangDrawFlg();
@@ -116,7 +116,7 @@ void CTrickWindow::UpDate()
 		if(CInput::GetKeyTrigger(DIK_K))
 		{
 			//自身のフラグを倒す
-			DrawFlgChange();
+			m_bDrawFlg = false;
 		}
 	}
 }

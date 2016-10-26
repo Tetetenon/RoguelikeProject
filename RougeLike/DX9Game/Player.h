@@ -49,7 +49,7 @@ public:
 	//現在のステート情報を渡す
 	static int GetState();
 
-	void	SetPos();															//位置情報を再設定する
+	void	SetPos();					//位置情報を再設定する
 
 	void DrawInventory();				//自身のアイテムを描画させる
 	void DrawEquipment();				//自身の装備を描画させる

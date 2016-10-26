@@ -81,7 +81,7 @@ void MessageWindow::Update()
 		//もし描画時間が0以下ならば、描画フラグを倒し、今後描画しないように設定する
 		if(m_fDrawTime <= 0)
 		{
-			m_bDrawflg = false;
+			//m_bDrawflg = false;
 		}
 	}
 

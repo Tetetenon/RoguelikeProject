@@ -119,6 +119,12 @@ CUnit::~CUnit(void)
 		delete m_pLevelUp;
 		m_pLevelUp = NULL;
 	}
+	
+	//戦闘を行う敵のポインタの初期化
+	m_pBattleUnit = NULL;
+	m_pBattleNext = NULL;
+	m_pBattleBack = NULL;
+
 	//シーン上から自身のユニットポインタを削除する
 	m_pScene ->DelUnit(this);
 }
@@ -184,6 +190,12 @@ void CUnit::Update()
 	//現在のプレイヤーのステート情報を取得
 	int nPlayerState = CPlayer::GetState();
 
+	if(nPlayerState == m_nStateNumber)
+	{
+		int Debug = 0;
+	}
+
+
 	int State = CTurn::GetState();	//ステート情報を一時的に格納
 	
 	//現在のステートを選択しているユニットの数を選択する
@@ -191,7 +203,7 @@ void CUnit::Update()
 
 	//もし現在のステートを選択しているユニットが存在しなければ、そのステートをスキップする
 	if(StateSelectNum == 0)
-		CTurn::State_Advance();
+		CTurn::State_Advance(State + 1);
 
 	//アイテムウィンドウを描画していたら
 	if(CInventory::GetDrawFlg())
@@ -398,7 +410,9 @@ void CUnit::AttackUpdate()
 	{
 		//自身が攻撃アニメーションを行っているよう、設定する
 		m_nAttackNumber = m_nUnitNumber;
-	int nBattleState = CTurn::GetBattleState();
+
+		//現在の戦闘ステートを取得する
+		int nBattleState = CTurn::GetBattleState();
 
 	//現在の戦闘ステート状態によって、更新内容を分岐させる
 	switch(nBattleState)
@@ -438,11 +452,6 @@ void CUnit::AttackUpdate()
 			BattleDamage();
 		break;
 
-		//HPが無くなった場合、消滅エフェクトを出す
-	case BATTLE_STATE_DELETE:
-		BattleDelete();
-		break;
-
 		//戦闘終了、ステート関連の設定
 	case BATTLE_STATE_END:
 			BattleEnd();
@@ -473,7 +482,7 @@ void CUnit::DamegeHP (int Damage)
 {
 	m_nHP -= Damage;	//体力を減らす
 
-	//もし体力が0以下ならば、死亡
+	//もし体力が0以下ならば、死亡メッセージを出させる
 	if(m_nHP <= 0)
 	{
 		//表示時に-表記にならないよう
@@ -547,7 +556,7 @@ char* CUnit::GetName(char* pName)
 }
 
 //---------------------------------------------------------------------------------------
-//相手の方向へ突撃させる
+//正面へ突撃させる
 //---------------------------------------------------------------------------------------
 void CUnit::BattleGo()
 {
@@ -610,7 +619,7 @@ void CUnit::BattleGo()
 	if(CTurn::GetStateTime() >= STATE_TIME)
 	{
 		//戦闘ステートを進める
-		CTurn::BattleState_Advance();
+		CTurn::BattleState_Advance(BATTLE_STATE_RETURN);
 
 		//ステートリセット
 		CTurn::TimeStateReset();
@@ -684,7 +693,7 @@ void CUnit::BattleReturn()
 			m_nTrickNumber = m_pTrickWindow->GetRange(CTrickWindowCursor::GetTrickNum());
 		}
 		//戦闘ステートを進める
-		CTurn::BattleState_Advance();
+		CTurn::BattleState_Advance(BATTLE_STATE_SEARCH);
 
 		//ステートリセット
 		CTurn::TimeStateReset();
@@ -1111,7 +1120,7 @@ void CUnit::AttackFront()
 	if(FrontFind())
 	{
 		//戦闘ステートを進める
-		CTurn::BattleState_Advance();
+		CTurn::BattleState_Advance(BATTLE_STATE_HIT);
 
 		//ステートリセット
 		CTurn::TimeStateReset();
@@ -1123,19 +1132,18 @@ void CUnit::AttackFront()
 		//戦闘ステート初期化
 		CTurn::BattleState_Init();
 
+		//戦闘ステートに存在するユニット-1
+		CTurn::SumCount(m_nStateNumber);
+
 		//自身のステートを入力待ちに変更
 		if(m_uID == ID_PLAYER)
 		{
-			//戦闘ステートに存在するユニット-1
-			CTurn::SumCount(m_nStateNumber);
 
 			//ステートの遷移(ターンの終了)
 			m_nStateNumber= GAME_STATE_STAND_BY_PLAYER;
 		}
 		else
 		{
-			//戦闘ステートに存在するユニット-1
-			CTurn::SumCount(m_nStateNumber);
 
 			//ステートの遷移(ターンの終了)
 			m_nStateNumber = GAME_STATE_STAND_BY_OTHER;
@@ -1175,7 +1183,7 @@ void CUnit::AttackWide()
 	if(bFront || bRight || bLeft)
 	{
 		//戦闘ステートを進める
-		CTurn::BattleState_Advance();
+		CTurn::BattleState_Advance(BATTLE_STATE_HIT);
 
 		//ステートリセット
 		CTurn::TimeStateReset();
@@ -1187,20 +1195,18 @@ void CUnit::AttackWide()
 		//戦闘ステート初期化
 		CTurn::BattleState_Init();
 
+		//戦闘ステートに存在するユニット-1
+		CTurn::SumCount(m_nStateNumber);
+
 		//自身のステートを入力待ちに変更
 		if(m_uID == ID_PLAYER)
 		{
-			//戦闘ステートに存在するユニット-1
-			CTurn::SumCount(m_nStateNumber);
 
 			//ステートの遷移(ターンの終了)
 			m_nStateNumber= GAME_STATE_STAND_BY_PLAYER;
 		}
 		else
 		{
-			//戦闘ステートに存在するユニット-1
-			CTurn::SumCount(m_nStateNumber);
-
 			//ステートの遷移(ターンの終了)
 			m_nStateNumber = GAME_STATE_STAND_BY_OTHER;
 		}
@@ -1251,53 +1257,9 @@ void CUnit::AttackAll()
 		{
 			for(int j = MyRoomData.left;j < MyRoomData.right;j++)
 			{
-				//攻撃している位置の状態取得
-				MapSituation = CMapData::Get_UnitMapSituation(j,i);
-
-				//攻撃位置にエネミーがいるか確認する
-				//戦闘を行うユニットの情報の所得を行う
-				if(MapSituation > 0 && MapSituation != m_nUnitNumber)
+				//指定した位置に敵がいたら当たったフラグをたてる
+				if(FindEnemy(j,i))
 				{
-					//これから追加する戦闘ユニット
-					CUnit *BattleUnit;
-
-					//戦闘するユニットの検索
-					BattleUnit = (CUnit*)FindUnit(MapSituation);
-
-					//戦闘ダメージの計算を行う
-					BattleCalculation(BattleUnit);
-
-					//ヒットオブジェクトの作成
-					CHitObj::Generation(BattleUnit);
-
-					//戦闘を行うユニットを、戦闘ユニットリストに追加する。
-
-					//戦闘ユニットリストの空きがあるところまで移動する
-					//現在確認しているユニット
-					CUnit* NowUnit = m_pBattleUnit;
-					
-					//中身が存在するかチェック
-					if(NowUnit)
-					{
-						while(NowUnit ->m_pBattleNext)
-						{
-							NowUnit = NowUnit->m_pBattleNext;
-						}
-
-						//最後尾に戦闘を行うユニットを追加する
-						NowUnit ->m_pBattleNext = BattleUnit;
-						BattleUnit->m_pBattleBack = NowUnit;
-						BattleUnit->m_pBattleNext = NULL;
-					}
-					//初めてユニットをリストに登録する
-					else
-					{
-						m_pBattleUnit = BattleUnit;
-						BattleUnit->m_pBattleBack = NULL;
-						BattleUnit->m_pBattleNext = NULL;
-					}
-
-
 					bHitFlg = true;
 				}
 			}
@@ -1306,7 +1268,7 @@ void CUnit::AttackAll()
 		if(bHitFlg)
 		{
 			//戦闘ステートを進める
-			CTurn::BattleState_Advance();
+			CTurn::BattleState_Advance(BATTLE_STATE_HIT);
 
 			//ステートリセット
 			CTurn::TimeStateReset();
@@ -1318,20 +1280,17 @@ void CUnit::AttackAll()
 			//戦闘ステート初期化
 			CTurn::BattleState_Init();
 
+			//戦闘ステートに存在するユニット-1
+			CTurn::SumCount(m_nStateNumber);
+
 			//自身のステートを入力待ちに変更
 			if(m_uID == ID_PLAYER)
 			{
-				//戦闘ステートに存在するユニット-1
-				CTurn::SumCount(m_nStateNumber);
-
 				//ステートの遷移(ターンの終了)
 				m_nStateNumber = GAME_STATE_STAND_BY_PLAYER;
 			}
 			else
 			{
-				//戦闘ステートに存在するユニット-1
-				CTurn::SumCount(m_nStateNumber);
-
 				//ステートの遷移(ターンの終了)
 				m_nStateNumber = GAME_STATE_STAND_BY_OTHER;
 			}
@@ -1388,7 +1347,7 @@ void CUnit::AttackAll()
 		if(bHitFlg)
 		{
 			//戦闘ステートを進める
-			CTurn::BattleState_Advance();
+			CTurn::BattleState_Advance(BATTLE_STATE_HIT);
 
 			//ステートリセット
 			CTurn::TimeStateReset();
@@ -1400,20 +1359,17 @@ void CUnit::AttackAll()
 			//戦闘ステート初期化
 			CTurn::BattleState_Init();
 
+			//戦闘ステートに存在するユニット-1
+			CTurn::SumCount(m_nStateNumber);
+
 			//自身のステートを入力待ちに変更
 			if(m_uID == ID_PLAYER)
 			{
-				//戦闘ステートに存在するユニット-1
-				CTurn::SumCount(m_nStateNumber);
-
 				//ステートの遷移(ターンの終了)
 				m_nStateNumber= GAME_STATE_STAND_BY_PLAYER;
 			}
 			else
 			{
-				//戦闘ステートに存在するユニット-1
-				CTurn::SumCount(m_nStateNumber);
-
 				//ステートの遷移(ターンの終了)
 				m_nStateNumber = GAME_STATE_STAND_BY_OTHER;
 			}
@@ -1452,7 +1408,7 @@ void CUnit::BattleHit()
 	if(CTurn::GetStateTime() >= STATE_TIME / 2)
 	{
 		//戦闘ステートを進める
-		CTurn::BattleState_Advance();
+		CTurn::BattleState_Advance(BATTLE_STATE_FLASHING);
 
 		//ステートリセット
 		CTurn::TimeStateReset();
@@ -1525,7 +1481,7 @@ void CUnit::BattleFlasing()
 			pNowUnit = pNowUnit->m_pBattleNext;
 		}
 		//戦闘ステートを進める
-		CTurn::BattleState_Advance();
+		CTurn::BattleState_Advance(BATTLE_STATE_WINDOW);
 		//ステートリセット
 		CTurn::TimeStateReset();
 	}
@@ -1559,7 +1515,7 @@ void CUnit::BattleWindow()
 		pNowUnit = pNowUnit->m_pBattleNext;
 	}
 	//戦闘ステートを進める
-	CTurn::BattleState_Advance();
+	CTurn::BattleState_Advance(BATTLE_STATE_DAMAGE);
 	//ステートリセット
 	CTurn::TimeStateReset();
 }
@@ -1587,12 +1543,6 @@ void CUnit::BattleDamage()
 		{
 			//消滅ステートに飛ぶように設定する
 			bDeleteEffectFlg = true;
-
-			//消滅エフェクト出力ステートへ
-			CTurn::BattleState_Advance();
-
-			//消滅エフェクト生成する
-			CDeleteObj::Generation(pNowUnit);
 
 			//パーティクル生成!(テスト)
 			CParticle::Generation(pNowUnit,PARTICLE_PATTERN_DELETE);
@@ -1654,11 +1604,6 @@ void CUnit::BattleDamage()
 	//戦闘ユニットリストに存在するすべてのユニットを確認する
 	//現在確認しているユニット
 	pNowUnit = m_pBattleUnit;
-
-	if(bDeleteEffectFlg)
-	{
-		int a = 0;
-	}
 	//全ての敵の確認が終わるまでループ
 	while(pNowUnit)
 	{
@@ -1691,6 +1636,9 @@ void CUnit::BattleDamage()
 			//ユニットを削除
 			pNowUnit ->Delete();
 
+			//一度初期化
+			pNowUnit = NULL;
+
 			//次のユニットへポインタを移動
 			pNowUnit = Next;
 
@@ -1701,41 +1649,12 @@ void CUnit::BattleDamage()
 			pNowUnit = pNowUnit->m_pBattleNext;
 		}
 	}
-
-	//消滅する敵が存在しなければ、消滅エフェクトステートを飛ばす
-	if(!bDeleteEffectFlg)
-	{
-		//消滅エフェクトをすっ飛ばす
-		//戦闘終了
-		CTurn::BattleState_Advance();
-	}
 	
 	//ステートを進める
-	CTurn::BattleState_Advance();
+	CTurn::BattleState_Advance(BATTLE_STATE_END);
 	//ステートリセット
 	CTurn::TimeStateReset();
 }
-
-//---------------------------------------------------------------------------------------
-//HPが無くなったら、消滅エフェクトを出す
-//---------------------------------------------------------------------------------------
-void CUnit::BattleDelete()
-{
-
-	//ステート経過時間加算
-	CTurn::TimeStateAdd();
-
-	//所定経過時間を超えたらステート遷移
-	if(CTurn::GetStateTime() >= STATE_TIME / 2)
-	{
-		//戦闘ステートを進める
-		CTurn::BattleState_Advance();
-
-		//ステートリセット
-		CTurn::TimeStateReset();
-	}
-}
-
 //---------------------------------------------------------------------------------------
 //バトルステート初期化、自身のターンステート更新
 //---------------------------------------------------------------------------------------
@@ -1758,7 +1677,7 @@ void CUnit::BattleEnd()
 	CTurn::TimeStateReset();
 
 	//ステートを計算へ
-	CTurn::BattleState_Advance();
+	CTurn::BattleState_Advance(BATTLE_STATE_GO);
 	
 	//戦闘を行った敵の初期化
 	//現在みているユニット

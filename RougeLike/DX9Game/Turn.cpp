@@ -50,23 +50,29 @@ void CTurn::Fin  ()
 //---------------------------------------------------------------------------------------
 //ステートを進める
 //---------------------------------------------------------------------------------------
-void CTurn::State_Advance()
+void CTurn::State_Advance(int nStateNumber)
 {
-	//ステートを次に進める
-	m_State ++;
+	//ステートを指定されたステートに進める
+	m_State = nStateNumber;
 
-	//一巡したらステートを待機状態に戻す
-	m_State %= GAME_STATE_MAX;
+	//デバッグ用処理
+	if(m_State >= GAME_STATE_MAX)
+	{
+		m_State %= GAME_STATE_MAX;
+	}
 }
 
 //---------------------------------------------------------------------------------------
 //戦闘ステートを進める
 //---------------------------------------------------------------------------------------
-void CTurn::BattleState_Advance()
+void CTurn::BattleState_Advance(int nBattleStateNumber)
 {
-	//ステートを次に進める
-	m_BattleState ++;
+	//ステートを指定されたステートに進める
+	m_BattleState = nBattleStateNumber;
 
-	//一巡したらステートを待機状態に戻す
-	m_BattleState %= BATTLE_STATE_MAX;
+	//デバッグ用処理
+	if(m_BattleState >= BATTLE_STATE_MAX)
+	{
+		m_BattleState %= BATTLE_STATE_MAX;
+	}
 }

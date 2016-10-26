@@ -29,7 +29,6 @@ enum BattleState
 	BATTLE_STATE_FLASHING,			//相手の描画をつけたり消したり…
 	BATTLE_STATE_WINDOW,			//メッセージウインドウにメッセージを送る
 	BATTLE_STATE_DAMAGE,			//相手のHPをダメージ分減らす
-	BATTLE_STATE_DELETE,			//相手の体力がなくなった場合、消滅エフェクトを出す
 	BATTLE_STATE_END,				//戦闘終了(ターンステートの更新)
 	BATTLE_STATE_MAX,				//ステート最大数
 };
@@ -52,19 +51,19 @@ public:
 	CTurn(void);										//コンストラクタ
 	~CTurn(void);										//デストラクタ
 
-	static void Init ();								//初期化
-	void Fin  ();										//終了
+	static void Init ();										//初期化
+	void Fin  ();												//終了
 
 	//-----ターンステート関連-----
-	static void State_Advance();						//ステートを進める
+	static void State_Advance(int nStateNumber);				//ステートを進める
 
-	static int GetState ()	{return m_State;}			//ステートの状態を返却する。
+	static int GetState ()	{return m_State;}					//ステートの状態を返却する。
 
 
 	//-----戦闘ステート関連-----
-	static void BattleState_Advance();					//戦闘ステートを進める
+	static void BattleState_Advance(int nBattleStateNumber);	//戦闘ステートを進める
 
-	static int  GetBattleState(){return m_BattleState;}	//現在の戦闘ステート状態を取得
+	static int  GetBattleState(){return m_BattleState;}			//現在の戦闘ステート状態を取得
 
 	//戦闘ステートの初期化
 	static void BattleState_Init(){m_BattleState = BATTLE_STATE_GO;}
