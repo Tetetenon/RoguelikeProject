@@ -205,21 +205,6 @@ void CUnit::Update()
 	if(StateSelectNum == 0)
 		CTurn::State_Advance(State + 1);
 
-	//アイテムウィンドウを描画していたら
-	if(CInventory::GetDrawFlg())
-		//アイテムインベントリの更新
-		m_pInventory->UpDate();
-
-	//装備ウィンドウを描画していたら
-	if(CEquipmentInventory::GetDrawFlg())
-		//装備インベントリの更新
-		m_pEquipment ->UpDate();
-
-	//技ウィンドウを描画していたら
-	if(CTrickWindow::GetDrawFlg())
-		//技ウィンドウの更新
-		m_pTrickWindow->UpDate();
-
 	//待機中、飛んでいるようなモーションを行う
 	if(m_bJumpFlg)
 	{
@@ -328,6 +313,21 @@ void CUnit::Update()
 			}
 		}
 	}
+
+	//アイテムウィンドウを描画していたら
+	if(CInventory::GetDrawFlg())
+		//アイテムインベントリの更新
+		m_pInventory->UpDate();
+
+	//装備ウィンドウを描画していたら
+	if(CEquipmentInventory::GetDrawFlg())
+		//装備インベントリの更新
+		m_pEquipment ->UpDate();
+
+	//技ウィンドウを描画していたら
+	if(CTrickWindow::GetDrawFlg())
+		//技ウィンドウの更新
+		m_pTrickWindow->UpDate();
 }
 	
 //---------------------------------------------------------------------------------------

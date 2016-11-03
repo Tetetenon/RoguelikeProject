@@ -617,4 +617,7 @@
       <Filter>UI関連\MiniMap</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
+  </ItemGroup>
 </Project>

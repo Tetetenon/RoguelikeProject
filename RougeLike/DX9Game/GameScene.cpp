@@ -524,7 +524,7 @@ void CGameScene::InitObj()
 	m_pTrickWindowCursor ->Init();
 
 	//初期配置エネミーの設定
-	m_pEnemyGenerator ->MakeEnemy();
+	//m_pEnemyGenerator ->MakeEnemy();
 
 	//初期配置アイテムの設定
 	m_pFieldGenerator->MakeItem();
@@ -647,6 +647,9 @@ void CGameScene::UpdateObj()
 
 		//アイテムの削除フラグを倒す
 		CFieldItem::CleatePermit();
+
+		//初期配置エネミーの設定
+		//m_pEnemyGenerator ->MakeEnemy();
 
 		//階段到達状態を偽にする
 		m_MapMake = false;
