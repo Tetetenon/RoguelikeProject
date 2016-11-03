@@ -8,6 +8,16 @@
 //アイテムの文字数
 #define ITEM_FONT_NUM_MAX 10
 
+//アイテムの名前
+enum ITEMNAME
+{
+	ITEM_APPLE	= 1,	//林檎
+	ITEM_HERB,			//薬草
+	ITEM_SWORD,			//剣
+	ITEM_SHIELD,		//盾
+	ITEM_MAX
+};
+
 class CItem
 {
 protected:

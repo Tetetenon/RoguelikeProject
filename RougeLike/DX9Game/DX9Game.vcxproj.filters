@@ -616,6 +616,9 @@
     <ClInclude Include="MiniMap.h">
       <Filter>UI関連\MiniMap</Filter>
     </ClInclude>
+    <ClInclude Include="StatesDefine.h">
+      <Filter>UI関連\ステータス</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram1.cd" />

@@ -94,21 +94,21 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 	{
 	case 0:
 		//名前の設定
-		_stprintf(pEnemy -> m_szName, _T("はち"));
+		_stprintf(pEnemy -> m_szName, ("はち"));
 
 		//モデルデータの読み込み
 		pEnemy -> m_nMeshNumber = MODEL_BEE;
 		break;
 	case 1:
 		//名前の設定
-		_stprintf(pEnemy -> m_szName, _T("おおかみ"));
+		_stprintf(pEnemy -> m_szName, ("おおかみ"));
 
 		//モデルデータ読み込み
 		pEnemy -> m_nMeshNumber = MODEL_WOLF;
 		break;
 	case 2:
 		//名前の設定
-		_stprintf(pEnemy -> m_szName, _T("くま"));
+		_stprintf(pEnemy -> m_szName, ("くま"));
 
 		//モデルデータ読み込み
 		pEnemy -> m_nMeshNumber = MODEL_BEAR;
@@ -117,7 +117,7 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 		//デバッグ用処理
 	default:
 		//名前の設定
-		_stprintf(pEnemy -> m_szName, _T("かべ"));
+		_stprintf(pEnemy -> m_szName, ("かべ"));
 
 		//モデルデータ読み込み
 		pEnemy ->m_nMeshNumber = MODEL_WALL;
@@ -820,7 +820,7 @@ void CEnemy::MoveUpdate()
 void CEnemy::ActUpdate()
 {	
 	//メッセージテスト
-	MessageWindow::SetMassege(_T("行動した"));
+	MessageWindow::SetMassege(("行動した"));
 
 	//行動更新に存在するユニットの数-1
 	CTurn::SumCount(m_nStateNumber);
@@ -841,7 +841,7 @@ void CEnemy::ItemUpdate()
 	CTurn::SumCount(m_nStateNumber);
 
 	//メッセージテスト
-	MessageWindow::SetMassege(_T("アイテム使った"));
+	MessageWindow::SetMassege(("アイテム使った"));
 
 	//入力待ちステートに存在するユニット数+1
 	CTurn::AddCount(m_nStateNumber);

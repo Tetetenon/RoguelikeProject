@@ -209,6 +209,7 @@
     <ClInclude Include="HPDraw.h" />
     <ClInclude Include="Sky.h" />
     <ClInclude Include="StatesCharacter.h" />
+    <ClInclude Include="StatesDefine.h" />
     <ClInclude Include="StatesFont.h" />
     <ClInclude Include="StatesValue.h" />
     <ClInclude Include="StatesWindow.h" />

@@ -3,7 +3,7 @@
 //ステータス画面の項目を描画する
 
 #include "C2DTexture.h"
-#include "define.h"
+#include "StatesDefine.h"
 
 class CStatesFont :
 	public C2DTexture

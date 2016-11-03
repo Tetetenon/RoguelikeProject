@@ -719,6 +719,34 @@ void CUnit::AttackSwitch()
 		//部屋の敵すべてに攻撃を行う
 		AttackAll();
 		break;
+
+		//自身に効果を及ぼす
+	case TRICK_RANGE_ME:
+		switch(m_pTrickWindow->GetEffect(CTrickWindowCursor::GetTrickNum()))
+		{
+		case TRICK_EFFECT_STATES_UP:
+
+			//ステータスを上昇させる
+			m_nAttack ++;
+			m_nDefence ++;
+
+			MessageWindow::SetMassege(_T("ステータスが上昇した!"));
+			break;
+		case TRICK_EFFECT_RECOVERY:
+
+			//今から回復する量
+			int nRecoveryHP = m_nMaxHP / 2;
+
+			//HPを半分回復する
+			RecoveryHP(nRecoveryHP);
+
+			//メッセージ出力
+			MessageWindow::SetMassege(_T("%d回復した!",nRecoveryHP));
+			break;
+		}
+		//ステートを進める
+		CTurn::BattleState_Advance(BATTLE_STATE_END);
+		break;
 		//デバッグ
 	case TRICK_RANGE_MAX:
 		break;
@@ -803,6 +831,18 @@ bool CUnit::FindEnemy(int PosX,int PosZ)
 	}
 	return false;
 
+}
+//---------------------------------------------------------------------------------------
+//指定した位置の敵に攻撃を行う
+//---------------------------------------------------------------------------------------
+bool CUnit::Attack(int CorrectionPosX,int CorrectionPosY)
+{
+	//ユニットの攻撃をした配列位置
+	int Direction_X = m_nUnit_Pos_X;
+	int Direction_Z = m_nUnit_Pos_Z;
+
+	//敵の探索を行い、その結果を変数とする
+	return FindEnemy(Direction_X,Direction_Z);
 }
 //---------------------------------------------------------------------------------------
 //正面の敵に攻撃を行う
@@ -1121,49 +1161,20 @@ void CUnit::AttackFront()
 	{
 		//戦闘ステートを進める
 		CTurn::BattleState_Advance(BATTLE_STATE_HIT);
-
-		//ステートリセット
-		CTurn::TimeStateReset();
 	}
 
 	//攻撃先にユニットが存在しなかった
 	else
 	{
-		//戦闘ステート初期化
-		CTurn::BattleState_Init();
-
-		//戦闘ステートに存在するユニット-1
-		CTurn::SumCount(m_nStateNumber);
-
-		//自身のステートを入力待ちに変更
-		if(m_uID == ID_PLAYER)
-		{
-
-			//ステートの遷移(ターンの終了)
-			m_nStateNumber= GAME_STATE_STAND_BY_PLAYER;
-		}
-		else
-		{
-
-			//ステートの遷移(ターンの終了)
-			m_nStateNumber = GAME_STATE_STAND_BY_OTHER;
-		}
-
-		//入力待ちステートに存在するユニット数+1
-		CTurn::AddCount(m_nStateNumber);
-		
 		//メッセージ表記
 		TCHAR	str[256];
 		_stprintf(str, _T("%sの攻撃は外れた"),m_szName);
-	
+		
 		//メッセージテスト
 		MessageWindow::SetMassege(str);
-	
-		//技番号の初期化
-		m_nTrickNumber = TRICK_NAME_MAX + 1;
 
-		//攻撃しているユニット番号初期化
-		m_nAttackNumber = 0;
+		//ステートを進める
+		CTurn::BattleState_Advance(BATTLE_STATE_END);
 	}
 
 	//ステートリセット
@@ -1184,48 +1195,20 @@ void CUnit::AttackWide()
 	{
 		//戦闘ステートを進める
 		CTurn::BattleState_Advance(BATTLE_STATE_HIT);
-
-		//ステートリセット
-		CTurn::TimeStateReset();
 	}
 
 	//攻撃先にユニットが存在しなかった
 	else
 	{
-		//戦闘ステート初期化
-		CTurn::BattleState_Init();
-
-		//戦闘ステートに存在するユニット-1
-		CTurn::SumCount(m_nStateNumber);
-
-		//自身のステートを入力待ちに変更
-		if(m_uID == ID_PLAYER)
-		{
-
-			//ステートの遷移(ターンの終了)
-			m_nStateNumber= GAME_STATE_STAND_BY_PLAYER;
-		}
-		else
-		{
-			//ステートの遷移(ターンの終了)
-			m_nStateNumber = GAME_STATE_STAND_BY_OTHER;
-		}
-
-		//入力待ちステートに存在するユニット数+1
-		CTurn::AddCount(m_nStateNumber);
-		
 		//メッセージ表記
 		TCHAR	str[256];
 		_stprintf(str, _T("%sの攻撃は外れた"),m_szName);
-	
+		
 		//メッセージテスト
 		MessageWindow::SetMassege(str);
-	
-		//技番号の初期化
-		m_nTrickNumber = TRICK_NAME_MAX + 1;
 
-		//攻撃しているユニット番号初期化
-		m_nAttackNumber = 0;
+		//ステートを進める
+		CTurn::BattleState_Advance(BATTLE_STATE_END);
 	}
 
 	//ステートリセット
@@ -1269,48 +1252,20 @@ void CUnit::AttackAll()
 		{
 			//戦闘ステートを進める
 			CTurn::BattleState_Advance(BATTLE_STATE_HIT);
-
-			//ステートリセット
-			CTurn::TimeStateReset();
 		}
 
 		//攻撃先にユニットが存在しなかった
 		else
 		{
-			//戦闘ステート初期化
-			CTurn::BattleState_Init();
-
-			//戦闘ステートに存在するユニット-1
-			CTurn::SumCount(m_nStateNumber);
-
-			//自身のステートを入力待ちに変更
-			if(m_uID == ID_PLAYER)
-			{
-				//ステートの遷移(ターンの終了)
-				m_nStateNumber = GAME_STATE_STAND_BY_PLAYER;
-			}
-			else
-			{
-				//ステートの遷移(ターンの終了)
-				m_nStateNumber = GAME_STATE_STAND_BY_OTHER;
-			}
-
-			//入力待ちステートに存在するユニット数+1
-			CTurn::AddCount(m_nStateNumber);
-			
 			//メッセージ表記
 			TCHAR	str[256];
 			_stprintf(str, _T("%sの攻撃は外れた"),m_szName);
 		
 			//メッセージテスト
 			MessageWindow::SetMassege(str);
-		
-			//技番号の初期化
-			m_nTrickNumber = TRICK_NAME_MAX + 1;
 
-			
-			//攻撃しているユニット番号初期化
-			m_nAttackNumber = 0;
+			//ステートを進める
+			CTurn::BattleState_Advance(BATTLE_STATE_END);
 		}
 
 		//ステートリセット
@@ -1348,47 +1303,20 @@ void CUnit::AttackAll()
 		{
 			//戦闘ステートを進める
 			CTurn::BattleState_Advance(BATTLE_STATE_HIT);
-
-			//ステートリセット
-			CTurn::TimeStateReset();
 		}
 
 		//攻撃先にユニットが存在しなかった
 		else
 		{
-			//戦闘ステート初期化
-			CTurn::BattleState_Init();
-
-			//戦闘ステートに存在するユニット-1
-			CTurn::SumCount(m_nStateNumber);
-
-			//自身のステートを入力待ちに変更
-			if(m_uID == ID_PLAYER)
-			{
-				//ステートの遷移(ターンの終了)
-				m_nStateNumber= GAME_STATE_STAND_BY_PLAYER;
-			}
-			else
-			{
-				//ステートの遷移(ターンの終了)
-				m_nStateNumber = GAME_STATE_STAND_BY_OTHER;
-			}
-
-			//入力待ちステートに存在するユニット数+1
-			CTurn::AddCount(m_nStateNumber);
-			
 			//メッセージ表記
 			TCHAR	str[256];
 			_stprintf(str, _T("%sの攻撃は外れた"),m_szName);
 		
 			//メッセージテスト
 			MessageWindow::SetMassege(str);
-		
-			//技番号の初期化
-			m_nTrickNumber = TRICK_NAME_MAX + 1;
-
-			//攻撃しているユニット番号初期化
-			m_nAttackNumber = 0;
+	
+			//ステートを進める
+			CTurn::BattleState_Advance(BATTLE_STATE_END);
 		}
 
 		//ステートリセット

@@ -1,5 +1,6 @@
 #include "StatesCharacter.h"
 #include "TextureManager.h"
+#include "Unit.h"
 
 //---------------------------------------------------------------------------------------
 //コンストラクタ

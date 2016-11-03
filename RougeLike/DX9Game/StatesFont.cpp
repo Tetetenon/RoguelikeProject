@@ -1,5 +1,5 @@
 #include "StatesFont.h"
-#include "define.h"
+#include "StatesDefine.h"
 #include "Graphics.h"
 #include "TextureManager.h"
 

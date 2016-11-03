@@ -26,6 +26,60 @@
 //装備できる最大数
 #define EQUIPMENTMAX 5
 
+//健康状態列挙
+enum UNIT_STATE
+{
+	UNIT_STATE_HEALTH = 0,		//健康そのものである。
+	UNIT_STATE_POISON,			//毒
+	UNIT_STATE_CONFUSION,		//少し混乱している!
+	UNIT_STATE_WINCE,			//ひるみ
+	UNIT_STATE_PARALYSIS,		//麻痺
+	UNIT_STATE_SLEEP,			//睡眠
+	UNIT_STATE_NO_MONEY,		//金欠
+	UNIT_STATE_MAX
+};
+
+//方向
+enum Direction
+{
+	Forword = 0,
+	Right,
+	Back,
+	Left,
+	MaxDirection
+};
+
+
+//八方向の定義
+enum Vector8Define
+{
+	VEC_LEFT_UP = 0,
+	VEC_UP,
+	VEC_RIGHT_UP,
+	VEC_RIGHT,
+	VEC_RIGHT_DOWN,
+	VEC_DOWN,
+	VEC_LEFT_DOWN,
+	VEC_LEFT,
+	VEC_MAX,
+};
+
+//八方向
+const int Vector_8[8][2] = {
+	{-1,-1},							//左上
+	{ 0,-1},							//上
+	{ 1,-1},							//右上
+	{ 1, 0},							//右
+	{ 1, 1},							//右下
+	{ 0, 1},							//下
+	{-1, 1},							//左下
+	{-1, 0},							//左
+};
+
+
+//毒ダメージ
+#define PoisonDamage 5
+
 //ステータス列挙
 enum UNITSTATES
 {
@@ -178,6 +232,8 @@ public:
 	bool SlightLeft();				//斜め左の敵に攻撃
 	bool SlightRightBack();			//斜め右後ろの敵に攻撃
 	bool SlightLeftBack();			//斜め左後ろの敵に攻撃
+
+	bool Attack(int CorrectionPosX,int CorrectionPosY);	//指定した補正値の場所へ攻撃を行う
 
 	bool FindEnemy(int,int);		//指定した位置に敵がいるか
 

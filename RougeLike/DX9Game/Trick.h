@@ -8,6 +8,36 @@
 //技の文字数
 #define TRICK_FONT_NUM_MAX 256
 
+//技の名前
+enum TRICKNAME
+{
+	TRICK_NAME_1 = 0,	//技１
+	TRICK_NAME_2,
+	TRICK_NAME_3,
+	TRICK_NAME_4,
+	TRICK_NAME_MAX
+};
+
+//技の効果ジャンル
+enum TRICKEFFECT
+{
+	TRICK_EFFECT_ATTACK = 0,	//攻撃
+	TRICK_EFFECT_STATES_UP,		//ステータスの強化、弱化
+	TRICK_EFFECT_RECOVERY,		//回復
+	TRICK_EFFECT_MAX
+};
+
+
+//技の効果範囲
+enum TRICKRANGE
+{
+	TRICK_RANGE_FRONT = 0,	//前方に攻撃
+	TRICK_RANGE_ME,			//自身
+	TRICK_RANGE_ALL,		//部屋全体
+	TRICK_RANGE_WIDE,		//前方３マス
+	TRICK_RANGE_MAX			//
+};
+
 class CTrick
 {
 protected:

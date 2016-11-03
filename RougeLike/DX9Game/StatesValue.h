@@ -1,7 +1,7 @@
 #pragma once
 //ユニットのステータス値を出力する
 #include "C2DTexture.h"
-#include "define.h"
+#include "StatesDefine.h"
 
 class CStatesValue :
 	public C2DTexture
