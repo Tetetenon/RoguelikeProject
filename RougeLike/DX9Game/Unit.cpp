@@ -17,6 +17,8 @@
 
 #define JUMP_INTERVAL 30	//ジャンプしてから次のジャンプまでの間隔
 
+#define _CRT_SECURE_NO_WARNINGS
+
 #define FLASHTIME	5	//点滅時の切り替え時間
 #define FLASHNUM	3	//点滅回数
 
@@ -512,6 +514,19 @@ void CUnit::RecoveryHP (int Recovery)
 	//体力の上限を超えないようにする
 	if(m_nHP > m_nMaxHP)
 		m_nHP = m_nMaxHP;
+	
+	//メッセージ表記
+	TCHAR	str[256];
+	_stprintf_s(str,sizeof(str),_T("%d回復した!"),Recovery);
+	//メッセージ出力
+	MessageWindow::SetMassege(str);
+
+	//プレイヤーのHPが減った場合、画面のHP表示を変更
+	if(m_uID == ID_PLAYER)
+	{
+		//画面に描画してもらうHPの数値を渡す
+		CHPDraw::SetHP(m_nHP);
+	}
 }
 
 //---------------------------------------------------------------------------------------
@@ -530,6 +545,7 @@ void CUnit::Delete()
 	//プレイヤーであった場合、シーンをリザルトに遷移させる
 	if(m_uID == ID_PLAYER)
 	{
+		//ゲームメインを終了
 		CGameScene::FadeOutStart();
 
 		//エネミーの生成数のリセット
@@ -739,9 +755,6 @@ void CUnit::AttackSwitch()
 
 			//HPを半分回復する
 			RecoveryHP(nRecoveryHP);
-
-			//メッセージ出力
-			MessageWindow::SetMassege(_T("%d回復した!",nRecoveryHP));
 			break;
 		}
 		//ステートを進める
@@ -1168,7 +1181,7 @@ void CUnit::AttackFront()
 	{
 		//メッセージ表記
 		TCHAR	str[256];
-		_stprintf(str, _T("%sの攻撃は外れた"),m_szName);
+		_stprintf_s(str, _T("%sの攻撃は外れた"),m_szName);
 		
 		//メッセージテスト
 		MessageWindow::SetMassege(str);
@@ -1202,7 +1215,7 @@ void CUnit::AttackWide()
 	{
 		//メッセージ表記
 		TCHAR	str[256];
-		_stprintf(str, _T("%sの攻撃は外れた"),m_szName);
+		_stprintf_s(str, _T("%sの攻撃は外れた"),m_szName);
 		
 		//メッセージテスト
 		MessageWindow::SetMassege(str);
@@ -1229,9 +1242,6 @@ void CUnit::AttackAll()
 	//自身が部屋にいる場合、部屋の中の敵の探索を行う
 	if(!(nMyRoomNumber >= ROOM_MAX_NUM))
 	{
-		//マップ状況を格納
-		int MapSituation;
-
 		//部屋の間取りを受け取る
 		RECT MyRoomData = CMapData::GetRoomFloorPlan(nMyRoomNumber);
 
@@ -1259,7 +1269,7 @@ void CUnit::AttackAll()
 		{
 			//メッセージ表記
 			TCHAR	str[256];
-			_stprintf(str, _T("%sの攻撃は外れた"),m_szName);
+			_stprintf_s(str, _T("%sの攻撃は外れた"),m_szName);
 		
 			//メッセージテスト
 			MessageWindow::SetMassege(str);
@@ -1310,7 +1320,7 @@ void CUnit::AttackAll()
 		{
 			//メッセージ表記
 			TCHAR	str[256];
-			_stprintf(str, _T("%sの攻撃は外れた"),m_szName);
+			_stprintf_s(str, _T("%sの攻撃は外れた"),m_szName);
 		
 			//メッセージテスト
 			MessageWindow::SetMassege(str);
@@ -1434,7 +1444,7 @@ void CUnit::BattleWindow()
 
 		//メッセージ表記
 		//TCHAR	str[256];
-		//_stprintf(str, _T("%sに%dのダメージ!"),pszName,g_Damage);
+		//_stprintf_s(str, _T("%sに%dのダメージ!"),pszName,g_Damage);
 
 		//メッセージテスト
 		MessageWindow::SetMassege(_T("%sに%dのダメージ!"),pszName,g_Damage);
@@ -1491,7 +1501,7 @@ void CUnit::BattleDamage()
 				//メッセージ表記用変数
 				TCHAR	str[256];
 				//レベルアップメッセージを出す
-				_stprintf(str, _T("%sはレベルが上がった!"),m_szName);
+				_stprintf_s(str, _T("%sはレベルが上がった!"),m_szName);
 				//メッセージ出力
 				MessageWindow::SetMassege(str);
 
@@ -1503,21 +1513,21 @@ void CUnit::BattleDamage()
 				//最大HP
 				m_nMaxHP += m_nHPUpNum;
 				//ステータス値をメッセージとして出す
-				_stprintf(str, _T("HPが%d上がった!"),m_nHPUpNum);
+				_stprintf_s(str, _T("HPが%d上がった!"),m_nHPUpNum);
 				//メッセージ出力
 				MessageWindow::SetMassege(str);
 
 				//攻撃
 				m_nAttack += m_nAttackUpNum;
 				//ステータス値をメッセージとして出す
-				_stprintf(str, _T("攻撃が%d上がった!"),m_nAttackUpNum);
+				_stprintf_s(str, _T("攻撃が%d上がった!"),m_nAttackUpNum);
 				//メッセージ出力
 				MessageWindow::SetMassege(str);
 
 				//防御
 				m_nDefence += m_nDefenceUpNum;
 				//ステータス値をメッセージとして出す
-				_stprintf(str, _T("防御が%d上がった!"),m_nDefenceUpNum);
+				_stprintf_s(str, _T("防御が%d上がった!"),m_nDefenceUpNum);
 				//メッセージ出力
 				MessageWindow::SetMassege(str);
 
@@ -1673,37 +1683,37 @@ void CUnit::SetStateAbnormal(int nStateNum)
 	{
 	case UNIT_STATE_POISON:
 		//メッセージ表記
-		_stprintf(str, _T("毒状態になった!"));
+		_stprintf_s(str, _T("毒状態になった!"));
 		//メッセージ出力
 		MessageWindow::SetMassege( _T("毒状態になった!"));
 		break;
 	case UNIT_STATE_PARALYSIS:
 		//メッセージ表記
-		_stprintf(str, _T("麻痺状態になった!"));
+		_stprintf_s(str, _T("麻痺状態になった!"));
 		//メッセージ出力
 		MessageWindow::SetMassege( _T("麻痺状態になった!"));
 		break;
 	case UNIT_STATE_CONFUSION:
 		//メッセージ表記
-		_stprintf(str, _T("混乱した!"));
+		_stprintf_s(str, _T("混乱した!"));
 		//メッセージ出力
 		MessageWindow::SetMassege( _T("混乱した!"));
 		break;
 	case UNIT_STATE_SLEEP:
 		//メッセージ表記
-		_stprintf(str, _T("眠ってしまった!"));
+		_stprintf_s(str, _T("眠ってしまった!"));
 		//メッセージ出力
 		MessageWindow::SetMassege( _T("眠ってしまった!"));
 		break;
 	case UNIT_STATE_WINCE:
 		//メッセージ表記
-		_stprintf(str, _T("ひるんでいる!"));
+		_stprintf_s(str, _T("ひるんでいる!"));
 		//メッセージ出力
 		MessageWindow::SetMassege( _T("ひるんでいる!"));
 		break;
 	default:
 		//メッセージ表記
-		_stprintf(str, _T("バグった!"));
+		_stprintf_s(str, _T("バグった!"));
 		//メッセージ出力
 		MessageWindow::SetMassege( _T("バグった!"));
 		break;
@@ -1729,7 +1739,7 @@ void CUnit::TurnStartStateProcessing()
 		//画面に描画してもらうHPの数値を渡す
 		CHPDraw::SetHP(m_nHP);
 		//メッセージ格納
-		_stprintf(str, _T("毒で%sに%dのダメージ"),m_szName,PoisonDamage);
+		_stprintf_s(str, _T("毒で%sに%dのダメージ"),m_szName,PoisonDamage);
 
 		//メッセージ出力
 		MessageWindow::SetMassege(str);
@@ -1741,7 +1751,7 @@ void CUnit::TurnStartStateProcessing()
 		if(rand()%4)
 		{
 			//メッセージ格納
-			_stprintf(str, _T("%sは痺れて動けない"),m_szName);
+			_stprintf_s(str, _T("%sは痺れて動けない"),m_szName);
 			
 			//メッセージ出力
 			MessageWindow::SetMassege(str);
@@ -1760,7 +1770,7 @@ void CUnit::TurnStartStateProcessing()
 		//睡眠状態の場合
 	case UNIT_STATE_SLEEP:
 		//メッセージ格納
-		_stprintf(str, _T("%sは眠っている"),m_szName);
+		_stprintf_s(str, _T("%sは眠っている"),m_szName);
 		
 		//メッセージ出力
 		MessageWindow::SetMassege(str);
@@ -1778,7 +1788,7 @@ void CUnit::TurnStartStateProcessing()
 		//怯み状態の場合
 	case UNIT_STATE_WINCE:
 		//メッセージ格納
-		_stprintf(str, _T("%sはひるんでいる!"),m_szName);
+		_stprintf_s(str, _T("%sはひるんでいる!"),m_szName);
 		
 		//メッセージ出力
 		MessageWindow::SetMassege(str);
@@ -1839,7 +1849,7 @@ void CUnit::ChackFeetItem()
 		{
 			//メッセージ表記
 			TCHAR	str[256];
-			_stprintf(str, _T("%sはアイテムを拾った"),m_szName);
+			_stprintf_s(str, _T("%sはアイテムを拾った"),m_szName);
 	
 			//メッセージテスト
 			MessageWindow::SetMassege(str);

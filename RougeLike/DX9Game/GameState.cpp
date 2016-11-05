@@ -1,8 +1,8 @@
 #include "GameState.h"
 #include "Input.h"
 
-int CGameState::State = 0;
-int CGameState::OldState = 0;
+int CGameState::m_nState = 0;
+int CGameState::m_nOldState = 0;
 
 CGameState::CGameState(void)
 {
@@ -13,10 +13,8 @@ CGameState::~CGameState(void)
 {
 }
 
-void CGameState::Update()
+void CGameState::StateUpdate(int State)
 {
-	State++;
-	
-	State %= STATE_MAX;
+	m_nState = State;
 	
 }

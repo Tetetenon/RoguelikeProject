@@ -524,7 +524,7 @@ void CGameScene::InitObj()
 	m_pTrickWindowCursor ->Init();
 
 	//初期配置エネミーの設定
-	//m_pEnemyGenerator ->MakeEnemy();
+	m_pEnemyGenerator ->MakeEnemy();
 
 	//初期配置アイテムの設定
 	m_pFieldGenerator->MakeItem();
@@ -649,12 +649,11 @@ void CGameScene::UpdateObj()
 		CFieldItem::CleatePermit();
 
 		//初期配置エネミーの設定
-		//m_pEnemyGenerator ->MakeEnemy();
+		m_pEnemyGenerator ->MakeEnemy();
 
 		//階段到達状態を偽にする
 		m_MapMake = false;
 	}
-
 	//-----3Dオブジェクトの更新-----
 
 	//マップ再生成フラグ状況を保存しておく
@@ -760,9 +759,6 @@ void CGameScene::UpdateObj()
 	//フェードイン開始フラグが立っていた場合、フェードの処理を行う
 	if(m_bFadeStart)
 	{
-		int UpdateTimeing = m_FPS / 60.0f;
-
-
 		//フェードインの更新
 		m_pFade ->Update();
 	}
@@ -772,7 +768,7 @@ void CGameScene::UpdateObj()
 		//フェード状態初期化
 		m_bFadeStart = false;
 		m_bFadeSuccess = false;
-		CGameState::Update();
+		CGameState::StateUpdate(STATE_GAMEOVER);
 	}
 }
 //---------------------------------------------------------------------------------------

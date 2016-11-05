@@ -83,10 +83,10 @@ void CResultScene::UpDate()
 	//プレススペース更新
 	m_pPress ->Update();
 
-	//もしSPACEが押されていればゲームシーンへ移行
+	//もしSPACEが押されていればタイトルシーンへ移行
 	if(CInput::GetKeyTrigger(DIK_SPACE))
 	{
-		CGameState::Update();
+		CGameState::StateUpdate(STATE_TITLE);
 	}
 }
 //---------------------------------------------------------------------------------------

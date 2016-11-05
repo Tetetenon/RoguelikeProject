@@ -1,50 +1,10 @@
-﻿2016/11/03 21:50:18 にビルドを開始しました。
+﻿2016/11/04 23:01:01 にビルドを開始しました。
      1>ノード 2 上のプロジェクト "C:\Users\40029\Documents\RoguelikeProject\RougeLike\DX9Game\DX9Game.vcxproj" (build ターゲット)。
      1>InitializeBuildStatus:
-         "AlwaysCreate" が指定されたため "Debug\DX9Game.unsuccessfulbuild" を作成しています。
+         "Debug\DX9Game.unsuccessfulbuild" のタッチ タスクを実行しています。
        ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt Unit.cpp
-         Unit.cpp
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\unit.cpp(744): warning C4002: マクロ '_T' に指定された実引数の数が多すぎます。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\unit.cpp(1171): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\unit.cpp(1205): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\unit.cpp(1262): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\unit.cpp(1313): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\unit.cpp(1233): warning C4101: 'MapSituation' : ローカル変数は 1 度も使われていません。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\unit.cpp(1494): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\unit.cpp(1506): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\unit.cpp(1513): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\unit.cpp(1520): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\unit.cpp(1676): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\unit.cpp(1682): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\unit.cpp(1688): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\unit.cpp(1694): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\unit.cpp(1700): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\unit.cpp(1706): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\unit.cpp(1732): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\unit.cpp(1744): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\unit.cpp(1763): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\unit.cpp(1781): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\unit.cpp(1842): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt GameState.cpp
+         GameState.cpp
        ManifestResourceCompile:
          すべての出力が最新のものです。
        Link:
@@ -124,4 +84,4 @@
 
 ビルドに成功しました。
 
-経過時間 00:00:01.31
+経過時間 00:00:03.96

@@ -129,7 +129,7 @@ bool CGameWindow::OnIdle(long lCount)
 			case STATE_TITLE:
 				SAFE_RELEASE(m_pTitleScene);
 				break;
-			case STATE_RESUALT:
+			case STATE_GAMEOVER:
 				SAFE_RELEASE(m_pResultscene);
 				break;
 			}
@@ -156,7 +156,7 @@ bool CGameWindow::OnIdle(long lCount)
 			}
 			m_pTitleScene -> Update();
 			break;
-		case STATE_RESUALT:
+		case STATE_GAMEOVER:
 			//リザルトシーンが存在しなければ作成する
 			if(!m_pResultscene)
 			{
@@ -184,7 +184,7 @@ bool CGameWindow::OnIdle(long lCount)
 			m_dwFrameCount++;					// フレームカウント＋１
 		}
 		break;
-	case STATE_RESUALT:
+	case STATE_GAMEOVER:
 		if(m_pResultscene)
 		{
 			m_pResultscene -> Render();

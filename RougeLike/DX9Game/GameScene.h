@@ -132,7 +132,10 @@ public:
 	//FPS情報を取得
 	void SetFPS(int nFPS){m_FPS = nFPS;}
 	//
-	void AddDebugStr(LPCTSTR psz) {lstrcat(m_szDebug, psz);}
+	void AddDebugStr(LPCTSTR psz)
+	{
+		lstrcat(m_szDebug, psz);
+	}
 
 	//-----オブジェクト関連の操作-----
 	//シーン上にオブジェクトを追加

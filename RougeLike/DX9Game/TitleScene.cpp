@@ -124,7 +124,7 @@ void CTitleScene::Update()
 	//フェードインが完了したら、ステートを変更する
 	if(m_pFade ->GetFadeAlpha() >= 255)
 	{
-		CGameState::Update();
+		CGameState::StateUpdate(STATE_GAME);
 	}
 }
 

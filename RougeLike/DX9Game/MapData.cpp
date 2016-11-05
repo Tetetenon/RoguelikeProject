@@ -442,7 +442,6 @@ void CMapData::DivideMap()
 
 	//３パターンの中から、ランダムに選択し、区画を分ける
 	m_nDividPattern = rand()%4;
-	m_nDividPattern = 3;
 
 	switch(m_nDividPattern)
 	{
