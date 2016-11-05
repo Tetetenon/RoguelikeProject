@@ -237,6 +237,15 @@
     <Filter Include="UI関連\MiniMap">
       <UniqueIdentifier>{53ea2996-b498-4877-998c-66e8c2b252cf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="タイトル、リザルト画面\ゲームクリア">
+      <UniqueIdentifier>{2cf1ddd1-aaf0-4f0c-9915-92a289f3bdad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="タイトル、リザルト画面\ゲームクリア\GameClear">
+      <UniqueIdentifier>{dc839140-ffcf-41df-aad0-965b0acbcbca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="タイトル、リザルト画面\ゲームクリア\GameClearScene">
+      <UniqueIdentifier>{61e81b14-b0c1-42c1-8136-04d0e10ad115}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameWnd.cpp">
@@ -424,6 +433,12 @@
     </ClCompile>
     <ClCompile Include="MiniMap.cpp">
       <Filter>UI関連\MiniMap</Filter>
+    </ClCompile>
+    <ClCompile Include="GameClear.cpp">
+      <Filter>タイトル、リザルト画面\ゲームクリア\GameClear</Filter>
+    </ClCompile>
+    <ClCompile Include="GameClearScene.cpp">
+      <Filter>タイトル、リザルト画面\ゲームクリア\GameClearScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -618,6 +633,12 @@
     </ClInclude>
     <ClInclude Include="StatesDefine.h">
       <Filter>UI関連\ステータス</Filter>
+    </ClInclude>
+    <ClInclude Include="GameClear.h">
+      <Filter>タイトル、リザルト画面\ゲームクリア\GameClear</Filter>
+    </ClInclude>
+    <ClInclude Include="GameClearScene.h">
+      <Filter>タイトル、リザルト画面\ゲームクリア\GameClearScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

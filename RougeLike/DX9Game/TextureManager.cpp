@@ -15,8 +15,11 @@ bool				CTextureManager::m_TextureLoad[TEXTURE_MAX] = {false};	//ƒeƒNƒXƒ`ƒƒ“Ç‚İ
 #define TEXTURE_PATH_FLOOR			_T("../data/Texture/Floor.png")			//°
 #define TEXTURE_PATH_WALL			_T("../data/Texture/Wall.png")			//ƒJƒx
 #define TEXTURE_PATH_IN_THE_WALL	_T("../data/Texture/In_The_Wall.png")	//•Ç‚Ì’†
+
 #define TEXTURE_PATH_TITLE			_T("../data/texture/Title.png")			//ƒ^ƒCƒgƒ‹
 #define TEXTURE_PATH_RESULT			_T("../data/texture/Result.png")		//ƒŠƒUƒ‹ƒg
+#define TEXTURE_PATH_GAMECLEAR		_T("../data/texture/GameClear.png")		//ƒQ[ƒ€ƒNƒŠƒA
+
 #define TEXTURE_PATH_PRESS_SPACE	_T("../data/texture/PressSpace.png")	//ƒvƒŒƒXƒXƒy[ƒX
 #define TEXTURE_PATH_CIRCLE_P		_T("../data/texture/Circle_P.png")		//ƒvƒŒƒCƒ„[ƒ†ƒjƒbƒgƒT[ƒNƒ‹
 #define TEXTURE_PATH_CIRCLE_E		_T("../data/texture/Circle_E.png")		//ƒGƒlƒ~[ƒ†ƒjƒbƒgƒT[ƒNƒ‹
@@ -148,6 +151,14 @@ void CTextureManager::LoadTexture()
 	{
 		//ƒeƒNƒXƒ`ƒƒ‚Ì“Ç‚İ‚İ
 		D3DXCreateTextureFromFile(pDevice,TEXTURE_PATH_RESULT,&m_TextureData[TEXTURE_RESULT]);
+	}
+
+	//ƒQ[ƒ€ƒNƒŠƒA
+	//ƒeƒNƒXƒ`ƒƒ‚Ì“Ç‚İ‚İ‚ªŠ®—¹‚µ‚Ä‚¢‚È‚¯‚ê‚Î“Ç‚İ‚Ş
+	if(!m_TextureLoad[TEXTURE_GAMECLEAR])
+	{
+		//ƒeƒNƒXƒ`ƒƒ‚Ì“Ç‚İ‚İ
+		D3DXCreateTextureFromFile(pDevice,TEXTURE_PATH_GAMECLEAR,&m_TextureData[TEXTURE_GAMECLEAR]);
 	}
 
 	//ƒvƒŒƒXƒXƒy[ƒX

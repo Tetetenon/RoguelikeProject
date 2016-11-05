@@ -107,6 +107,8 @@
     <ClCompile Include="EquipmentWindow.cpp" />
     <ClCompile Include="EquipmentWindowCursor.cpp" />
     <ClCompile Include="Fade.cpp" />
+    <ClCompile Include="GameClear.cpp" />
+    <ClCompile Include="GameClearScene.cpp" />
     <ClCompile Include="ItemCommandCursor.cpp" />
     <ClCompile Include="ItemCommandWindow.cpp" />
     <ClCompile Include="LevelUp.cpp" />
@@ -171,6 +173,8 @@
     <ClInclude Include="EquipmentWindow.h" />
     <ClInclude Include="EquipmentWindowCursor.h" />
     <ClInclude Include="Fade.h" />
+    <ClInclude Include="GameClear.h" />
+    <ClInclude Include="GameClearScene.h" />
     <ClInclude Include="ItemCommandCursor.h" />
     <ClInclude Include="ItemCommandWindow.h" />
     <ClInclude Include="LevelUp.h" />

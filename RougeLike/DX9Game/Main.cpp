@@ -39,7 +39,6 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPTSTR lpCmdLine,
 
 
 	//メモリ番号にブレークポイントを置く
-	//_CrtSetBreakAlloc(425);
 	//_CrtSetBreakAlloc(310);
 
 

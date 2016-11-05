@@ -29,6 +29,8 @@ bool	CGameScene::m_OldMapMake = false;
 bool	CGameScene::m_bFadeStart = false;
 int		CGameScene::m_nPlayerLevel = 0;
 
+bool	CGameScene::m_bGameClaer = false;	//ゲームをクリアできたか
+
 //---------------------------------------------------------------------------------------
 // コンストラクタ
 //---------------------------------------------------------------------------------------
@@ -768,7 +770,16 @@ void CGameScene::UpdateObj()
 		//フェード状態初期化
 		m_bFadeStart = false;
 		m_bFadeSuccess = false;
-		CGameState::StateUpdate(STATE_GAMEOVER);
+
+		//ゲームクリアできたかによって次に以降するシーンを変更する
+		if(m_bGameClaer)
+		{
+			CGameState::StateUpdate(STATE_GAMECLEAR);
+		}
+		else
+		{
+			CGameState::StateUpdate(STATE_GAMEOVER);
+		}
 	}
 }
 //---------------------------------------------------------------------------------------
@@ -911,6 +922,11 @@ void CGameScene::DrawObj()
 	{
 		m_pFade ->Draw();
 	}
+}
+//ゲームのクリア状況を変更する
+void CGameScene::GameClearFlgChange(bool Change)
+{
+	m_bGameClaer = Change;
 }
 
 //=======================================================================================

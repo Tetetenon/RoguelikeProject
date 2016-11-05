@@ -7,9 +7,10 @@
 
 #include "Window.h"
 #include "Graphics.h"
-#include "GameScene.h"
-#include "ResultScene.h"
-#include "TitleScene.h"
+#include "GameScene.h"		//ゲームメイン
+#include "ResultScene.h"	//ゲームオーバー
+#include "TitleScene.h"		//タイトル
+#include "GameClearScene.h"		//ゲームクリア
 
 #define SCREEN_WIDTH	800			// スクリーンの幅
 #define SCREEN_HEIGHT	600			// スクリーンの高さ
@@ -18,15 +19,16 @@
 class CGameWindow : public CWindow
 {
 private:
-	CGraphics*	m_pGraph;			// 描画デバイス クラス
-	CGameScene*		m_pScene;			// シーン
+	CGraphics*	m_pGraph;				// 描画デバイス クラス
 
-	CResultScene*	m_pResultscene;	//リザルトシーンクラス
-	CTitleScene*	m_pTitleScene;	//タイトルシーンクラス
+	CGameScene*			m_pGameMainScene;			//ゲームメインシーン
+	CResultScene*		m_pResultscene;		//リザルトシーンクラス
+	CTitleScene*		m_pTitleScene;		//タイトルシーンクラス
+	CGameClearScene*	m_pGameClearScene;	//ゲームクリアシーンクラス
 
-	bool		m_bWindow;			// ウィンドウ / フルスクリーン
+	bool		m_bWindow;				// ウィンドウ / フルスクリーン
 
-	DWORD		m_dwExecLastTime;	// FPS計測用
+	DWORD		m_dwExecLastTime;		// FPS計測用
 	DWORD		m_dwFPSLastTime;
 	DWORD		m_dwFrameCount;
 

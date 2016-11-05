@@ -18,9 +18,10 @@
 //---------------------------------------------------------------------------------------
 bool CGameWindow::InitInstance()
 {
-	m_pGraph = NULL;	//描画クラスの中身を初期化
-	m_pScene = NULL;	//シーンクラスの中身を初期化
-	m_pResultscene = NULL;	//リザルトシーンクラスの初期化
+	m_pGraph			= NULL;	//描画クラスの中身を初期化
+	m_pGameMainScene	= NULL;	//ゲームメインシーンクラスの中身を初期化
+	m_pResultscene		= NULL;	//リザルトシーンクラスの初期化
+	m_pGameClearScene	= NULL;	//ゲームクリアシーンのポインタを初期化
 
 	//ウインドウと入力ハンドルの関連付け(NULLの場合切り離し)
 	::ImmAssociateContext(GetHwnd(), NULL);
@@ -72,14 +73,17 @@ bool CGameWindow::InitInstance()
 //---------------------------------------------------------------------------------------
 int CGameWindow::ExitInstance()
 {
-	// シーン解放
-	SAFE_RELEASE(m_pScene);
+	//ゲームメインシーン解放
+	SAFE_RELEASE(m_pGameMainScene);
 
 	//リザルトシーン解放
 	SAFE_RELEASE(m_pResultscene);
 
 	//タイトルシーン解放
 	SAFE_RELEASE(m_pTitleScene);
+
+	//ゲームクリアシーン解放
+	SAFE_RELEASE(m_pGameClearScene);
 
 	//使用テクスチャ開放
 	CTextureManager::ReleaseTexture();
@@ -105,9 +109,9 @@ bool CGameWindow::OnIdle(long lCount)
 	if ((dwCurrentTime - m_dwFPSLastTime) >= 500) 
 	{	// 0.5 秒ごとに計測
 		// フレーム数を計算
-		if (m_pScene) 
+		if (m_pGameMainScene) 
 		{
-			m_pScene->SetFPS(m_dwFrameCount * 1000 / (dwCurrentTime - m_dwFPSLastTime));
+			m_pGameMainScene->SetFPS(m_dwFrameCount * 1000 / (dwCurrentTime - m_dwFPSLastTime));
 		}
 		m_dwFPSLastTime = dwCurrentTime;	// タイマ値を更新
 		m_dwFrameCount = 0;					// フレームカウンタをリセット
@@ -124,13 +128,16 @@ bool CGameWindow::OnIdle(long lCount)
 			switch(CGameState::GetOldState())
 			{
 			case STATE_GAME:
-				SAFE_RELEASE(m_pScene);
+				SAFE_RELEASE(m_pGameMainScene);
 				break;
 			case STATE_TITLE:
 				SAFE_RELEASE(m_pTitleScene);
 				break;
 			case STATE_GAMEOVER:
 				SAFE_RELEASE(m_pResultscene);
+				break;
+			case STATE_GAMECLEAR:
+				SAFE_RELEASE(m_pGameClearScene);
 				break;
 			}
 			
@@ -142,11 +149,11 @@ bool CGameWindow::OnIdle(long lCount)
 		{
 		case STATE_GAME:
 			//ゲームシーンが存在しなかった場合、作成する
-			if (!m_pScene) 
+			if (!m_pGameMainScene) 
 			{
-				m_pScene = CGameScene::Create(m_pGraph);
+				m_pGameMainScene = CGameScene::Create(m_pGraph);
 			}
-			m_pScene -> Update();
+			m_pGameMainScene -> Update();
 			break;
 		case STATE_TITLE:
 			//タイトルシーンが存在しなければ作成する
@@ -164,6 +171,14 @@ bool CGameWindow::OnIdle(long lCount)
 			}
 			m_pResultscene -> UpDate();
 			break;
+		case STATE_GAMECLEAR:
+			//ゲームクリアシーンが存在しなければ作成する
+			if(!m_pGameClearScene)
+			{
+				m_pGameClearScene = CGameClearScene::Create(m_pGraph);
+			}
+			m_pGameClearScene ->UpDate();
+			break;
 		}
 	}
 
@@ -171,26 +186,40 @@ bool CGameWindow::OnIdle(long lCount)
 	switch(CGameState::GetState())
 	{
 	case STATE_GAME:
-		if (m_pScene) 
+
+		//ゲームシーンのポインタが存在するか確認を取る
+		if (m_pGameMainScene) 
 		{
-			m_pScene-> Render();				// レンダリング処理
+			m_pGameMainScene-> Render();		// レンダリング処理
 			m_dwFrameCount++;					// フレームカウント＋１
 		}
 		break;
 	case STATE_TITLE:
+
+		//タイトルシーンのポインタが存在するか確認を取る
 		if(m_pTitleScene)
 		{
-			m_pTitleScene -> Render();
+			m_pTitleScene -> Render();			//レンダリング
 			m_dwFrameCount++;					// フレームカウント＋１
 		}
 		break;
 	case STATE_GAMEOVER:
+
+		//ゲームオーバーシーンのポインタが存在するか確認を取る
 		if(m_pResultscene)
 		{
-			m_pResultscene -> Render();
+			m_pResultscene -> Render();			//レンダリング
 			m_dwFrameCount++;					// フレームカウント＋１
 		}
 		break;
+	case STATE_GAMECLEAR:
+
+		//ゲームクリアシーンのポインタが存在するか確認を取る
+		if(m_pGameClearScene)
+		{
+			m_pGameClearScene ->Render();		//レンダリング
+			m_dwFrameCount ++;					//フレームカウント
+		}
 	}
 	return true;
 }

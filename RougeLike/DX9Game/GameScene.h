@@ -118,6 +118,8 @@ private:
 	bool						m_bFadeSuccess;				//フェードアウト完了フラグ
 
 	static int					m_nPlayerLevel;				//階層を下りた時点のプレイヤーのレベル
+
+	static bool					m_bGameClaer;				//ゲームをクリアしたか
 public:
 	CGameScene();
 	virtual ~CGameScene();
@@ -171,6 +173,9 @@ public:
 
 	//プレイヤーのレベルを取得
 	static int GetPlayerLevel()	{return m_nPlayerLevel;}
+
+	//ゲームのクリア状況を変更する
+	static void GameClearFlgChange(bool Change);
 private:
 	//初期化
 	bool Initialize(CGraphics* pGraph);

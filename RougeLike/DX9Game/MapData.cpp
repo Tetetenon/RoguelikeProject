@@ -1,6 +1,7 @@
 #include "MapData.h"
 #include "Graphics.h"
 #include "TextureManager.h"
+#include "GameScene.h"
 
 #include <stdlib.h>
 #include <tchar.h>
@@ -420,6 +421,22 @@ void CMapData::MapGeneration()
 
 	//階層数加算
 	m_nHierarchyNum ++;
+
+	
+	//10階層移動したら、シーンをゲームクリアに遷移させる
+	if(m_nHierarchyNum > 10)
+	{
+		//ゲームのクリア状況をクリアに変更する
+		CGameScene::GameClearFlgChange(true);
+
+		//ゲームメインを終了
+		CGameScene::FadeOutStart();
+
+		//エネミーの生成数のリセット
+		CEnemyGenerator::ResetMakeEnemyNum();
+		//フィールドアイテム生成数のリセット
+		CItemGenerator::ResetMakeItemNum();
+	}
 
 }
 //---------------------------------------------------------------------------------------

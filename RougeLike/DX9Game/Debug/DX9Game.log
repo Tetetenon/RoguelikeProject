@@ -1,10 +1,30 @@
-﻿2016/11/04 23:01:01 にビルドを開始しました。
+﻿2016/11/05 11:42:11 にビルドを開始しました。
      1>ノード 2 上のプロジェクト "C:\Users\40029\Documents\RoguelikeProject\RougeLike\DX9Game\DX9Game.vcxproj" (build ターゲット)。
      1>InitializeBuildStatus:
-         "Debug\DX9Game.unsuccessfulbuild" のタッチ タスクを実行しています。
+         "AlwaysCreate" が指定されたため "Debug\DX9Game.unsuccessfulbuild" を作成しています。
        ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt GameState.cpp
-         GameState.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt C3DObj.cpp DeleteObj.cpp EffectObj.cpp Enemy.cpp FieldItem.cpp FieldObj.cpp GameScene.cpp GameWnd.cpp HitObj.cpp Main.cpp MapData.cpp Player.cpp Unit.cpp
+         MapData.cpp
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\mapdata.cpp(850): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\mapdata.cpp(851): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\mapdata.cpp(852): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\mapdata.cpp(853): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\mapdata.cpp(863): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+         GameScene.cpp
+         コードを生成中...
+         スキップ中... (関連する変更は検出されませんでした)
+         Unit.cpp
+         Player.cpp
+         Main.cpp
+         HitObj.cpp
+         GameWnd.cpp
+         FieldObj.cpp
+         FieldItem.cpp
+         Enemy.cpp
+         EffectObj.cpp
+         DeleteObj.cpp
+         C3DObj.cpp
        ManifestResourceCompile:
          すべての出力が最新のものです。
        Link:
@@ -20,6 +40,8 @@
          Debug\EquipmentWindow.obj
          Debug\EquipmentWindowCursor.obj
          Debug\Fade.obj
+         Debug\GameClear.obj
+         Debug\GameClearScene.obj
          Debug\ItemCommandCursor.obj
          Debug\ItemCommandWindow.obj
          Debug\LevelUp.obj
@@ -84,4 +106,4 @@
 
 ビルドに成功しました。
 
-経過時間 00:00:03.96
+経過時間 00:00:02.12

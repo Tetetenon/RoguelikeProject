@@ -12,6 +12,7 @@ enum TEXTURENUM
 	TEXTURE_IN_THE_WALL,		//壁の中
 	TEXTURE_TITLE,				//タイトル
 	TEXTURE_RESULT,				//リザルト
+	TEXTURE_GAMECLEAR,			//ゲームクリア
 	TEXTURE_PRESS_SPACE,		//プレススペース
 	TEXTURE_CIRCLE_P,			//プレイヤーサークル
 	TEXTURE_CIRCLE_E,			//エネミーサークル
