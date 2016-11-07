@@ -1306,7 +1306,7 @@ void CUnit::AttackAll()
 		bool bSlightLeftBackHit = SlightLeftBack();
 
 		//全てのヒットフラグをまとめる
-		bHitFlg = bFrontHit && bBackHit && bRightHit && bLeftHit && bSlightLeftHit && bSlightLeftBackHit && bSlightRightHit && bSlightRightBackHit;
+		bHitFlg = bFrontHit || bBackHit || bRightHit || bLeftHit || bSlightLeftHit || bSlightLeftBackHit || bSlightRightHit || bSlightRightBackHit;
 		
 		//敵ユニットに一度でも攻撃が当たった
 		if(bHitFlg)

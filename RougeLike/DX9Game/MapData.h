@@ -9,6 +9,9 @@
 #define SECTION_MIN_SIZE 8
 #define SECTION_MAX_SIZE 10
 
+//移動できる方向の数
+#define MOVEVEC 8
+
 //マップサイズ
 #define MAP_SIZE 30
 
@@ -17,21 +20,21 @@
 
 
 //マップ情報を格納する構造体
-typedef struct
+struct Map
 {
 	int m_Map_Situation;		//マップ状況(壁、床、壁の中、プレイヤーがいる、エネミーがいる…ect)
-}Map;
+};
 
 //マップの状況
 enum Situation
 {
-	IN_THE_WALL = -1,	//壁の中
 	WALL_UP  = 1,	//壁(上向き)
 	WALL_DOWN,		//壁(下向き)
 	WALL_RIGH,		//壁(右向き)
 	WALL_LEFT,		//壁(左向き)
 	FLOOR,			//床
 	STAIRS,			//階段
+	IN_THE_WALL = 99,	//壁の中
 	etc
 };
 
@@ -45,6 +48,9 @@ private:
 	static Map						m_ItemMap[MAP_SIZE][MAP_SIZE];				//マップ上のアイテム情報格納
 	static Map						m_UnitMap[MAP_SIZE][MAP_SIZE];				//マップ上のユニット情報格納
 
+	static bool						m_bCheckFlg[MAP_SIZE][MAP_SIZE];			//確認が完了したか
+	static int						m_nCost[MAP_SIZE][MAP_SIZE];				//現在地からの移動コスト
+	static int						m_nScore[MAP_SIZE][MAP_SIZE];				//特定の位置から目標位置までのコスト
 
 	static LPDIRECT3DVERTEXBUFFER9	m_pD3DVtxBuff;								//頂点バッファインタフェースへのポインタ
 	static LPDIRECT3DINDEXBUFFER9	m_pD3DIdxBuff;								//インデックスバッファ

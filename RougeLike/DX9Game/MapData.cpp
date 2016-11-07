@@ -11,6 +11,7 @@
 #include<string>
 #include<sstream> //文字ストリーム
 
+
 //静的メンバ実体定義
 Map						CMapData::m_TerrainMap[MAP_SIZE][MAP_SIZE];				//地形マップ情報
 Map						CMapData::m_UnitMap[MAP_SIZE][MAP_SIZE];				//ユニットマップ
@@ -379,7 +380,7 @@ void CMapData::AllInitMapData()
 	{
 		for(int j = 0;j < MAP_SIZE;j++)
 		{
-			m_TerrainMap[j][i].m_Map_Situation = -1;
+			m_TerrainMap[j][i].m_Map_Situation = IN_THE_WALL;
 			m_UnitMap[j][i].m_Map_Situation = 0;
 			m_ItemMap[j][i].m_Map_Situation = 0;
 		}

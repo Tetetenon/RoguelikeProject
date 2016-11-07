@@ -536,10 +536,8 @@ void CGameScene::InitObj()
 	{
 		for(int j = 0;j < MAP_SIZE;j++)
 		{
-			if(CMapData::Get_TerrainMapSituation(i,j) == 1)
-				m_pFieldObjMaker->PutObj(MODEL_WALL,i,j);
 
-			if(CMapData::Get_TerrainMapSituation(i,j) == -1)
+			if(CMapData::Get_TerrainMapSituation(i,j) == IN_THE_WALL)
 				m_pFieldObjMaker->PutObj(MODEL_TREE,i,j);
 
 			if(CMapData::Get_TerrainMapSituation(i,j) == STAIRS)
@@ -612,10 +610,8 @@ void CGameScene::UpdateObj()
 		{
 			for(int j = 0;j < MAP_SIZE;j++)
 			{
-				if(CMapData::Get_TerrainMapSituation(i,j) == 1)
-					m_pFieldObjMaker->PutObj(MODEL_WALL,i,j);
 
-				if(CMapData::Get_TerrainMapSituation(i,j) == -1)
+				if(CMapData::Get_TerrainMapSituation(i,j) == IN_THE_WALL)
 					m_pFieldObjMaker->PutObj(MODEL_TREE,i,j);
 
 				if(CMapData::Get_TerrainMapSituation(i,j) == STAIRS)
