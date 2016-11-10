@@ -25,6 +25,25 @@ struct Map
 	int m_Map_Situation;		//マップ状況(壁、床、壁の中、プレイヤーがいる、エネミーがいる…ect)
 };
 
+//A*アルゴリズムで使用する際に用いる構造体
+struct AStar
+{
+	int			m_nPosX;
+	int			m_nPosZ;
+	int			m_nMapStatus;		//マップの状態を保存
+	int			m_nCost;			//スタート位置から自身の位置までの移動コスト
+	int			m_nHeuristic;		//自身の位置から目標地点までのコスト
+	int			m_nScore;			//コストとヒューリスティック値の合計値
+	D3DXVECTOR2	m_ParentPos;		//自身の親の位置
+};
+
+//A*アルゴリズムで用いるリスト
+struct AStarList
+{
+	AStar AstarData;
+	AStarList* NextData;
+};
+
 //マップの状況
 enum Situation
 {
@@ -70,6 +89,10 @@ private:
 	static LPD3DXFONT				m_pFont;									//描画フォントの設定
 	static RECT						m_FontDrawPos;								//フォントの描画位置を設定する
 	static int						m_nDividPattern;							//生成するマップパターン
+	
+
+	static AStar		m_AStarData[MAP_SIZE][MAP_SIZE];//A*アルゴリズムに使用する構造体
+	static AStarList*	m_pAstarList;
 public:
 	CMapData(void);										//コンストラクタ
 	~CMapData(void);									//デストラクタ
@@ -131,5 +154,26 @@ public:
 
 	//現在の階層数を描画する
 	static void DrawHierarchyNum();
+
+	//A*アルゴリズム用構造体の初期化を行う
+	static void InitAStarData();	
+
+	//A*アルゴリズムの構造体のデータを設定する
+	static void ASarSetData(int NowPosX,int NowPosZ,int EnemyPosX,int EnemyPosZ,int PlayerPosX,int PlayerPosZ);
+
+	//指定された位置周囲の移動可能な場所を検索しリストへ追加する
+	static void SearchPosition(int SearchPosX,int SearchPosZ,int EnemyPosX,int EnemyPosZ,int PlayerPosX,int PlayerPosZ);
+
+	//A*アルゴリズムにおける、値を計算する
+	static int AStarCalculator(int NowPosX,int NowPosZ,int GoalPosX,int GoalPosZ);
+
+	//リスト内の、最もスコアの小さい位置を検索し、渡す
+	static void SearchMinScoreData(int *PosX,int *PosZ);
+
+	//セルの状態を遷移させる
+	static void CompleteCellCal(int PosX,int PosZ,int State);
+
+	//指定された位置の親の場所を返す
+	static void GetParentPos(int ChildPosX,int ChildPosZ,int *ParentPosX,int *ParentPosZ);
 };
 

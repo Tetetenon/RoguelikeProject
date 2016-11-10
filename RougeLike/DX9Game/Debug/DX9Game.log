@@ -1,24 +1,18 @@
-﻿2016/11/07 22:16:46 にビルドを開始しました。
+﻿2016/11/10 16:30:15 にビルドを開始しました。
      1>ノード 2 上のプロジェクト "C:\Users\40029\Documents\RoguelikeProject\RougeLike\DX9Game\DX9Game.vcxproj" (build ターゲット)。
      1>InitializeBuildStatus:
-         "Debug\DX9Game.unsuccessfulbuild" のタッチ タスクを実行しています。
+         "AlwaysCreate" が指定されたため "Debug\DX9Game.unsuccessfulbuild" を作成しています。
        ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt Enemy.cpp
          Enemy.cpp
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\enemy.cpp(101): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\enemy.cpp(100): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\enemy.cpp(108): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\enemy.cpp(107): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\enemy.cpp(115): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\enemy.cpp(114): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\enemy.cpp(124): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\enemy.cpp(123): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\enemy.cpp(962): warning C4244: '引数' : 'FLOAT' から 'int' への変換です。データが失われる可能性があります。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\enemy.cpp(962): warning C4244: '引数' : 'FLOAT' から 'int' への変換です。データが失われる可能性があります。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\enemy.cpp(967): warning C4244: '=' : 'int' から 'FLOAT' への変換です。データが失われる可能性があります。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\enemy.cpp(968): warning C4244: '=' : 'int' から 'FLOAT' への変換です。データが失われる可能性があります。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\enemy.cpp(973): warning C4244: '=' : 'int' から 'FLOAT' への変換です。データが失われる可能性があります。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\enemy.cpp(974): warning C4244: '=' : 'int' から 'FLOAT' への変換です。データが失われる可能性があります。
        ManifestResourceCompile:
          すべての出力が最新のものです。
        Link:
@@ -100,4 +94,4 @@
 
 ビルドに成功しました。
 
-経過時間 00:00:01.62
+経過時間 00:00:01.89

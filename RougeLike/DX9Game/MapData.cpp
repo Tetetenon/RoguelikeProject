@@ -35,6 +35,8 @@ LPD3DXFONT				CMapData::m_pFont;										//描画フォントの設定
 RECT					CMapData::m_FontDrawPos;								//フォントの描画位置を設定する
 int						CMapData::m_nDividPattern;								//生成するマップパターン
 
+AStar					CMapData::m_AStarData[MAP_SIZE][MAP_SIZE];				//A*アルゴリズムに使用する構造体
+AStarList*				CMapData::m_pAstarList;									//A*アルゴリズムで次の探索候補のデータを保存する
 //---------------------------------------------------------------------------------------
 //　コンストラクタ
 //---------------------------------------------------------------------------------------
@@ -200,6 +202,8 @@ CMapData::CMapData(void)
 //---------------------------------------------------------------------------------------
 CMapData::~CMapData(void)
 {
+	//A*で用いたデータの初期化
+	InitAStarData();
 	//頂点バッファの開放
 	SAFE_RELEASE(m_pD3DVtxBuff);
 	//インデックスバッファの開放
@@ -460,6 +464,7 @@ void CMapData::DivideMap()
 
 	//３パターンの中から、ランダムに選択し、区画を分ける
 	m_nDividPattern = rand()%4;
+	//m_nDividPattern = 3;
 
 	switch(m_nDividPattern)
 	{
@@ -864,4 +869,262 @@ void CMapData::DrawHierarchyNum()
 	_stprintf(Hierarchy, _T("%d階"), m_nHierarchyNum);
 	//数値(文字)描画
 	m_pFont ->DrawText(NULL,Hierarchy,-1,&m_FontDrawPos,DT_LEFT,D3DCOLOR_ARGB(0xff, 0x00, 0x00, 0x00));
+}
+
+
+
+//---------------------------------------------------------------------------------------
+//A*アルゴリズムの情報を設定する
+//---------------------------------------------------------------------------------------
+void CMapData::ASarSetData(int NowPosX,int NowPosZ,int EnemyPosX,int EnemyPosZ,int PlayerPosX,int PlayerPosZ)
+{
+	//自身の位置を構造体配列の中に格納する
+
+	//位置情報を保存
+	m_AStarData[NowPosZ][NowPosX].m_nPosX = NowPosX;
+	m_AStarData[NowPosZ][NowPosX].m_nPosZ = NowPosZ;
+	//コストを入力する
+	m_AStarData[NowPosZ][NowPosX].m_nCost = AStarCalculator(NowPosX,NowPosZ,EnemyPosX,EnemyPosZ);
+	//ヒューリステック値を入力する
+	m_AStarData[NowPosZ][NowPosX].m_nHeuristic = AStarCalculator(NowPosX,NowPosZ,PlayerPosX,PlayerPosX);
+	//スコアを入力する(コスト+ヒューリスティック値)
+	m_AStarData[NowPosZ][NowPosX].m_nScore = m_AStarData[NowPosZ][NowPosX].m_nCost + m_AStarData[NowPosZ][NowPosX].m_nHeuristic;
+}
+
+//---------------------------------------------------------------------------------------
+//A*アルゴリズム用構造体の初期化を行う
+//---------------------------------------------------------------------------------------
+void CMapData::InitAStarData()
+{
+	//データの初期化を行う
+	for(int i = 0;i < MAP_SIZE;i++)
+	{
+		for(int k = 0;k < MAP_SIZE;k++)
+		{
+			//マップのオープンクローズフラグ初期化
+			m_AStarData[i][k].m_nMapStatus = 0;
+
+			//コスト、ヒューリスティック値、スコア初期化
+			m_AStarData[i][k].m_nCost = 0;
+			m_AStarData[i][k].m_nHeuristic = 0;
+			m_AStarData[i][k].m_nScore = 0;
+
+			//自身の親のポインタを初期化する
+			m_AStarData[i][k].m_ParentPos = D3DXVECTOR2(0,0);
+		}
+	}
+	
+	//これから削除するデータ
+	AStarList* DeleteAstarData = m_pAstarList;
+
+
+	//リストの最後まで移動する
+	while(DeleteAstarData!= NULL)
+	{
+		//これから削除するデータの次のデータ
+		AStarList* NextDeleteData = DeleteAstarData->NextData;
+
+		//データの削除
+		delete DeleteAstarData;
+		DeleteAstarData = NULL;
+
+		//次のデータの削除に移る
+		DeleteAstarData = NextDeleteData;
+	}
+
+	m_pAstarList = NULL;
+}
+
+
+//---------------------------------------------------------------------------------------
+//指定された位置周囲の移動可能な場所を検索しリストに追加
+//---------------------------------------------------------------------------------------
+void CMapData::SearchPosition(int SearchPosX,int SearchPosZ,int EnemyPosX,int EnemyPosZ,int PlayerPosX,int PlayerPosZ)
+{
+	//方向の補正値
+	D3DXVECTOR2 CorrectionPos[MOVEVEC] = 
+	{
+		//			 X, Z
+		D3DXVECTOR2(-1,-1),	//左上
+		D3DXVECTOR2( 0,-1),	//上
+		D3DXVECTOR2( 1,-1),	//右上
+		D3DXVECTOR2( 1, 0),	//右
+		D3DXVECTOR2( 1, 1),	//右下
+		D3DXVECTOR2(0 , 1),	//下
+		D3DXVECTOR2(-1, 1),	//左下
+		D3DXVECTOR2(-1, 0)	//左
+	};
+
+	//周囲を確認する
+	for(int i = 0;i < MOVEVEC;i++)
+	{
+		//子供の位置を保存
+		int ChildPosX = (int)(SearchPosX + CorrectionPos[i].x);
+		int ChildPosZ = (int)(SearchPosZ + CorrectionPos[i].y);
+
+		int StatusFlg = m_AStarData[ChildPosZ][ChildPosX].m_nMapStatus;
+
+		//確認した場所の状態が計算を行っていない状態ならば処理を続ける
+		if(StatusFlg != 0)
+			continue;
+
+		//確認した位置が床(移動可能)かつ、誰もいなければ移動可能リストに加える
+		int MapSituNum = Get_TerrainMapSituation(ChildPosX,ChildPosZ);
+		int UnitSituNum = Get_UnitMapSituation(ChildPosX,ChildPosZ);
+
+		if(UnitSituNum > 1)
+			continue;
+
+		if(MapSituNum != FLOOR && MapSituNum != STAIRS)
+			continue;
+
+		//子供の親の位置を自身に設定する
+		m_AStarData[ChildPosZ][ChildPosX].m_ParentPos.x = SearchPosX;
+		m_AStarData[ChildPosZ][ChildPosX].m_ParentPos.y = SearchPosZ;
+
+		//スコアの計算を行う
+		ASarSetData(ChildPosX,ChildPosZ,EnemyPosX,EnemyPosZ,PlayerPosX,PlayerPosZ);
+
+		//計算を行った状態に遷移する
+		CMapData::CompleteCellCal(ChildPosX,ChildPosZ,1);
+
+		//リストに追加
+		//これから格納するデータ
+		AStarList* NextAStarData = new AStarList;
+		//位置情報の格納
+		NextAStarData->AstarData = m_AStarData[ChildPosZ][ChildPosX];
+		//次のデータ
+		NextAStarData->NextData = NULL;
+		//初めてリストに登録する
+		if(m_pAstarList == NULL)
+		{
+			m_pAstarList = NextAStarData;
+		}
+		else
+		{
+			//これから格納するデータの前のデータ
+			AStarList* BackAstarData = m_pAstarList;
+
+			//リストの最後まで移動する
+			while(BackAstarData->NextData != NULL)
+			{
+				BackAstarData = BackAstarData ->NextData;
+			}
+
+			//最後まで到達したら、その後ろにデータを追加し、接合させる
+			BackAstarData ->NextData = NextAStarData;
+		}
+
+	}
+}
+//---------------------------------------------------------------------------------------
+//A*アルゴリズムにおける、距離を計算する
+//---------------------------------------------------------------------------------------
+int CMapData::AStarCalculator(int NowPosX,int NowPosZ,int GoalPosX,int GoalPosZ)
+{
+	//現在の位置と、目標地点の位置の距離を計算する
+	int DistanceX = abs(NowPosX - GoalPosX);
+	int DistanceZ = abs(NowPosZ - GoalPosZ);
+
+	//値を暫定的に計算する
+	int HeuristicScoreNum = DistanceX + DistanceZ;
+
+	//斜め移動も可能なため、縦、横の数値の低い分、スコア値から減算する
+	//引く数値
+	int SubNum = DistanceX;
+
+	if(DistanceX > DistanceZ)
+		SubNum = DistanceZ;
+
+	HeuristicScoreNum -= SubNum;
+
+	//計算が完了した数値をヒューリスティック値として返す
+	return HeuristicScoreNum;
+}
+//---------------------------------------------------------------------------------------
+//リスト内の、最もスコアの小さい位置を検索し、渡す
+//---------------------------------------------------------------------------------------
+void CMapData::SearchMinScoreData(int *PosX,int *PosZ)
+{
+	//もし、リストに何も登録されていなければ処理を中断
+	if(m_pAstarList == NULL)
+	{
+		//非常値を入れて、検索失敗を返す
+		*PosX = -99;
+		*PosZ = -99;
+
+		return;
+	}
+
+	//現在探索中のデータ
+	AStarList * NowListData = m_pAstarList;
+
+	//最少スコアのデータ
+	AStarList* MinScoreData = m_pAstarList;
+
+	//全てのデータの探索が終了するまで続ける
+	while(NowListData)
+	{
+
+		//もし現在の最少スコアよりも探索中のデータのスコアのほうが小さければ、入れ替える
+		if(MinScoreData->AstarData.m_nScore > NowListData->AstarData.m_nScore)
+		{
+			MinScoreData = NowListData;
+		}
+
+		//次のデータの探索に移る
+		NowListData = NowListData->NextData;
+	}
+
+	//全てのデータの探索を行った
+
+	//位置情報の値を渡せるように格納しておく
+	*PosX = MinScoreData->AstarData.m_nPosX;
+	*PosZ = MinScoreData->AstarData.m_nPosZ;
+
+	//リスト上から最小値のデータを削除する
+
+	//削除するデータが最前の場合、先頭ポインタを移動させる
+	if(MinScoreData == m_pAstarList)
+	{
+		m_pAstarList = m_pAstarList ->NextData;
+	}
+
+	//削除するデータの前にデータが存在している場合、つなぎなおす
+	else
+	{
+		//削除するデータの前のデータ
+		AStarList* BackAstarData = m_pAstarList;
+
+		//次のポインタが削除するデータになるまで移動する
+		while(BackAstarData->NextData != MinScoreData)
+		{
+			BackAstarData = BackAstarData ->NextData;
+		}
+
+		//ポインタの先を変更
+		BackAstarData ->NextData = MinScoreData->NextData;
+	}
+
+	//状態を遷移させる
+	CompleteCellCal(MinScoreData ->AstarData.m_nPosX,MinScoreData ->AstarData.m_nPosZ,2);
+
+	//データの削除
+	delete MinScoreData;
+	MinScoreData = NULL;
+}
+//---------------------------------------------------------------------------------------
+//指定したセルの状態をクローズ化(探索完了)にする
+//---------------------------------------------------------------------------------------
+void CMapData::CompleteCellCal(int PosX,int PosZ,int State)
+{
+	m_AStarData[PosZ][PosX].m_nMapStatus = State;
+}
+//---------------------------------------------------------------------------------------
+//指定したセルの親の位置を返す
+//---------------------------------------------------------------------------------------
+void CMapData::GetParentPos(int ChildPosX,int ChildPosZ,int *ParentPosX,int *ParentPosZ)
+{
+	*ParentPosX = (int)m_AStarData[ChildPosZ][ChildPosX].m_ParentPos.x;
+	*ParentPosZ = (int)m_AStarData[ChildPosZ][ChildPosX].m_ParentPos.y;
 }

@@ -21,7 +21,6 @@ int			CEnemy::m_nLevelUpData[UPSTATES_MAX];	//レベルアップ時上昇ステータス情報格
 bool		CEnemy::m_bStatesLoad = false;			//ステータス情報ファイル読み込みフラグ
 bool		CEnemy::m_bLevelUpLoad = false;			//レベルアップ時上昇値ファイル読み込みフラグ
 bool		CEnemy::m_bDelete = false;				//全てのエネミーを削除するフラグ
-AStar		CEnemy::m_AStarData[MAP_SIZE][MAP_SIZE];		//A*アルゴリズムに使用する構造体
 
 #define PATH_DATA_ENEMY		("../data/txt/Enemy.txt")
 #define PATH_LEVEL_UP_ENEMY ("../data/txt/LevelUp_Enemy.txt")
@@ -356,33 +355,24 @@ void CEnemy::Update()
 //---------------------------------------------------------------------------------------
 void CEnemy::InputUpdate()
 {
-	//回転度数
-	m_Angle = D3DXVECTOR3(0.0f,0.0f,0.0f);
 
 	//移動できたか
 	bool MoveCompletion = false;
 
-	
-	//-----移動ルーチン作成-----
-	if (m_Player)
+	//A*による移動
+	MoveCompletion = A_StarMove();
+
+	//プレイヤーの位置情報を取得
+	int PlayerPos_X = m_Player->GetPosX();
+	int PlayerPos_Z = m_Player->GetPosZ();
+
+	//差を計算
+	int Distance_X = PlayerPos_X - m_nUnit_Pos_X;
+	int Distance_Z = m_nUnit_Pos_Z - PlayerPos_Z;
+
+	if(!MoveCompletion)
 	{
-		D3DXVECTOR3 Distance = D3DXVECTOR3(0.0f,0.0f,0.0f);	//プレイヤーと自分との距離
-
-		//ワールド上のプレイヤーの位置情報取得
-		D3DXVECTOR3 PlayerPos = m_Player -> GetPos();
 		
-		//プレイヤーの位置情報を配列位置に変換
-		int PlayerPos_X = (int)((PlayerPos.x - (MAP_SIZE / 2) * GRIDSIZE) / GRIDSIZE + (MAP_SIZE));
-		int PlayerPos_Z = (int)(MAP_SIZE - ((PlayerPos.z - (MAP_SIZE / 2) * GRIDSIZE) / GRIDSIZE + (MAP_SIZE)));
-
-		PlayerPos_X = m_Player->GetPosX();
-		PlayerPos_Z = m_Player->GetPosZ();
-
-		//差を計算
-		int Distance_X = PlayerPos_X - m_nUnit_Pos_X;
-		int Distance_Z = m_nUnit_Pos_Z - PlayerPos_Z;
-		
-
 		//攻撃判定(もしプレイヤーがそばに居たら攻撃をする)
 		if(abs(Distance_X) <= 1 && abs(Distance_Z) <= 1)
 		{
@@ -473,174 +463,246 @@ void CEnemy::InputUpdate()
 			//繰り出す技の番号を指定
 			m_nTrickNumber = TRICK_RANGE_FRONT;
 		}
-		//差があれば移動
-		else if(abs(Distance_X) >= 1 || abs(Distance_Z) >= 1)
+	}
+
+	if(0)
+	{
+		//回転度数
+		m_Angle = D3DXVECTOR3(0.0f,0.0f,0.0f);
+
+		
+		//-----移動ルーチン作成-----
+		if (m_Player)
 		{
+			
 
-			//向きフラグ初期化
-			for(int i = 0;i < MaxDirection;i++)
-				m_bDirectionFlg[i] = false;
-
-			//上移動
-			//移動先が床ならば移動可能
-			if(Distance_Z > 0 
-				&& FLOOR == CMapData::Get_TerrainMapSituation(m_nUnit_Pos_X,m_nUnit_Pos_Z - 1) 
-				&& CMapData::Get_UnitMapSituation(m_nUnit_Pos_X,m_nUnit_Pos_Z - 1) == 0)
+			//差があれば移動
+			if(abs(Distance_X) >= 1 || abs(Distance_Z) >= 1)
 			{
-				//マーキング消去
-				CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 
-				//ミニマップ上の位置情報を削除
-				CMiniMap::Delete(m_nUnit_Pos_X,m_nUnit_Pos_Z);
+				//向きフラグ初期化
+				for(int i = 0;i < MaxDirection;i++)
+					m_bDirectionFlg[i] = false;
 
-				//向きフラグ上
-				m_bDirectionFlg[Forword] = true;
+				//上移動
+				//移動先が床ならば移動可能
+				if(Distance_Z > 0 
+					&& FLOOR == CMapData::Get_TerrainMapSituation(m_nUnit_Pos_X,m_nUnit_Pos_Z - 1) 
+					&& CMapData::Get_UnitMapSituation(m_nUnit_Pos_X,m_nUnit_Pos_Z - 1) == 0)
+				{
+					//マーキング消去
+					CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 
-				//指定位置に到達していない
-				m_bDestination = false;
-				m_fTimer = 0.0f;
+					//ミニマップ上の位置情報を削除
+					CMiniMap::Delete(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 
-				//移動完了
-				MoveCompletion = true;
+					//向きフラグ上
+					m_bDirectionFlg[Forword] = true;
 
-				//配列上を移動
-				m_nUnit_Pos_Z--;
+					//指定位置に到達していない
+					m_bDestination = false;
+					m_fTimer = 0.0f;
+
+					//移動完了
+					MoveCompletion = true;
+
+					int TextureNumber;
+					if(CMapData::Get_ItemMapSituation(m_nUnit_Pos_X,m_nUnit_Pos_Z) != 0)
+						TextureNumber = TEXTURE_ORANGE_TEXTURE;
+
+					//ミニマップ上に自身の位置を設定
+					CMiniMap::SetIcon(m_nUnit_Pos_X,m_nUnit_Pos_Z,TEXTURE_RED_TEXTURE);
+
+					//配列上を移動
+					m_nUnit_Pos_Z--;
+					
+					//マーキング
+					CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
+
+					//ミニマップ上に自身の位置を設定
+					CMiniMap::SetIcon(m_nUnit_Pos_X,m_nUnit_Pos_Z,TEXTURE_RED_TEXTURE);
+
+					//操作決定待ちに存在するユニットの数-1
+					CTurn::SumCount(m_nStateNumber);
+
+					//自身のステートの設定
+					m_nStateNumber = GAME_STATE_MOVE;
+					
+					//移動ステートに存在するユニット+1
+					CTurn::AddCount(m_nStateNumber);
+				}
+				//下移動
+				//移動先が床ならば移動可能
+				else if(Distance_Z < 0 
+					&& FLOOR == CMapData::Get_TerrainMapSituation(m_nUnit_Pos_X,m_nUnit_Pos_Z + 1) 
+					&& CMapData::Get_UnitMapSituation(m_nUnit_Pos_X,m_nUnit_Pos_Z + 1) == 0)
+				{
+					//マーキング消去
+					CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
+
+					//ミニマップ上の位置情報を削除
+					CMiniMap::Delete(m_nUnit_Pos_X,m_nUnit_Pos_Z);
+					
+					//向きフラグ下
+					m_bDirectionFlg[Back] = true;
+
+					//指定位置に到達していない
+					m_bDestination = false;
+					m_fTimer = 0.0f;
+
+					//移動完了
+					MoveCompletion = true;
+
+					//配列上を移動
+					m_nUnit_Pos_Z ++;
+					
+					//マーキング
+					CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
+
+					//ミニマップ上に自身の位置を設定
+					CMiniMap::SetIcon(m_nUnit_Pos_X,m_nUnit_Pos_Z,TEXTURE_RED_TEXTURE);
+
+					//操作決定待ちに存在するユニットの数-1
+					CTurn::SumCount(m_nStateNumber);
+
+					//自身のステートの設定
+					m_nStateNumber = GAME_STATE_MOVE;
+					
+					//移動ステートに存在するユニット+1
+					CTurn::AddCount(m_nStateNumber);
+				}
+				//右移動
+				if(Distance_X > 0 && 
+					FLOOR == CMapData::Get_TerrainMapSituation(m_nUnit_Pos_X + 1,m_nUnit_Pos_Z) && 
+					CMapData::Get_UnitMapSituation(m_nUnit_Pos_X + 1,m_nUnit_Pos_Z) == 0)
+				{
+					//マーキング消去
+					CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
+
+					//ミニマップ上の位置情報を削除
+					CMiniMap::Delete(m_nUnit_Pos_X,m_nUnit_Pos_Z);
+
+					//向きフラグ右
+					m_bDirectionFlg[Right] = true;
+
+					//指定位置に到達していない
+					m_bDestination = false;
+					m_fTimer = 0.0f;
+
+					//移動完了
+					MoveCompletion = true;
+
+					//配列上を移動
+					m_nUnit_Pos_X ++;
+					
+					//マーキング
+					CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
+
+					//ミニマップ上に自身の位置を設定
+					CMiniMap::SetIcon(m_nUnit_Pos_X,m_nUnit_Pos_Z,TEXTURE_RED_TEXTURE);
+
+					//操作決定待ちに存在するユニットの数-1
+					CTurn::SumCount(m_nStateNumber);
+
+					//自身のステートの設定
+					m_nStateNumber = GAME_STATE_MOVE;
+					
+					//移動ステートに存在するユニット+1
+					CTurn::AddCount(m_nStateNumber);
+				}
+				//左移動
+				else if(Distance_X < 0 && 
+					FLOOR == CMapData::Get_TerrainMapSituation(m_nUnit_Pos_X - 1,m_nUnit_Pos_Z) && 
+					CMapData::Get_UnitMapSituation(m_nUnit_Pos_X - 1,m_nUnit_Pos_Z) == 0)
+				{
+					//マーキング消去
+					CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
+
+					//ミニマップ上の位置情報を削除
+					CMiniMap::Delete(m_nUnit_Pos_X,m_nUnit_Pos_Z);
+
+					//向きフラグ左
+					m_bDirectionFlg[Left] = true;
+
+					//指定位置に到達していない
+					m_bDestination = false;
+					m_fTimer = 0.0f;
+
+					//移動完了
+					MoveCompletion = true;
+
+					//配列上を移動
+					m_nUnit_Pos_X --;
+					
+					//マーキング
+					CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
+
+					//ミニマップ上に自身の位置を設定
+					CMiniMap::SetIcon(m_nUnit_Pos_X,m_nUnit_Pos_Z,TEXTURE_RED_TEXTURE);
+
+					//操作決定待ちに存在するユニットの数-1
+					CTurn::SumCount(m_nStateNumber);
+
+					//自身のステートの設定
+					m_nStateNumber = GAME_STATE_MOVE;
+					
+					//移動ステートに存在するユニット+1
+					CTurn::AddCount(m_nStateNumber);
+				}
+				//移動できなかった場合、エネミーのターンを終了する
+				if(!MoveCompletion)
+				{
+					//入力待ちに存在するユニットの数-1
+					CTurn::SumCount(m_nStateNumber);
+
+					//自身のステートの設定
+					m_nStateNumber = GAME_STATE_TURN_END;
+
+					//ターン終了に存在するユニットの数+1
+					CTurn::AddCount(m_nStateNumber);
+				}
 				
-				//マーキング
-				CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
-
-				//ミニマップ上に自身の位置を設定
-				CMiniMap::SetIcon(m_nUnit_Pos_X,m_nUnit_Pos_Z,TEXTURE_RED_TEXTURE);
-
-				//操作決定待ちに存在するユニットの数-1
-				CTurn::SumCount(m_nStateNumber);
-
-				//自身のステートの設定
-				m_nStateNumber = GAME_STATE_MOVE;
+				//回頭
+				int nAngle = 0;		//ユニットの回転させる角度
 				
-				//移動ステートに存在するユニット+1
-				CTurn::AddCount(m_nStateNumber);
+				if(m_nStateNumber == GAME_STATE_MOVE)
+				{
+					//フラグの状況から角度を設定する
+					if(m_bDirectionFlg[0])
+					{
+						if(m_bDirectionFlg[1])
+							nAngle = 45;
+						else if(m_bDirectionFlg[3])
+							nAngle = 315;
+						else
+							nAngle = 0;
+					}
+				
+					else if(m_bDirectionFlg[2])
+					{
+						if(m_bDirectionFlg[1])
+							nAngle = 135;
+						else if(m_bDirectionFlg[3])
+							nAngle = 225;
+						else
+							nAngle = 180;
+					}
+					else if(m_bDirectionFlg[1])
+						nAngle = 90;
+					else if(m_bDirectionFlg[3])
+						nAngle = 270;
+				
+						
+					int OldAngle = (int)(m_fOldAngle* 180 / PI );
+					float RotateAngle = (float)(nAngle * PI / 180);
+				
+					m_Angle.y = RotateAngle - m_fOldAngle;
+				
+					m_fOldAngle = RotateAngle;
+				}
 			}
-			//下移動
-			//移動先が床ならば移動可能
-			else if(Distance_Z < 0 
-				&& FLOOR == CMapData::Get_TerrainMapSituation(m_nUnit_Pos_X,m_nUnit_Pos_Z + 1) 
-				&& CMapData::Get_UnitMapSituation(m_nUnit_Pos_X,m_nUnit_Pos_Z + 1) == 0)
-			{
-				//マーキング消去
-				CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-
-				//ミニマップ上の位置情報を削除
-				CMiniMap::Delete(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-				
-				//向きフラグ下
-				m_bDirectionFlg[Back] = true;
-
-				//指定位置に到達していない
-				m_bDestination = false;
-				m_fTimer = 0.0f;
-
-				//移動完了
-				MoveCompletion = true;
-
-				//配列上を移動
-				m_nUnit_Pos_Z ++;
-				
-				//マーキング
-				CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
-
-				//ミニマップ上に自身の位置を設定
-				CMiniMap::SetIcon(m_nUnit_Pos_X,m_nUnit_Pos_Z,TEXTURE_RED_TEXTURE);
-
-				//操作決定待ちに存在するユニットの数-1
-				CTurn::SumCount(m_nStateNumber);
-
-				//自身のステートの設定
-				m_nStateNumber = GAME_STATE_MOVE;
-				
-				//移動ステートに存在するユニット+1
-				CTurn::AddCount(m_nStateNumber);
-			}
-			//右移動
-			if(Distance_X > 0 && 
-				FLOOR == CMapData::Get_TerrainMapSituation(m_nUnit_Pos_X + 1,m_nUnit_Pos_Z) && 
-				CMapData::Get_UnitMapSituation(m_nUnit_Pos_X + 1,m_nUnit_Pos_Z) == 0)
-			{
-				//マーキング消去
-				CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-
-				//ミニマップ上の位置情報を削除
-				CMiniMap::Delete(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-
-				//向きフラグ右
-				m_bDirectionFlg[Right] = true;
-
-				//指定位置に到達していない
-				m_bDestination = false;
-				m_fTimer = 0.0f;
-
-				//移動完了
-				MoveCompletion = true;
-
-				//配列上を移動
-				m_nUnit_Pos_X ++;
-				
-				//マーキング
-				CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
-
-				//ミニマップ上に自身の位置を設定
-				CMiniMap::SetIcon(m_nUnit_Pos_X,m_nUnit_Pos_Z,TEXTURE_RED_TEXTURE);
-
-				//操作決定待ちに存在するユニットの数-1
-				CTurn::SumCount(m_nStateNumber);
-
-				//自身のステートの設定
-				m_nStateNumber = GAME_STATE_MOVE;
-				
-				//移動ステートに存在するユニット+1
-				CTurn::AddCount(m_nStateNumber);
-			}
-			//左移動
-			else if(Distance_X < 0 && 
-				FLOOR == CMapData::Get_TerrainMapSituation(m_nUnit_Pos_X - 1,m_nUnit_Pos_Z) && 
-				CMapData::Get_UnitMapSituation(m_nUnit_Pos_X - 1,m_nUnit_Pos_Z) == 0)
-			{
-				//マーキング消去
-				CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-
-				//ミニマップ上の位置情報を削除
-				CMiniMap::Delete(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-
-				//向きフラグ左
-				m_bDirectionFlg[Left] = true;
-
-				//指定位置に到達していない
-				m_bDestination = false;
-				m_fTimer = 0.0f;
-
-				//移動完了
-				MoveCompletion = true;
-
-				//配列上を移動
-				m_nUnit_Pos_X --;
-				
-				//マーキング
-				CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
-
-				//ミニマップ上に自身の位置を設定
-				CMiniMap::SetIcon(m_nUnit_Pos_X,m_nUnit_Pos_Z,TEXTURE_RED_TEXTURE);
-
-				//操作決定待ちに存在するユニットの数-1
-				CTurn::SumCount(m_nStateNumber);
-
-				//自身のステートの設定
-				m_nStateNumber = GAME_STATE_MOVE;
-				
-				//移動ステートに存在するユニット+1
-				CTurn::AddCount(m_nStateNumber);
-			}
-			//移動できなかった場合、エネミーのターンを終了する
-			if(!MoveCompletion)
+			//移動できない
+			else
 			{
 				//入力待ちに存在するユニットの数-1
 				CTurn::SumCount(m_nStateNumber);
@@ -651,95 +713,44 @@ void CEnemy::InputUpdate()
 				//ターン終了に存在するユニットの数+1
 				CTurn::AddCount(m_nStateNumber);
 			}
+
+			//ワールドマトリックスからローカル軸抽出、座標抽出
+			D3DXMATRIX world = GetWorld();
+
+			//それぞれの軸の値を格納する
+			D3DXVECTOR3 vX,vY,vZ,vP;
 			
-			//回頭
-			int nAngle = 0;		//ユニットの回転させる角度
-			
-			if(m_nStateNumber == GAME_STATE_MOVE)
-			{
-				//フラグの状況から角度を設定する
-				if(m_bDirectionFlg[0])
-				{
-					if(m_bDirectionFlg[1])
-						nAngle = 45;
-					else if(m_bDirectionFlg[3])
-						nAngle = 315;
-					else
-						nAngle = 0;
-				}
-			
-				else if(m_bDirectionFlg[2])
-				{
-					if(m_bDirectionFlg[1])
-						nAngle = 135;
-					else if(m_bDirectionFlg[3])
-						nAngle = 225;
-					else
-						nAngle = 180;
-				}
-				else if(m_bDirectionFlg[1])
-					nAngle = 90;
-				else if(m_bDirectionFlg[3])
-					nAngle = 270;
-			
-					
-				int OldAngle = (int)(m_fOldAngle* 180 / PI );
-				float RotateAngle = (float)(nAngle * PI / 180);
-			
-				m_Angle.y = RotateAngle - m_fOldAngle;
-			
-				m_fOldAngle = RotateAngle;
-			}
+			vX = D3DXVECTOR3(world._11,world._12,world._13);	//vX:X軸回転
+			vY = D3DXVECTOR3(world._21,world._22,world._23);	//vY:Y軸回転
+			vZ = D3DXVECTOR3(world._31,world._32,world._33);	//vZ:Z軸回転
+			vP = D3DXVECTOR3(world._41,world._42,world._43);	//位置情報
+
+			world._41 = world._43 = 0.0f;	//原点へ移動させる
+				
+			m_Pos.x = (m_nUnit_Pos_X - (MAP_SIZE / 2)) * GRIDSIZE + GRIDSIZE / 2;
+			m_Pos.z = -((m_nUnit_Pos_Z) - (MAP_SIZE / 2)) * GRIDSIZE - GRIDSIZE / 2;
+
+			vP = vP + (m_Pos - vP) * (m_fTimer / (float)ACTION_TIME);
+
+			//回転行列の作成
+			D3DXMATRIX rot_X,rot_Y,rot_Z;
+			D3DXMatrixRotationAxis(&rot_X,&vX,m_Angle.x);		//&rot_YにvYとangle.yの値を掛け合わせた行列を格納する
+			D3DXMatrixRotationAxis(&rot_Y,&vY,m_Angle.y);		//&rot_Zに現在の角度(vY)に回転度数(angle.y)をかけた値の行列を格納
+			D3DXMatrixRotationAxis(&rot_Z,&vZ,m_Angle.z);		//&rot_Zに現在の角度(vZ)に回転度数(angle.z)をかけた値の行列を格納
+
+			//回転度数初期化
+			m_Angle = D3DXVECTOR3(0.0f,0.0f,0.0f);	
+
+			//計算結果の行列をワールド行列に反映させる
+			world *= (rot_Z *rot_Y * rot_X);
+
+			world._41 = vP.x;
+			world._42 = vP.y;
+			world._43 = vP.z;
+
+			//ワールドマトリックスを設定
+			SetWorld(world);
 		}
-		//移動できない
-		else
-		{
-			//入力待ちに存在するユニットの数-1
-			CTurn::SumCount(m_nStateNumber);
-
-			//自身のステートの設定
-			m_nStateNumber = GAME_STATE_TURN_END;
-
-			//ターン終了に存在するユニットの数+1
-			CTurn::AddCount(m_nStateNumber);
-		}
-
-		//ワールドマトリックスからローカル軸抽出、座標抽出
-		D3DXMATRIX world = GetWorld();
-
-		//それぞれの軸の値を格納する
-		D3DXVECTOR3 vX,vY,vZ,vP;
-		
-		vX = D3DXVECTOR3(world._11,world._12,world._13);	//vX:X軸回転
-		vY = D3DXVECTOR3(world._21,world._22,world._23);	//vY:Y軸回転
-		vZ = D3DXVECTOR3(world._31,world._32,world._33);	//vZ:Z軸回転
-		vP = D3DXVECTOR3(world._41,world._42,world._43);	//位置情報
-
-		world._41 = world._43 = 0.0f;	//原点へ移動させる
-			
-		m_Pos.x = (m_nUnit_Pos_X - (MAP_SIZE / 2)) * GRIDSIZE + GRIDSIZE / 2;
-		m_Pos.z = -((m_nUnit_Pos_Z) - (MAP_SIZE / 2)) * GRIDSIZE - GRIDSIZE / 2;
-
-		vP = vP + (m_Pos - vP) * (m_fTimer / (float)ACTION_TIME);
-
-		//回転行列の作成
-		D3DXMATRIX rot_X,rot_Y,rot_Z;
-		D3DXMatrixRotationAxis(&rot_X,&vX,m_Angle.x);		//&rot_YにvYとangle.yの値を掛け合わせた行列を格納する
-		D3DXMatrixRotationAxis(&rot_Y,&vY,m_Angle.y);		//&rot_Zに現在の角度(vY)に回転度数(angle.y)をかけた値の行列を格納
-		D3DXMatrixRotationAxis(&rot_Z,&vZ,m_Angle.z);		//&rot_Zに現在の角度(vZ)に回転度数(angle.z)をかけた値の行列を格納
-
-		//回転度数初期化
-		m_Angle = D3DXVECTOR3(0.0f,0.0f,0.0f);	
-
-		//計算結果の行列をワールド行列に反映させる
-		world *= (rot_Z *rot_Y * rot_X);
-
-		world._41 = vP.x;
-		world._42 = vP.y;
-		world._43 = vP.z;
-
-		//ワールドマトリックスを設定
-		SetWorld(world);
 	}
 }
 
@@ -791,7 +802,6 @@ void CEnemy::MoveUpdate()
 	m_Pos.z = -((m_nUnit_Pos_Z) - (MAP_SIZE / 2)) * GRIDSIZE - GRIDSIZE / 2;
 
 	vP = vP + (m_Pos - vP) * (m_fTimer / (float)ACTION_TIME);
-
 
 	if(vP == m_Pos)
 	{
@@ -871,182 +881,105 @@ void CEnemy::TurnEndUpdate()
 //---------------------------------------------------------------------------------------
 //A*アルゴリズムを用いた移動を行う
 //---------------------------------------------------------------------------------------
-void CEnemy::A_StarMove()
+bool CEnemy::A_StarMove()
 {
-	//プレイヤーの位置を取得する
-	int PlayerPosX = m_Player->GetPosX();
-	int PlayerPosZ = m_Player->GetPosZ();
+	//A*で用いるデータ群の初期化
+	CMapData::InitAStarData();
 
-	//現在探索を行っている場所
-	AStar NowSearchPosition;
+	//探索を行う場所
+	int SearchPositionX = m_nUnit_Pos_X;
+	int SearchPositionZ = m_nUnit_Pos_Z;
 
-	//探索を終了させるフラグ
-	bool SearchEndFlg = false;
+	//プレイヤーの位置情報
+	int PlayerPositionX = m_Player->GetPosX();
+	int PlayerPositionZ = m_Player->GetPosZ();
 
-	//構造体の初期化を行う
-	InitAStarData();
+	//探索した位置をクローズ化
+	CMapData::CompleteCellCal(SearchPositionX,SearchPositionZ,2);
 
-	//開始位置を設定する
-	AStarStartPosSet();
-
-	//自身の位置から周囲の探索を行い、子供を設定する
-	SearchPosition(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-
-	//設定した子供すべてをスコア付けを行う
-	for(int i = 0;i < m_AStarData[m_nUnit_Pos_Z][m_nUnit_Pos_X].m_nChildNum;i++)
+	//探索を行う位置がプレイヤーの位置、又は異常値が返ってくるまで処理を行う
+	while((SearchPositionX != PlayerPositionX || SearchPositionZ != PlayerPositionZ) && (SearchPositionX != -99 && SearchPositionZ != -99))
 	{
-		//子供の位置
-		D3DXVECTOR2 ChildPos = m_AStarData[m_nUnit_Pos_Z][m_nUnit_Pos_X].m_ChildPos[i];
+		//周囲を探索する
+		CMapData::SearchPosition(SearchPositionX,SearchPositionZ,m_nUnit_Pos_X,m_nUnit_Pos_Z,PlayerPositionX,PlayerPositionZ);
 
-		//コストを計算
-		m_AStarData[(int)ChildPos.y][(int)ChildPos.x].m_nCost = AStarCalculator(ChildPos.x,ChildPos.y,m_nUnit_Pos_X,m_nUnit_Pos_Z);
-
-		//ヒューリスティック値の計算
-		m_AStarData[(int)ChildPos.y][(int)ChildPos.x].m_nHeuristic = AStarCalculator(ChildPos.x,ChildPos.y,PlayerPosX,PlayerPosZ);
+		//最もスコアの小さい位置を取得
+		CMapData::SearchMinScoreData(&SearchPositionX,&SearchPositionZ);
+		
+		//探索した位置をクローズ化
+		CMapData::CompleteCellCal(SearchPositionX,SearchPositionZ,2);
 	}
 
-	NowSearchPosition = m_AStarData[m_nUnit_Pos_Z][m_nUnit_Pos_X];
+	//探索終了
 
-	//探索位置がプレイヤーの位置にまで到達する、又は探索不能になるまで処理
-	while(!SearchEndFlg)
+	//もし異常値が返ってきて処理が終了した場合、移動処理を終了(その場で待機)
+	if((SearchPositionX == -99) || (SearchPositionZ == -99))
 	{
-		//もし自身の子供の位置が、プレイヤーの位置と一致したならば、探索を終了させる
-		//自身の子供すべてに確認を取る
-		for(int i = 0;i < NowSearchPosition.m_nChildNum;i++)
-		{
-			//子供の位置と、プレイヤーの位置が一致したならば、終了する
-			if(NowSearchPosition.m_ChildPos[i].x == PlayerPosX && NowSearchPosition.m_ChildPos[i].y == PlayerPosZ)
-			{
-				//探索終了フラグを立てる
-				SearchEndFlg = true;
-			}
+		//操作決定待ちに存在するユニットの数-1
+		CTurn::SumCount(m_nStateNumber);
 
-			//全ての探索できる場所を探索した場合、探索を終了させる
-			if(NowSearchPosition.m_bMapStatus)
-			{
-				SearchEndFlg = true;
-			}
-		}
+		//自身のステートの設定
+		m_nStateNumber = GAME_STATE_TURN_END;
+		
+		//移動ステートに存在するユニット+1
+		CTurn::AddCount(m_nStateNumber);
+		return false;
 	}
-}
+	//プレイヤーのもとにたどり着いた場合
 
-//---------------------------------------------------------------------------------------
-//A*アルゴリズムの開始位置を設定する
-//---------------------------------------------------------------------------------------
-void CEnemy::ASarSetData(int NowPosX,int NowPosZ)
-{
-	//プレイヤーの位置を取得する
-	int PlayerPosX = m_Player->GetPosX();
-	int PlayerPosZ = m_Player->GetPosZ();
+	//エネミーの位置の一つ前に戻る
+	int ParentPosX = SearchPositionX;
+	int ParentPosZ = SearchPositionZ;
 
-	//自身の位置を構造体配列の中に格納する
-	//コストを入力する
-	m_AStarData[NowPosZ][NowPosX].m_nCost = AStarCalculator(NowPosX,NowPosZ,m_nUnit_Pos_X,m_nUnit_Pos_Z);
-	//ヒューリステック値を入力する
-	m_AStarData[NowPosZ][NowPosX].m_nHeuristic = AStarCalculator(NowPosX,NowPosZ,PlayerPosX,PlayerPosZ);
-	//スコアを入力する(コスト+ヒューリスティック値)
-	m_AStarData[NowPosZ][NowPosX].m_nScore = m_AStarData[NowPosZ][NowPosX].m_nCost + m_AStarData[NowPosZ][NowPosX].m_nHeuristic;
-
-	//自身の親の位置を設定する(自身が最初の親)
-	m_AStarData[m_nUnit_Pos_Z][NowPosX].m_ParentPos = D3DXVECTOR2(0,0);
-
-}
-
-//---------------------------------------------------------------------------------------
-//A*アルゴリズム用構造体の初期化を行う
-//---------------------------------------------------------------------------------------
-void CEnemy::InitAStarData()
-{
-	//データの初期化を行う
-	for(int i = 0;i < MAP_SIZE;i++)
+	//親の位置がエネミー自身の位置になるまでループ
+	while(ParentPosX != m_nUnit_Pos_X || ParentPosZ != m_nUnit_Pos_Z)
 	{
-		for(int k = 0;k < MAP_SIZE;k++)
-		{
-			//マップのオープンクローズフラグ初期化
-			m_AStarData[i][k].m_bMapStatus = false;
+		SearchPositionX = ParentPosX;
+		SearchPositionZ = ParentPosZ;
 
-			//コスト、ヒューリスティック値、スコア初期化
-			m_AStarData[i][k].m_nCost = 0;
-			m_AStarData[i][k].m_nHeuristic = 0;
-			m_AStarData[i][k].m_nScore = 0;
-			
-			//自身の持つ子供の数を初期化
-			m_AStarData[i][k].m_nCost = 0;
-
-			//自身の子供のポインタを初期化
-			for(int l = 0;l < MOVEVEC;l++)
-			{
-				m_AStarData[i][k].m_ChildPos[l] = D3DXVECTOR2(0,0);
-			}
-
-			//自身の親のポインタを初期化する
-			m_AStarData[i][k].m_ParentPos = D3DXVECTOR2(0,0);
-		}
+		CMapData::GetParentPos(SearchPositionX,SearchPositionZ,&ParentPosX,&ParentPosZ);
 	}
-}
 
+	//その位置がプレイヤーの位置の場合、移動しない
+	int UnitMapSituation = CMapData::Get_UnitMapSituation(SearchPositionX,SearchPositionZ);
+	if(UnitMapSituation != 0)
+		return false;
 
-//---------------------------------------------------------------------------------------
-//指定された位置周囲の移動可能な場所を検索し、自身の子供として設定する
-//---------------------------------------------------------------------------------------
-void CEnemy::SearchPosition(int PosX,int PosZ)
-{
-	//方向の補正値
-	D3DXVECTOR2 CorrectionPos[MOVEVEC] = 
-	{
-		//			 X, Z
-		D3DXVECTOR2(-1,-1),	//左上
-		D3DXVECTOR2( 0,-1),	//上
-		D3DXVECTOR2( 1,-1),	//右上
-		D3DXVECTOR2( 1, 0),	//右
-		D3DXVECTOR2( 1, 1),	//右下
-		D3DXVECTOR2(0 , 1),	//下
-		D3DXVECTOR2(-1, 1),	//左下
-		D3DXVECTOR2(-1, 0)	//左
-	};
+	//その位置に移動
+	//マーキング消去
+	CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 
-	//周囲を確認する
-	for(int i = 0;i < MOVEVEC;i++)
-	{
-		//確認した位置が床(移動可能)ならば、自身の子として、位置を持っておく
-		int MapSituNum = CMapData::Get_TerrainMapSituation(PosX + CorrectionPos[i].x,PosZ + CorrectionPos[i].y);
+	//ミニマップ上の位置情報を削除
+	CMiniMap::Delete(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 
-		if(MapSituNum == FLOOR || MapSituNum == STAIRS)
-		{
-			//自身の子として位置情報を持っておく
-			m_AStarData[PosZ][PosX].m_ChildPos[m_AStarData[PosZ][PosX].m_nChildNum].x = (int)(PosX + CorrectionPos[i].x);
-			m_AStarData[PosZ][PosX].m_ChildPos[m_AStarData[PosZ][PosX].m_nChildNum].y = (int)(PosZ + CorrectionPos[i].y);
-			//自身の子供の数を加算する
-			m_AStarData[PosZ][PosX].m_nChildNum ++;
+	//向きフラグ左
+	//m_bDirectionFlg[Left] = true;
 
-			//子供の親の位置を自身に設定する
-			m_AStarData[(int)(PosZ + CorrectionPos[i].y)][(int)(PosX + CorrectionPos[i].x)].m_ParentPos.x = PosX;
-			m_AStarData[(int)(PosZ + CorrectionPos[i].y)][(int)(PosX + CorrectionPos[i].x)].m_ParentPos.y = PosZ;
-		}
+	//指定位置に到達していない
+	m_bDestination = false;
+	m_fTimer = 0.0f;
 
-	}
-}
-//---------------------------------------------------------------------------------------
-//A*アルゴリズムにおける、ヒューリスティック値を計算する
-//---------------------------------------------------------------------------------------
-int CEnemy::AStarCalculator(int NowPosX,int NowPosZ,int GoalPosX,int GoalPosZ)
-{
-	//現在の位置と、目標地点の位置の距離を計算する
-	int DistanceX = abs(NowPosX - GoalPosX);
-	int DistanceZ = abs(NowPosZ - GoalPosZ);
+	//配列上を移動
+	m_nUnit_Pos_X = SearchPositionX;
+	m_nUnit_Pos_Z = SearchPositionZ;
+	
+	//マーキング
+	CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
 
-	//ヒューリスティック値を暫定的に計算する
-	int HeuristicScoreNum = DistanceX + DistanceZ;
+	//ミニマップ上に自身の位置を設定
+	CMiniMap::SetIcon(m_nUnit_Pos_X,m_nUnit_Pos_Z,TEXTURE_RED_TEXTURE);
 
-	//斜め移動も可能なため、縦、横の数値の低い分、スコア値から減算する
-	//引く数値
-	int SubNum = DistanceX;
+	//操作決定待ちに存在するユニットの数-1
+	CTurn::SumCount(m_nStateNumber);
 
-	if(DistanceX > DistanceZ)
-		SubNum = DistanceZ;
+	//自身のステートの設定
+	m_nStateNumber = GAME_STATE_MOVE;
+	
+	//移動ステートに存在するユニット+1
+	CTurn::AddCount(m_nStateNumber);
 
-	HeuristicScoreNum -= SubNum;
+	//A*で用いるデータ群の初期化
+	CMapData::InitAStarData();
 
-	//計算が完了した数値をヒューリスティック値として返す
-	return HeuristicScoreNum;
+	return true;
 }
