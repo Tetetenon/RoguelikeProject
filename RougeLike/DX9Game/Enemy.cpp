@@ -451,6 +451,44 @@ void CEnemy::InputUpdate()
 
 			m_fOldAngle = RotateAngle;
 
+			//ワールドマトリックスからローカル軸抽出、座標抽出
+			D3DXMATRIX world = GetWorld();
+
+			//それぞれの軸の値を格納する
+			D3DXVECTOR3 vX,vY,vZ,vP;
+			
+			vX = D3DXVECTOR3(world._11,world._12,world._13);	//vX:X軸回転
+			vY = D3DXVECTOR3(world._21,world._22,world._23);	//vY:Y軸回転
+			vZ = D3DXVECTOR3(world._31,world._32,world._33);	//vZ:Z軸回転
+			vP = D3DXVECTOR3(world._41,world._42,world._43);	//位置情報
+
+			world._41 = world._43 = 0.0f;	//原点へ移動させる
+				
+			m_Pos.x = (m_nUnit_Pos_X - (MAP_SIZE / 2)) * GRIDSIZE + GRIDSIZE / 2;
+			m_Pos.z = -((m_nUnit_Pos_Z) - (MAP_SIZE / 2)) * GRIDSIZE - GRIDSIZE / 2;
+
+			vP = vP + (m_Pos - vP) * (m_fTimer / (float)ACTION_TIME);
+
+			//回転行列の作成
+			D3DXMATRIX rot_X,rot_Y,rot_Z;
+
+			D3DXMatrixRotationAxis(&rot_X,&vX,m_Angle.x);		//&rot_YにvYとangle.yの値を掛け合わせた行列を格納する
+			D3DXMatrixRotationAxis(&rot_Y,&vY,m_Angle.y);		//&rot_Zに現在の角度(vY)に回転度数(angle.y)をかけた値の行列を格納
+			D3DXMatrixRotationAxis(&rot_Z,&vZ,m_Angle.z);		//&rot_Zに現在の角度(vZ)に回転度数(angle.z)をかけた値の行列を格納
+
+			//回転度数初期化
+			m_Angle = D3DXVECTOR3(0.0f,0.0f,0.0f);	
+
+			//計算結果の行列をワールド行列に反映させる
+			world *= (rot_Z *rot_Y * rot_X);
+
+			world._41 = vP.x;
+			world._42 = vP.y;
+			world._43 = vP.z;
+
+			//ワールドマトリックスを設定
+			SetWorld(world);
+
 			//入力待ちに存在するユニットの数-1
 			CTurn::SumCount(m_nStateNumber);
 
@@ -506,12 +544,8 @@ void CEnemy::InputUpdate()
 					//移動完了
 					MoveCompletion = true;
 
-					int TextureNumber;
-					if(CMapData::Get_ItemMapSituation(m_nUnit_Pos_X,m_nUnit_Pos_Z) != 0)
-						TextureNumber = TEXTURE_ORANGE_TEXTURE;
-
-					//ミニマップ上に自身の位置を設定
-					CMiniMap::SetIcon(m_nUnit_Pos_X,m_nUnit_Pos_Z,TEXTURE_RED_TEXTURE);
+					//ミニマップの状態をもとに戻す
+					CMiniMap::MiniMapBack(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 
 					//配列上を移動
 					m_nUnit_Pos_Z--;
@@ -553,6 +587,9 @@ void CEnemy::InputUpdate()
 					//移動完了
 					MoveCompletion = true;
 
+					//ミニマップの状態をもとに戻す
+					CMiniMap::MiniMapBack(m_nUnit_Pos_X,m_nUnit_Pos_Z);
+
 					//配列上を移動
 					m_nUnit_Pos_Z ++;
 					
@@ -592,6 +629,9 @@ void CEnemy::InputUpdate()
 					//移動完了
 					MoveCompletion = true;
 
+					//ミニマップの状態をもとに戻す
+					CMiniMap::MiniMapBack(m_nUnit_Pos_X,m_nUnit_Pos_Z);
+
 					//配列上を移動
 					m_nUnit_Pos_X ++;
 					
@@ -630,6 +670,9 @@ void CEnemy::InputUpdate()
 
 					//移動完了
 					MoveCompletion = true;
+
+					//ミニマップの状態をもとに戻す
+					CMiniMap::MiniMapBack(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 
 					//配列上を移動
 					m_nUnit_Pos_X --;
@@ -923,6 +966,9 @@ bool CEnemy::A_StarMove()
 		
 		//移動ステートに存在するユニット+1
 		CTurn::AddCount(m_nStateNumber);
+
+		//A*で用いるデータ群の初期化
+		CMapData::InitAStarData();
 		return false;
 	}
 	//プレイヤーのもとにたどり着いた場合
@@ -943,8 +989,20 @@ bool CEnemy::A_StarMove()
 	//その位置がプレイヤーの位置の場合、移動しない
 	int UnitMapSituation = CMapData::Get_UnitMapSituation(SearchPositionX,SearchPositionZ);
 	if(UnitMapSituation != 0)
-		return false;
+	{
+		//操作決定待ちに存在するユニットの数-1
+		CTurn::SumCount(m_nStateNumber);
 
+		//自身のステートの設定
+		m_nStateNumber = GAME_STATE_TURN_END;
+		
+		//移動ステートに存在するユニット+1
+		CTurn::AddCount(m_nStateNumber);
+
+		//A*で用いるデータ群の初期化
+		CMapData::InitAStarData();
+		return false;
+	}
 	//その位置に移動
 	//マーキング消去
 	CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
@@ -952,12 +1010,130 @@ bool CEnemy::A_StarMove()
 	//ミニマップ上の位置情報を削除
 	CMiniMap::Delete(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 
-	//向きフラグ左
-	//m_bDirectionFlg[Left] = true;
+	//向きフラグ設定
+
+	//フラグ初期化
+	for(int i = 0;i < MaxDirection;i++)
+	{
+		m_bDirectionFlg[i] = false;
+	}
+
+	//移動する位置と現在の位置の差分を計算
+	int DistanceX = m_nUnit_Pos_X - SearchPositionX;
+	int DistanceZ = SearchPositionZ - m_nUnit_Pos_Z;
+	
+	//X軸の数値に変更がある場合処理
+	if(abs(DistanceX))
+	{
+		//左へ移動した
+		if(DistanceX > 0)
+		{
+			m_bDirectionFlg[Left] = true;	
+		}
+	
+		//右へ移動した
+		else
+		{
+			m_bDirectionFlg[Right] = true;	
+		}
+	}
+	//Z軸の数値に変更がある場合処理
+	if(abs(DistanceZ))
+	{
+		//後ろへ移動した
+		if(DistanceZ > 0)
+		{
+			m_bDirectionFlg[Back] = true;	
+		}
+	
+		//前へ移動した
+		else
+		{
+			m_bDirectionFlg[Forword] = true;	
+		}
+	}
+			
+	//回頭
+	int nAngle = 0;		//ユニットの回転させる角度
+	//フラグの状況から角度を設定する
+	if(m_bDirectionFlg[0])
+	{
+		if(m_bDirectionFlg[1])
+			nAngle = 45;
+		else if(m_bDirectionFlg[3])
+			nAngle = 315;
+		else
+			nAngle = 0;
+	}
+	
+	else if(m_bDirectionFlg[2])
+	{
+		if(m_bDirectionFlg[1])
+			nAngle = 135;
+		else if(m_bDirectionFlg[3])
+			nAngle = 225;
+		else
+			nAngle = 180;
+	}
+	else if(m_bDirectionFlg[1])
+		nAngle = 90;
+	else if(m_bDirectionFlg[3])
+		nAngle = 270;
+	
+		
+	int OldAngle = (int)(m_fOldAngle* 180 / PI );
+	float RotateAngle = (float)((nAngle) * PI / 180);
+	
+	m_Angle.x = 0.0f;
+	m_Angle.y = RotateAngle - m_fOldAngle;
+	m_Angle.z = 0.0f;
+	
+	m_fOldAngle = RotateAngle;
+
+	//ワールドマトリックスからローカル軸抽出、座標抽出
+	D3DXMATRIX world = GetWorld();
+
+	//それぞれの軸の値を格納する
+	D3DXVECTOR3 vX,vY,vZ,vP;
+	
+	vX = D3DXVECTOR3(world._11,world._12,world._13);	//vX:X軸回転
+	vY = D3DXVECTOR3(world._21,world._22,world._23);	//vY:Y軸回転
+	vZ = D3DXVECTOR3(world._31,world._32,world._33);	//vZ:Z軸回転
+	vP = D3DXVECTOR3(world._41,world._42,world._43);	//位置情報
+
+	world._41 = world._43 = 0.0f;	//原点へ移動させる
+		
+	m_Pos.x = (m_nUnit_Pos_X - (MAP_SIZE / 2)) * GRIDSIZE + GRIDSIZE / 2;
+	m_Pos.z = -((m_nUnit_Pos_Z) - (MAP_SIZE / 2)) * GRIDSIZE - GRIDSIZE / 2;
+
+	vP = vP + (m_Pos - vP) * (m_fTimer / (float)ACTION_TIME);
+
+	//回転行列の作成
+	D3DXMATRIX rot_X,rot_Y,rot_Z;
+
+	D3DXMatrixRotationAxis(&rot_X,&vX,m_Angle.x);		//&rot_YにvYとangle.yの値を掛け合わせた行列を格納する
+	D3DXMatrixRotationAxis(&rot_Y,&vY,m_Angle.y);		//&rot_Zに現在の角度(vY)に回転度数(angle.y)をかけた値の行列を格納
+	D3DXMatrixRotationAxis(&rot_Z,&vZ,m_Angle.z);		//&rot_Zに現在の角度(vZ)に回転度数(angle.z)をかけた値の行列を格納
+
+	//回転度数初期化
+	m_Angle = D3DXVECTOR3(0.0f,0.0f,0.0f);	
+
+	//計算結果の行列をワールド行列に反映させる
+	world *= (rot_Z *rot_Y * rot_X);
+
+	world._41 = vP.x;
+	world._42 = vP.y;
+	world._43 = vP.z;
+
+	//ワールドマトリックスを設定
+	SetWorld(world);
 
 	//指定位置に到達していない
 	m_bDestination = false;
 	m_fTimer = 0.0f;
+
+	//ミニマップの状態をもとに戻す
+	CMiniMap::MiniMapBack(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 
 	//配列上を移動
 	m_nUnit_Pos_X = SearchPositionX;

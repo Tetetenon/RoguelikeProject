@@ -104,6 +104,8 @@ public:
 	
 	void SetFontPos();									//文字描画位置を設定
 
+	//現在の階層数を取得
+	static int GetHierarchieNum()	{return m_nHierarchyNum;}
 
 	//-----地形マップ状態取得-----
 	static int Get_TerrainMapSituation (int,int);				//地形配列の位置を指定し状態を返す

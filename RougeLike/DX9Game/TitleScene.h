@@ -12,8 +12,6 @@ private:
 	CTitle*			m_pTitle;		//タイトル画面
 	CFade*			m_pFade;		//フェードイン、フェードアウト
 	CPressSpace*	m_pPress;		//プレススタート
-	bool			m_bFadeSuccess;	//フェードアウト成功フラグ
-	bool			m_bFadeStart;	//フェード開始フラグ
 	static bool		m_bCreate;		//生成成功フラグ
 public:
 	CTitleScene(void);

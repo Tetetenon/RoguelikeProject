@@ -26,5 +26,7 @@ public:
 
 	static void SetIcon(int nX,int nZ,int nNumber);		//指定された位置に指定されたアイコンを設置する
 	static void Delete(int nX,int nZ);					//指定された位置の情報を地形情報に戻す
+
+	static void MiniMapBack(int nX,int nZ);				//指定した位置のマップ状態をもとに戻す
 };
 

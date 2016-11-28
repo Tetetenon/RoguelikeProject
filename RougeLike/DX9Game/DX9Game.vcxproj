@@ -109,8 +109,10 @@
     <ClCompile Include="Fade.cpp" />
     <ClCompile Include="GameClear.cpp" />
     <ClCompile Include="GameClearScene.cpp" />
+    <ClCompile Include="HierarchieNum.cpp" />
     <ClCompile Include="ItemCommandCursor.cpp" />
     <ClCompile Include="ItemCommandWindow.cpp" />
+    <ClCompile Include="ItemDescriptionFrame.cpp" />
     <ClCompile Include="LevelUp.cpp" />
     <ClCompile Include="MiniMap.cpp" />
     <ClCompile Include="Operation.cpp" />
@@ -175,8 +177,10 @@
     <ClInclude Include="Fade.h" />
     <ClInclude Include="GameClear.h" />
     <ClInclude Include="GameClearScene.h" />
+    <ClInclude Include="HierarchieNum.h" />
     <ClInclude Include="ItemCommandCursor.h" />
     <ClInclude Include="ItemCommandWindow.h" />
+    <ClInclude Include="ItemDescriptionFrame.h" />
     <ClInclude Include="LevelUp.h" />
     <ClInclude Include="MiniMap.h" />
     <ClInclude Include="Operation.h" />
@@ -230,7 +234,7 @@
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram11.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

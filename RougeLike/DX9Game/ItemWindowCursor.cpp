@@ -43,7 +43,7 @@ CInventoryCursor::~CInventoryCursor(void)
 //---------------------------------------------------------------------------------------
 void CInventoryCursor::Init()
 {
-
+	m_Number = 0;
 }
 //---------------------------------------------------------------------------------------
 //終了
@@ -92,26 +92,26 @@ void CInventoryCursor::Update()
 	{
 		if(CInput::GetKeyTrigger(DIK_W))
 		{
-			//カーソルが上に移動できるか確認
-			if(m_Number > 0)
-			{
-				//上に移動
-				m_Number --;
-				//位置情報再設定
-				SetPos();
-			}
+			//上に移動
+			m_Number --;
+
+			//ループ
+			if(m_Number < 0)
+				m_Number = ITEM_NUM_MAX - 1;
+			//位置情報再設定
+			SetPos();
 		}
 
 		if(CInput::GetKeyTrigger(DIK_S))
 		{
-			//カーソルが下に移動できるか確認
-			if(m_Number < ITEM_NUM_MAX - 1)
-			{
-				//下に移動
-				m_Number ++;
-				//位置情報を再設定
-				SetPos();
-			}
+			//下に移動
+			m_Number ++;
+
+			//ループ
+			m_Number%= ITEM_NUM_MAX;
+
+			//位置情報を再設定
+			SetPos();
 		}
 	}
 }

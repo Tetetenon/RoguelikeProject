@@ -2,6 +2,7 @@
 
 #include "2DWindow.h"
 #include "Item.h"
+#include "ItemDescriptionFrame.h"
 
 class CCommandWindow;
 class CInventoryCursor;
@@ -24,6 +25,8 @@ private:
 
 	static CCommandWindow		m_CommandWindow;		//コマンドウインドウの描画フラグ変更用
 	static CInventoryCursor	m_InventoryCursor;		//選択しているアイテムウインドウの取得
+
+	static CItemDescriptionFrame m_Description;		//アイテム説明文
 public:
 	CInventory(void);							//コンストラクタ
 	~CInventory(void);							//デストラクタ

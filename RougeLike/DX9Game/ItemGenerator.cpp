@@ -75,7 +75,7 @@ void CItemGenerator::ResetMakeItemNum()
 void CItemGenerator::MakeItem()
 {
 	//¶¬”‚ğİ’è
-	int nMakeNum = rand()%8;
+	int nMakeNum = rand()%8 + 7;
 
 	//¶¬
 	for(int i = 0;i < nMakeNum;i++)

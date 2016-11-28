@@ -133,6 +133,8 @@ protected:
 
 	static int				m_nAttackNumber;				//攻撃を行っているユニットの番号
 
+	static bool				m_bMoveCanFlg;					//移動可能フラグ
+
 	//レベルアップ時ステータス上昇値
 	int						m_nHPUpNum;						//レベルアップ時HP上昇値
 	int						m_nAttackUpNum;					//レベルアップ時攻撃力上昇値
@@ -293,4 +295,7 @@ public:
 
 	//足元のアイテムの確認
 	void ChackFeetItem();
+
+	//ユニット全ての行動可能フラグを変更する
+	static void ChangeMoveCanFlg(bool ChangeFlg);
 };

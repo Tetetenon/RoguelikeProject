@@ -30,6 +30,8 @@ public:
 
 	void SetVertex ();							//ポリゴン情報の中身を埋める
 
+	static void InitFontData();					//フォントのデータを初期化する
+
 	void SetFontPos ();							//フォント描画位置を設定
 	
 	static void SetMassege(_TCHAR String[], ...);		//文字列をセットする

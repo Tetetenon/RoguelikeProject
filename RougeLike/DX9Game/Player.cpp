@@ -467,6 +467,9 @@ void CPlayer::InputUpdate()
 						//目的地に到達していない
 						m_bDestination = false;
 						m_fTimer = 0.0f;
+
+						//ミニマップの状態をもとに戻す
+						CMiniMap::MiniMapBack(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 						
 						//移動先を本来の位置に設定
 						m_nUnit_Pos_X = PosX;
@@ -554,7 +557,7 @@ void CPlayer::InputUpdate()
 		}
 
 		//-----足踏み-----
-		if(CInput::GetKeyTrigger(DIK_E))
+		if(CInput::GetKeyTrigger(DIK_E) || CInput::GetKeyPress(DIK_E) )
 		{
 			//ターンスキップ
 			

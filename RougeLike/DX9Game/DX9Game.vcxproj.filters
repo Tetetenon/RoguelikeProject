@@ -143,12 +143,6 @@
     <Filter Include="UI関連\アイテムウィンドウ">
       <UniqueIdentifier>{cf11aecb-3b16-481a-9927-d7ecaa774258}</UniqueIdentifier>
     </Filter>
-    <Filter Include="UI関連\アイテムウィンドウ\ItemCommandWindow">
-      <UniqueIdentifier>{a3e6aa06-ecbc-4a50-8073-e8711b30ee12}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="UI関連\アイテムウィンドウ\ItemWindow">
-      <UniqueIdentifier>{87cb1e5f-f0e5-49e3-bdf3-48b6c966281f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="3Dモデル\Sky">
       <UniqueIdentifier>{2cc1b99d-06e2-4080-8bac-a61d0f7ca19b}</UniqueIdentifier>
     </Filter>
@@ -200,12 +194,6 @@
     <Filter Include="UI関連\装備ウィンドウ\EquipmentCommandCursor">
       <UniqueIdentifier>{727c0b69-dc5d-45d9-8d36-c238f9023819}</UniqueIdentifier>
     </Filter>
-    <Filter Include="UI関連\アイテムウィンドウ\ITemCommandCursor">
-      <UniqueIdentifier>{1fb74671-91a6-40d1-b52b-294fc77ca743}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="UI関連\アイテムウィンドウ\ItemWindowCursor">
-      <UniqueIdentifier>{44493663-90fa-47c8-801a-78e5de0b0df6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="UI関連\LevelUp">
       <UniqueIdentifier>{ae5b642c-f928-4fe3-b05d-0b427713001c}</UniqueIdentifier>
     </Filter>
@@ -245,6 +233,33 @@
     </Filter>
     <Filter Include="タイトル、リザルト画面\ゲームクリア\GameClearScene">
       <UniqueIdentifier>{61e81b14-b0c1-42c1-8136-04d0e10ad115}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\HierarchieNum">
+      <UniqueIdentifier>{0d8028bc-6a9e-4a9e-a44f-878e151ec5d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\アイテムウィンドウ\説明文">
+      <UniqueIdentifier>{51d3d1d1-2cbd-4e3c-b132-8923d48f1205}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\アイテムウィンドウ\アイテム選択">
+      <UniqueIdentifier>{f5aa7d6b-d98a-4e0e-b093-8e414ad7c4c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\アイテムウィンドウ\アイテム選択\ItemWindow">
+      <UniqueIdentifier>{87cb1e5f-f0e5-49e3-bdf3-48b6c966281f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\アイテムウィンドウ\アイテム操作">
+      <UniqueIdentifier>{d3c03dce-fa1b-407f-b14d-02f199e650d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\アイテムウィンドウ\アイテム操作\ITemCommandCursor">
+      <UniqueIdentifier>{1fb74671-91a6-40d1-b52b-294fc77ca743}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\アイテムウィンドウ\アイテム操作\ItemCommandWindow">
+      <UniqueIdentifier>{a3e6aa06-ecbc-4a50-8073-e8711b30ee12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\アイテムウィンドウ\アイテム選択\ItemWindowCursor">
+      <UniqueIdentifier>{44493663-90fa-47c8-801a-78e5de0b0df6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\アイテムウィンドウ\説明文\ItemDescriptionFrame">
+      <UniqueIdentifier>{fcec6c33-eaaa-49e1-aea2-e1a9608f652c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -345,10 +360,10 @@
       <Filter>UI関連\ステータス\HPDraw</Filter>
     </ClCompile>
     <ClCompile Include="ItemCommandWindow.cpp">
-      <Filter>UI関連\アイテムウィンドウ\ItemCommandWindow</Filter>
+      <Filter>UI関連\アイテムウィンドウ\アイテム操作\ItemCommandWindow</Filter>
     </ClCompile>
     <ClCompile Include="ItemWindow.cpp">
-      <Filter>UI関連\アイテムウィンドウ\ItemWindow</Filter>
+      <Filter>UI関連\アイテムウィンドウ\アイテム選択\ItemWindow</Filter>
     </ClCompile>
     <ClCompile Include="MenuWindow.cpp">
       <Filter>UI関連\メニュー\MenuWindow</Filter>
@@ -405,10 +420,7 @@
       <Filter>UI関連\装備ウィンドウ\EquipmentWindowCursor</Filter>
     </ClCompile>
     <ClCompile Include="ItemCommandCursor.cpp">
-      <Filter>UI関連\アイテムウィンドウ\ITemCommandCursor</Filter>
-    </ClCompile>
-    <ClCompile Include="ItemWindowCursor.cpp">
-      <Filter>UI関連\アイテムウィンドウ\ItemWindowCursor</Filter>
+      <Filter>UI関連\アイテムウィンドウ\アイテム操作\ITemCommandCursor</Filter>
     </ClCompile>
     <ClCompile Include="LevelUp.cpp">
       <Filter>UI関連\LevelUp</Filter>
@@ -439,6 +451,15 @@
     </ClCompile>
     <ClCompile Include="GameClearScene.cpp">
       <Filter>タイトル、リザルト画面\ゲームクリア\GameClearScene</Filter>
+    </ClCompile>
+    <ClCompile Include="HierarchieNum.cpp">
+      <Filter>システム\HierarchieNum</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemDescriptionFrame.cpp">
+      <Filter>UI関連\アイテムウィンドウ\説明文\ItemDescriptionFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemWindowCursor.cpp">
+      <Filter>UI関連\アイテムウィンドウ\アイテム選択\ItemWindowCursor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -542,10 +563,10 @@
       <Filter>UI関連\ステータス\HPDraw</Filter>
     </ClInclude>
     <ClInclude Include="ItemCommandWindow.h">
-      <Filter>UI関連\アイテムウィンドウ\ItemCommandWindow</Filter>
+      <Filter>UI関連\アイテムウィンドウ\アイテム操作\ItemCommandWindow</Filter>
     </ClInclude>
     <ClInclude Include="ItemWindow.h">
-      <Filter>UI関連\アイテムウィンドウ\ItemWindow</Filter>
+      <Filter>UI関連\アイテムウィンドウ\アイテム選択\ItemWindow</Filter>
     </ClInclude>
     <ClInclude Include="MenuWindow.h">
       <Filter>UI関連\メニュー\MenuWindow</Filter>
@@ -602,10 +623,7 @@
       <Filter>UI関連\装備ウィンドウ\EquipmentWindowCursor</Filter>
     </ClInclude>
     <ClInclude Include="ItemCommandCursor.h">
-      <Filter>UI関連\アイテムウィンドウ\ITemCommandCursor</Filter>
-    </ClInclude>
-    <ClInclude Include="ItemWindowCursor.h">
-      <Filter>UI関連\アイテムウィンドウ\ItemWindowCursor</Filter>
+      <Filter>UI関連\アイテムウィンドウ\アイテム操作\ITemCommandCursor</Filter>
     </ClInclude>
     <ClInclude Include="LevelUp.h">
       <Filter>UI関連\LevelUp</Filter>
@@ -640,8 +658,17 @@
     <ClInclude Include="GameClearScene.h">
       <Filter>タイトル、リザルト画面\ゲームクリア\GameClearScene</Filter>
     </ClInclude>
+    <ClInclude Include="HierarchieNum.h">
+      <Filter>システム\HierarchieNum</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemDescriptionFrame.h">
+      <Filter>UI関連\アイテムウィンドウ\説明文\ItemDescriptionFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemWindowCursor.h">
+      <Filter>UI関連\アイテムウィンドウ\アイテム選択\ItemWindowCursor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram11.cd" />
   </ItemGroup>
 </Project>

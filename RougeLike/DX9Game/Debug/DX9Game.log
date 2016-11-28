@@ -1,18 +1,10 @@
-﻿2016/11/10 16:30:15 にビルドを開始しました。
+﻿2016/11/25 16:56:39 にビルドを開始しました。
      1>ノード 2 上のプロジェクト "C:\Users\40029\Documents\RoguelikeProject\RougeLike\DX9Game\DX9Game.vcxproj" (build ターゲット)。
      1>InitializeBuildStatus:
          "AlwaysCreate" が指定されたため "Debug\DX9Game.unsuccessfulbuild" を作成しています。
        ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt Enemy.cpp
-         Enemy.cpp
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\enemy.cpp(100): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\enemy.cpp(107): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\enemy.cpp(114): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\enemy.cpp(123): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt ItemWindowCursor.cpp
+         ItemWindowCursor.cpp
        ManifestResourceCompile:
          すべての出力が最新のものです。
        Link:
@@ -30,8 +22,10 @@
          Debug\Fade.obj
          Debug\GameClear.obj
          Debug\GameClearScene.obj
+         Debug\HierarchieNum.obj
          Debug\ItemCommandCursor.obj
          Debug\ItemCommandWindow.obj
+         Debug\ItemDescriptionFrame.obj
          Debug\LevelUp.obj
          Debug\MiniMap.obj
          Debug\Operation.obj
@@ -94,4 +88,4 @@
 
 ビルドに成功しました。
 
-経過時間 00:00:01.89
+経過時間 00:00:01.04

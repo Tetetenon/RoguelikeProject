@@ -206,3 +206,15 @@ void MessageWindow::SetMassege(_TCHAR String[], ...)
 	m_bDrawflg = true;
 	m_fDrawTime = DRAW_TIME_MAX;
 }
+//---------------------------------------------------------------------------------------
+//フォントのデータを初期化する
+//---------------------------------------------------------------------------------------
+void MessageWindow::InitFontData()
+{
+	//文字列先頭初期化
+	for(int i = 0;i < DRAW_NUM;i++)
+	{
+		for(int j = 0;j < FONT_NUM;j++)
+			m_Message[i][j] = 0;
+	}
+}

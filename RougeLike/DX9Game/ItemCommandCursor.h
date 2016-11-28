@@ -26,6 +26,6 @@ public:
 	void SetVertex();									//ポリゴン情報を埋める
 	void SetPos();										//ポリゴンの位置情報を設定する
 
-	int  GetCommand();									//選択したコマンドを返す 
+	static int  GetCommand();									//選択したコマンドを返す 
 };
 

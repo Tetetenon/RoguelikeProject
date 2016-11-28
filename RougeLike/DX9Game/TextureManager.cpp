@@ -61,6 +61,9 @@ bool				CTextureManager::m_TextureLoad[TEXTURE_MAX] = {false};	//ƒeƒNƒXƒ`ƒƒ“Ç‚İ
 #define TEXTURE_PATH_8	_T("../data/texture/8.png")							//”šƒeƒNƒXƒ`ƒƒ
 #define TEXTURE_PATH_9	_T("../data/texture/9.png")							//”šƒeƒNƒXƒ`ƒƒ
 
+//-----ƒAƒ‹ƒtƒ@ƒxƒbƒg-----
+#define TEXTURE_PATH_F	_T("../data/texture/F.png")							//ƒAƒ‹ƒtƒ@ƒxƒbƒgƒeƒNƒXƒ`ƒƒ
+
 
 //---------------------------------------------------------------------------------------
 //ƒRƒ“ƒXƒgƒ‰ƒNƒ^
@@ -428,6 +431,14 @@ void CTextureManager::LoadTexture()
 	{
 		//ƒeƒNƒXƒ`ƒƒ‚Ì“Ç‚İ‚İ
 		D3DXCreateTextureFromFile(pDevice,TEXTURE_PATH_9,&m_TextureData[TEXTURE_9]);
+	}
+
+	//ƒAƒ‹ƒtƒ@ƒxƒbƒg
+	//ƒeƒNƒXƒ`ƒƒ‚Ì“Ç‚İ‚İ‚ªŠ®—¹‚µ‚Ä‚¢‚È‚¯‚ê‚Î“Ç‚İ‚Ş
+	if(!m_TextureLoad[TEXTURE_F])
+	{
+		//ƒeƒNƒXƒ`ƒƒ‚Ì“Ç‚İ‚İ
+		D3DXCreateTextureFromFile(pDevice,TEXTURE_PATH_F,&m_TextureData[TEXTURE_F]);
 	}
 	
 }

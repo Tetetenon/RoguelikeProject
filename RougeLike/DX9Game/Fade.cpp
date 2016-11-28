@@ -1,6 +1,8 @@
 #include "Fade.h"
 #include "TextureManager.h"
 
+int		CFade::m_nFadeTime;		//フェードイン、アウトの時間を格納する
+int		CFade::m_nFadeState;		//フェードアウト、フェードイン、しないを設定する。
 
 //---------------------------------------------------------------------------------------
 //コンストラクタ
@@ -8,7 +10,7 @@
 CFade::CFade(void)
 {
 	//描画フラグ初期化
-	m_bDrawFlg = false;
+	m_nFadeState = FADEMODE_NON;
 
 	//描画時間初期化
 	m_nFadeTime = 0;
@@ -16,7 +18,6 @@ CFade::CFade(void)
 	//テクスチャの設定
 	m_nTextureID = TEXTURE_IN_THE_WALL;
 }
-
 
 //---------------------------------------------------------------------------------------
 //デストラクタ
@@ -30,33 +31,60 @@ CFade::~CFade(void)
 //---------------------------------------------------------------------------------------
 void CFade::Update()
 {
-	//もし、描画残り時間が残っていれば、その時間を減らす
-	if(m_nFadeTime <= 255)
-	{
-		m_nFadeTime += (FADETIME / 60);
+	//もし、フェードの状態が何もしない場合、処理を終了する
+	if(m_nFadeState == FADEMODE_NON)
+		return;
 
-		//描画残り時間が尽きた場合、フラグを倒す
-		if(m_nFadeTime <= 0)
+	//フェードの値
+	int nAlphaNum = 0;
+	//現在のフェード状態に応じて処理を変更
+	switch(m_nFadeState)
+	{
+		//フェードインモード
+	case FADEMODE_IN:
+		//もし、描画残り時間が起こっている場合、その数を減らす
+		if(m_nFadeTime <= 255)
 		{
-			m_bDrawFlg = false;
+			m_nFadeTime += (FADETIME / 80);
 		}
+		nAlphaNum = 255 - m_nFadeTime;
+			break;
+		//フェードアウトモード
+	case FADEMODE_OUT:
+		//もし、描画残り時間が残っていれば、その時間を減らす
+		if(m_nFadeTime <= 255)
+		{
+			m_nFadeTime += (FADETIME / 60);
+		}
+		nAlphaNum = m_nFadeTime;
+		break;
 	}
-	
 	//頂点カラーの設定
-	m_aVertex[0].col = D3DCOLOR_RGBA(255,255,255,m_nFadeTime);
-	m_aVertex[1].col = D3DCOLOR_RGBA(255,255,255,m_nFadeTime);
-	m_aVertex[2].col = D3DCOLOR_RGBA(255,255,255,m_nFadeTime);
-	m_aVertex[3].col = D3DCOLOR_RGBA(255,255,255,m_nFadeTime);
+	m_aVertex[0].col = D3DCOLOR_RGBA(255,255,255,nAlphaNum);
+	m_aVertex[1].col = D3DCOLOR_RGBA(255,255,255,nAlphaNum);
+	m_aVertex[2].col = D3DCOLOR_RGBA(255,255,255,nAlphaNum);
+	m_aVertex[3].col = D3DCOLOR_RGBA(255,255,255,nAlphaNum);
+}
+//---------------------------------------------------------------------------------------
+//描画
+//---------------------------------------------------------------------------------------
+void CFade::Draw(void)
+{
+	//もし、フェードの状態が何もしない場合、処理を終了する
+	if(m_nFadeState == FADEMODE_NON)
+		return;
+	//親の描画を行う
+	C2DTexture::Draw();
 }
 
 //---------------------------------------------------------------------------------------
 //フラグを立てる
 //---------------------------------------------------------------------------------------
-void CFade::ChangeFlg(void)
+void CFade::ChangeState(int ChangeState)
 {
 	//フェードをするようにフラグを立てる
-	m_bDrawFlg = true;
+	m_nFadeState = ChangeState;
 	//フェードまでの時間を設定する
-	m_nFadeTime = FADETIME;
+	m_nFadeTime = 0;
 
 }

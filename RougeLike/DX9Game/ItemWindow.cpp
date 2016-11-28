@@ -17,9 +17,10 @@
 //---------------------------------------------------------------------------------------
 //静的メンバ定義
 //---------------------------------------------------------------------------------------
-bool				CInventory::m_bDrawFlg;								//描画フラグ
-CCommandWindow		CInventory::m_CommandWindow;		//コマンドウインドウの描画フラグ変更用
-CInventoryCursor	CInventory::m_InventoryCursor;		//選択しているアイテムウインドウの取得
+bool					CInventory::m_bDrawFlg;				//描画フラグ
+CCommandWindow			CInventory::m_CommandWindow;		//コマンドウインドウの描画フラグ変更用
+CInventoryCursor		CInventory::m_InventoryCursor;		//選択しているアイテムウインドウの取得
+CItemDescriptionFrame	CInventory::m_Description;			//アイテム説明文
 //---------------------------------------------------------------------------------------
 //コンストラクタ
 //---------------------------------------------------------------------------------------
@@ -58,6 +59,8 @@ CInventory::~CInventory(void)
 //---------------------------------------------------------------------------------------
 void CInventory::Init()
 {
+	//説明文の初期化
+	m_Description.Init();
 }
 //---------------------------------------------------------------------------------------
 //終了処理
@@ -135,6 +138,9 @@ void CInventory::Draw()
 			// テキスト描画
 			m_Font->DrawText(NULL,ItemName,-1, &m_Pos[i], DT_LEFT, D3DCOLOR_ARGB(0xff, 0xff, 0x00, 0xff));
 		}
+
+		//アイテム説明文の描画
+		m_Description.Draw(m_Item[CInventoryCursor::GetItemNum()].GetID());
 
 }
 //---------------------------------------------------------------------------------------

@@ -24,6 +24,6 @@ public:
 
 	void SetPos();				//ポリゴンの位置情報を設定する
 
-	int GetItemNum();			//選択しているアイテムの情報を返却する。
+	static int GetItemNum();			//選択しているアイテムの情報を返却する。
 };
 

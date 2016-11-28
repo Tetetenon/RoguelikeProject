@@ -1,9 +1,11 @@
-﻿2016/09/12 12:15:04 にビルドを開始しました。
-     1>ノード 2 上のプロジェクト "D:\DeskTop\RougeLikeVer0.52\DX9Game\DX9Game.vcxproj" (rebuild ターゲット)。
-     1>InitializeBuildStatus:
+﻿2016/11/22 14:19:55 にビルドを開始しました。
+     1>ノード 2 上のプロジェクト "C:\Users\40029\Documents\RoguelikeProject\RougeLike\DX9Game\DX9Game.vcxproj" (rebuild ターゲット)。
+     1>_PrepareForClean:
+         ファイル "Release\DX9Game.lastbuildstate" を削除しています。
+       InitializeBuildStatus:
          "AlwaysCreate" が指定されたため "Release\DX9Game.unsuccessfulbuild" を作成しています。
        ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _WINDOWS /D _MBCS /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt 2DWindow.cpp Battle.cpp C2DTexture.cpp C3DObj.cpp Camera.cpp EffectObj.cpp EquipmentCommandCursor.cpp EquipmentCommandWindow.cpp EquipmentWindow.cpp EquipmentWindowCursor.cpp Fade.cpp ItemCommandCursor.cpp ItemCommandWindow.cpp LevelUp.cpp Operation.cpp Particle.cpp ResultScene.cpp DeleteObj.cpp Enemy.cpp EnemyGenerator.cpp FieldItem.cpp FieldObj.cpp FieldObjMaker.cpp GameState.cpp GameWnd.cpp Graphics.cpp HitObj.cpp Input.cpp ItemWindow.cpp ItemWindowCursor.cpp Item.cpp ItemGenerator.cpp Main.cpp MapData.cpp MenuSelect.cpp MenuWindow.cpp MenuWindow_Back.cpp Mesh.cpp MeshObj.cpp MessageWindow.cpp ModelManager.cpp Player.cpp PressSpace.cpp Result.cpp GameScene.cpp HPDraw.cpp Sky.cpp StatesCharacter.cpp StatesFont.cpp StatesValue.cpp StatesWindow.cpp TextureManager.cpp Title.cpp TitleScene.cpp Trick.cpp TrickWindow.cpp TrickWindowCursor.cpp Turn.cpp Unit.cpp Circle.cpp Window.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _WINDOWS /D _MBCS /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt 2DWindow.cpp Battle.cpp C2DTexture.cpp C3DObj.cpp Camera.cpp EffectObj.cpp EquipmentCommandCursor.cpp EquipmentCommandWindow.cpp EquipmentWindow.cpp EquipmentWindowCursor.cpp Fade.cpp GameClear.cpp GameClearScene.cpp HierarchieNum.cpp ItemCommandCursor.cpp ItemCommandWindow.cpp LevelUp.cpp MiniMap.cpp Operation.cpp Particle.cpp ResultScene.cpp DeleteObj.cpp Enemy.cpp EnemyGenerator.cpp FieldItem.cpp FieldObj.cpp FieldObjMaker.cpp GameState.cpp GameWnd.cpp Graphics.cpp HitObj.cpp Input.cpp ItemWindow.cpp ItemWindowCursor.cpp Item.cpp ItemGenerator.cpp Main.cpp MapData.cpp MenuSelect.cpp MenuWindow.cpp MenuWindow_Back.cpp Mesh.cpp MeshObj.cpp MessageWindow.cpp ModelManager.cpp Player.cpp PressSpace.cpp Result.cpp GameScene.cpp HPDraw.cpp Sky.cpp StatesCharacter.cpp StatesFont.cpp StatesValue.cpp StatesWindow.cpp TextureManager.cpp Title.cpp TitleScene.cpp Trick.cpp TrickWindow.cpp TrickWindowCursor.cpp Turn.cpp Unit.cpp Circle.cpp Window.cpp
          2DWindow.cpp
          Battle.cpp
          C2DTexture.cpp
@@ -15,27 +17,33 @@
          EquipmentWindow.cpp
          EquipmentWindowCursor.cpp
          Fade.cpp
+         GameClear.cpp
+         GameClearScene.cpp
+         HierarchieNum.cpp
          ItemCommandCursor.cpp
          ItemCommandWindow.cpp
          LevelUp.cpp
+         MiniMap.cpp
+     1>MiniMap.cpp(27): warning C4244: '引数' : 'int' から 'float' への変換です。データが失われる可能性があります。
+     1>MiniMap.cpp(30): warning C4244: '引数' : 'double' から 'int' への変換です。データが失われる可能性があります。
          Operation.cpp
          Particle.cpp
+         コンパイル中...
          ResultScene.cpp
          DeleteObj.cpp
          Enemy.cpp
-     1>Enemy.cpp(87): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>Enemy.cpp(100): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>Enemy.cpp(94): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>Enemy.cpp(107): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>Enemy.cpp(101): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>Enemy.cpp(114): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>Enemy.cpp(110): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>Enemy.cpp(123): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
          EnemyGenerator.cpp
-         コンパイル中...
          FieldItem.cpp
-     1>FieldItem.cpp(134): warning C4244: '=' : 'int' から 'FLOAT' への変換です。データが失われる可能性があります。
      1>FieldItem.cpp(135): warning C4244: '=' : 'int' から 'FLOAT' への変換です。データが失われる可能性があります。
+     1>FieldItem.cpp(136): warning C4244: '=' : 'int' から 'FLOAT' への変換です。データが失われる可能性があります。
          FieldObj.cpp
          FieldObjMaker.cpp
          GameState.cpp
@@ -49,33 +57,36 @@
          ItemGenerator.cpp
          Main.cpp
          MapData.cpp
-     1>MapData.cpp(827): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
-     1>MapData.cpp(828): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
-     1>MapData.cpp(829): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
-     1>MapData.cpp(830): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
-     1>MapData.cpp(840): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>MapData.cpp(866): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
+     1>MapData.cpp(867): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
+     1>MapData.cpp(868): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
+     1>MapData.cpp(869): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
+     1>MapData.cpp(879): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+     1>MapData.cpp(990): warning C4244: '=' : 'int' から 'FLOAT' への変換です。データが失われる可能性があります。
+     1>MapData.cpp(991): warning C4244: '=' : 'int' から 'FLOAT' への変換です。データが失われる可能性があります。
          MenuSelect.cpp
          MenuWindow.cpp
+         コンパイル中...
          MenuWindow_Back.cpp
          Mesh.cpp
          MeshObj.cpp
          MessageWindow.cpp
-         コンパイル中...
          ModelManager.cpp
          Player.cpp
-     1>Player.cpp(133): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>Player.cpp(147): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>Player.cpp(219): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>Player.cpp(253): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>Player.cpp(769): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>Player.cpp(802): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>Player.cpp(781): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>Player.cpp(814): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+     1>Player.cpp(926): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
          PressSpace.cpp
          Result.cpp
          GameScene.cpp
-     1>GameScene.cpp(736): warning C4244: '初期化中' : 'float' から 'int' への変換です。データが失われる可能性があります。
          HPDraw.cpp
      1>HPDraw.cpp(159): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
@@ -89,55 +100,14 @@
          TitleScene.cpp
          Trick.cpp
          TrickWindow.cpp
+         コンパイル中...
          TrickWindowCursor.cpp
          Turn.cpp
          Unit.cpp
-     1>Unit.cpp(1136): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>Unit.cpp(1197): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>Unit.cpp(1322): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>Unit.cpp(1359): warning C4800: 'int' : ブール値を 'true' または 'false' に強制的に設定します (警告の処理)
-     1>Unit.cpp(1400): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>Unit.cpp(1516): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>Unit.cpp(1573): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>Unit.cpp(1582): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>Unit.cpp(1589): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>Unit.cpp(1596): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>Unit.cpp(1787): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>Unit.cpp(1793): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>Unit.cpp(1799): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>Unit.cpp(1805): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>Unit.cpp(1811): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>Unit.cpp(1817): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>Unit.cpp(1846): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>Unit.cpp(1858): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>Unit.cpp(1877): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>Unit.cpp(1895): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-     1>Unit.cpp(1956): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
          Circle.cpp
-         コンパイル中...
          Window.cpp
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\DeskTop\RougeLikeVer0.52\Release\DX9Game.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Release\DX9Game.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"D:\DeskTop\RougeLikeVer0.52\Release\DX9Game.pdb" /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\DeskTop\RougeLikeVer0.52\Release\DX9Game.lib" /MACHINE:X86 Release\2DWindow.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\40029\Documents\RoguelikeProject\RougeLike\Release\DX9Game.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Release\DX9Game.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\40029\Documents\RoguelikeProject\RougeLike\Release\DX9Game.pdb" /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\40029\Documents\RoguelikeProject\RougeLike\Release\DX9Game.lib" /MACHINE:X86 Release\2DWindow.obj
          Release\Battle.obj
          Release\C2DTexture.obj
          Release\C3DObj.obj
@@ -148,9 +118,13 @@
          Release\EquipmentWindow.obj
          Release\EquipmentWindowCursor.obj
          Release\Fade.obj
+         Release\GameClear.obj
+         Release\GameClearScene.obj
+         Release\HierarchieNum.obj
          Release\ItemCommandCursor.obj
          Release\ItemCommandWindow.obj
          Release\LevelUp.obj
+         Release\MiniMap.obj
          Release\Operation.obj
          Release\Particle.obj
          Release\ResultScene.obj
@@ -200,14 +174,14 @@
          Release\Window.obj
          コード生成しています。
          コード生成が終了しました。
-         DX9Game.vcxproj -> D:\DeskTop\RougeLikeVer0.52\Release\DX9Game.exe
+         DX9Game.vcxproj -> C:\Users\40029\Documents\RoguelikeProject\RougeLike\Release\DX9Game.exe
        Manifest:
-         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"D:\DeskTop\RougeLikeVer0.52\Release\DX9Game.exe;#1" /manifest Release\DX9Game.exe.intermediate.manifest
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"C:\Users\40029\Documents\RoguelikeProject\RougeLike\Release\DX9Game.exe;#1" /manifest Release\DX9Game.exe.intermediate.manifest
        FinalizeBuildStatus:
          ファイル "Release\DX9Game.unsuccessfulbuild" を削除しています。
          "Release\DX9Game.lastbuildstate" のタッチ タスクを実行しています。
-     1>プロジェクト "D:\DeskTop\RougeLikeVer0.52\DX9Game\DX9Game.vcxproj" (rebuild ターゲット) のビルドが完了しました。
+     1>プロジェクト "C:\Users\40029\Documents\RoguelikeProject\RougeLike\DX9Game\DX9Game.vcxproj" (rebuild ターゲット) のビルドが完了しました。
 
 ビルドに成功しました。
 
-経過時間 00:00:24.02
+経過時間 00:00:27.88

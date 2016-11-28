@@ -27,7 +27,7 @@ CMiniMap::CMiniMap(void)
 			m_MapPolygon[i][j].SetPos(SCREEN_WIDTH - 215.0f + i * POLYGON_SIZE + POLYGON_HALF_SIZE, 50 + j * POLYGON_SIZE + POLYGON_HALF_SIZE,POLYGON_SIZE,POLYGON_SIZE);
 
 			//アルファ値を設定する
-			m_MapPolygon[i][j].SetAlpha(255 * 0.8);
+			m_MapPolygon[i][j].SetAlpha(255 * 0.9);
 		}
 	}
 }
@@ -93,6 +93,42 @@ void CMiniMap::Fin(void)
 void CMiniMap::SetIcon(int nX,int nY,int nNumber)
 {
 	m_MapPolygon[nX][nY].SetTextureID(nNumber);
+}
+
+//---------------------------------------------------------------------------------------
+//指定したミニマップのデータをもとに戻す
+//---------------------------------------------------------------------------------------
+void CMiniMap::MiniMapBack(int nX,int nZ)
+{
+	//地形のマップデータを取得
+	int TerrainMapData = CMapData::Get_TerrainMapSituation(nX,nZ);
+	//アイテムのデータを取得
+	int ItemMapData = CMapData::Get_ItemMapSituation(nX,nZ);
+	//ユニットのデータを取得
+	int UnitMapData = CMapData::Get_UnitMapSituation(nX,nZ);
+
+	int TextureNumber = 0;
+	switch(TerrainMapData)
+	{
+	case STAIRS:
+		TextureNumber = TEXTURE_PURPLE_TEXTURE;
+		break;
+	case FLOOR:
+		TextureNumber = TEXTURE_FLOOR;
+		break;
+	default:
+		TextureNumber = TEXTURE_WALL;
+		break;
+	};
+	
+	if(ItemMapData)
+		TextureNumber = TEXTURE_ORANGE_TEXTURE;
+	if(UnitMapData >= OBJ_NUM_ENEMY)
+		TextureNumber = TEXTURE_RED_TEXTURE;
+	if(UnitMapData == OBJ_NUM_PLAYER)
+		TextureNumber = TEXTURE_BLUE_TEXTURE;
+	//使用テクスチャの設定
+	m_MapPolygon[nX][nZ].SetTextureID(TextureNumber);
 }
 
 //---------------------------------------------------------------------------------------

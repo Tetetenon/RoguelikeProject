@@ -3,6 +3,8 @@
 #include "TextureManager.h"
 #include "GameScene.h"
 
+#include "MessageWindow.h"
+
 #include <stdlib.h>
 #include <tchar.h>
 
@@ -43,6 +45,7 @@ AStarList*				CMapData::m_pAstarList;									//A*アルゴリズムで次の探索候補のデ
 CMapData::CMapData(void)
 {
 	int nFloorCounter = 0;
+	m_nHierarchyNum = 0;
 
 	//マップを生成
 	MapGeneration();
@@ -202,6 +205,7 @@ CMapData::CMapData(void)
 //---------------------------------------------------------------------------------------
 CMapData::~CMapData(void)
 {
+	m_nHierarchyNum = 0;
 	//A*で用いたデータの初期化
 	InitAStarData();
 	//頂点バッファの開放
@@ -409,6 +413,9 @@ void CMapData::AllInitMapData()
 //---------------------------------------------------------------------------------------
 void CMapData::MapGeneration()
 {
+	//メッセージウィンドウのデータを初期化
+	MessageWindow::InitFontData();
+
 	//マップデータの初期化
 	AllInitMapData();
 
@@ -427,15 +434,19 @@ void CMapData::MapGeneration()
 	//階層数加算
 	m_nHierarchyNum ++;
 
+	//フェードの状態をフェードインに設定
+	CFade::ChangeState(FADEMODE_IN);
+	//ユニットを一時行動不能状態に設定
+	CUnit::ChangeMoveCanFlg(false);
 	
 	//10階層移動したら、シーンをゲームクリアに遷移させる
 	if(m_nHierarchyNum > 10)
 	{
 		//ゲームのクリア状況をクリアに変更する
-		CGameScene::GameClearFlgChange(true);
+		CGameScene::GameClearStateChange(GAME_CLEAR);
 
 		//ゲームメインを終了
-		CGameScene::FadeOutStart();
+		CFade::ChangeState(FADEMODE_OUT);
 
 		//エネミーの生成数のリセット
 		CEnemyGenerator::ResetMakeEnemyNum();
@@ -464,7 +475,6 @@ void CMapData::DivideMap()
 
 	//３パターンの中から、ランダムに選択し、区画を分ける
 	m_nDividPattern = rand()%4;
-	//m_nDividPattern = 3;
 
 	switch(m_nDividPattern)
 	{
@@ -945,14 +955,14 @@ void CMapData::SearchPosition(int SearchPosX,int SearchPosZ,int EnemyPosX,int En
 	D3DXVECTOR2 CorrectionPos[MOVEVEC] = 
 	{
 		//			 X, Z
-		D3DXVECTOR2(-1,-1),	//左上
 		D3DXVECTOR2( 0,-1),	//上
-		D3DXVECTOR2( 1,-1),	//右上
 		D3DXVECTOR2( 1, 0),	//右
+		D3DXVECTOR2(-1, 0),	//左
+		D3DXVECTOR2( 0, 1),	//下
+		D3DXVECTOR2( 1,-1),	//右上
 		D3DXVECTOR2( 1, 1),	//右下
-		D3DXVECTOR2(0 , 1),	//下
 		D3DXVECTOR2(-1, 1),	//左下
-		D3DXVECTOR2(-1, 0)	//左
+		D3DXVECTOR2(-1,-1)	//左上
 	};
 
 	//周囲を確認する
@@ -972,18 +982,19 @@ void CMapData::SearchPosition(int SearchPosX,int SearchPosZ,int EnemyPosX,int En
 		int MapSituNum = Get_TerrainMapSituation(ChildPosX,ChildPosZ);
 		int UnitSituNum = Get_UnitMapSituation(ChildPosX,ChildPosZ);
 
-		if(UnitSituNum > 1)
-			continue;
 
 		if(MapSituNum != FLOOR && MapSituNum != STAIRS)
 			continue;
 
-		//子供の親の位置を自身に設定する
+		//親の位置を自身に設定する
 		m_AStarData[ChildPosZ][ChildPosX].m_ParentPos.x = SearchPosX;
 		m_AStarData[ChildPosZ][ChildPosX].m_ParentPos.y = SearchPosZ;
 
 		//スコアの計算を行う
 		ASarSetData(ChildPosX,ChildPosZ,EnemyPosX,EnemyPosZ,PlayerPosX,PlayerPosZ);
+
+		if(UnitSituNum > 1)
+			m_AStarData[ChildPosZ][ChildPosX].m_nCost += 1500;
 
 		//計算を行った状態に遷移する
 		CMapData::CompleteCellCal(ChildPosX,ChildPosZ,1);

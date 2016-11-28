@@ -53,6 +53,10 @@ enum TEXTURENUM
 	TEXTURE_7,		//7
 	TEXTURE_8,		//8
 	TEXTURE_9,		//9
+
+	//-----アルファベット-----
+	TEXTURE_F,		//F
+
 	TEXTURE_MAX
 };
 

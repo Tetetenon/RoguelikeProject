@@ -59,6 +59,11 @@
 
 #include "MiniMap.h"				//ミニマップ処理
 
+#include "HierarchieNum.h"			//現在の階層数を、フェードイン中に表示する
+
+#define GAME_CLEAR	(1)
+#define GAME_OVER	(2)
+
 class CGameScene
 {
 private:
@@ -104,6 +109,7 @@ private:
 	CStatesFont*				m_pStatesFont;				//ステータス項目文字
 	CStatesValue*				m_pStatesValue;				//ステータス数値
 
+
 	//-----技ウィンドウ-----
 	CTrickWindowCursor*			m_pTrickWindowCursor;		//技ウィンドウカーソル
 
@@ -114,12 +120,11 @@ private:
 	static bool					m_MapMake;					//マップデータを再生成する
 	static bool					m_OldMapMake;				//前フレームのマップ再生成フラグを保持
 
-	static bool					m_bFadeStart;				//フェードアウト開始フラグ
-	bool						m_bFadeSuccess;				//フェードアウト完了フラグ
-
 	static int					m_nPlayerLevel;				//階層を下りた時点のプレイヤーのレベル
 
-	static bool					m_bGameClaer;				//ゲームをクリアしたか
+	static int					m_nGameClaer;				//ゲームをクリアしたか、ゲームオーバーになったか
+
+	CHierarchieNum*				m_pHierarchiNum;			//フェードイン中に階層数を表示する
 public:
 	CGameScene();
 	virtual ~CGameScene();
@@ -168,14 +173,11 @@ public:
 	//マップの再生成フラグを立てる
 	static void MapReMake ()	{m_MapMake = true;}	
 
-	//フェードアウト開始
-	static void FadeOutStart () {m_bFadeStart = true;}
-
 	//プレイヤーのレベルを取得
 	static int GetPlayerLevel()	{return m_nPlayerLevel;}
 
 	//ゲームのクリア状況を変更する
-	static void GameClearFlgChange(bool Change);
+	static void GameClearStateChange(int Change);
 private:
 	//初期化
 	bool Initialize(CGraphics* pGraph);

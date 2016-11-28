@@ -29,8 +29,9 @@
 #define MAX_SATIETY	100
 
 //静的メンバ実体定義
-int	CUnit::m_nMakeNumber = OBJ_NUM_PLAYER;	//生成したユニットの数
-int CUnit::m_nAttackNumber = 0;				//攻撃を行っているユニットの番号
+int	 CUnit::m_nMakeNumber = OBJ_NUM_PLAYER;	//生成したユニットの数
+int  CUnit::m_nAttackNumber = 0;				//攻撃を行っているユニットの番号
+bool CUnit::m_bMoveCanFlg = true;;					//移動可能フラグ
 
 float	g_Timer = 0;		//処理を開始してからの時間計測
 int		g_Damage = 0;		//戦闘で発生するダメージ
@@ -250,6 +251,9 @@ void CUnit::Update()
 	//ワールドマトリックスを設定
 	SetWorld(world);
 
+	//もし、行動可能フラグが立っていなければ、処理をスキップ
+	if(!m_bMoveCanFlg)
+		return;
 
 	//現在のターンが、自身のターンであれば更新を行う
 	if(m_nStateNumber == State)
@@ -546,10 +550,14 @@ void CUnit::Delete()
 	if(m_uID == ID_PLAYER)
 	{
 		//ゲームメインを終了
-		CGameScene::FadeOutStart();
+		CFade::ChangeState(FADEMODE_OUT);
+
+		//ゲームクリア状態をゲームオーバーに
+		CGameScene::GameClearStateChange(GAME_OVER);
 
 		//エネミーの生成数のリセット
 		CEnemyGenerator::ResetMakeEnemyNum();
+
 		//フィールドアイテム生成数のリセット
 		CItemGenerator::ResetMakeItemNum();
 	}
@@ -1866,4 +1874,12 @@ void CUnit::ChackFeetItem()
 			MessageWindow::SetMassege(_T("アイテムを拾えなかった!"));
 		}
 	}
+}
+
+//---------------------------------------------------------------------------------------
+//ユニット全ての行動可能フラグを変更する
+//---------------------------------------------------------------------------------------
+void CUnit::ChangeMoveCanFlg(bool ChangeFlg)
+{
+	m_bMoveCanFlg = ChangeFlg;
 }

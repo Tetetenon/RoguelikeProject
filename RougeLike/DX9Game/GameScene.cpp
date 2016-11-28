@@ -25,11 +25,9 @@
 
 bool	CGameScene::m_MapMake = false;
 bool	CGameScene::m_OldMapMake = false;
-
-bool	CGameScene::m_bFadeStart = false;
 int		CGameScene::m_nPlayerLevel = 0;
 
-bool	CGameScene::m_bGameClaer = false;	//ゲームをクリアできたか
+int	CGameScene::m_nGameClaer = 0;	//ゲームをクリアできたか
 
 //---------------------------------------------------------------------------------------
 // コンストラクタ
@@ -44,9 +42,8 @@ CGameScene::CGameScene():
 	//デバッグ文字の初期化
 	m_szDebug[0] = _T('\0');
 
-	//フェードフラグの初期化
-	m_bFadeStart = false;
-	m_bFadeSuccess = false;
+	//ゲームのクリア状態の初期化
+	m_nGameClaer = 0;
 
 	srand((unsigned int)time(NULL));			//時間で乱数の初期化を行う
 
@@ -62,11 +59,10 @@ CGameScene::CGameScene():
 	m_pHPDraw			= new CHPDraw();				//ステータスウインドウ
 
 	//アイテムウィンドウ
-	//m_pInventory		= new CInventory();			//インベントリ(アイテムウインドウ)
+	//m_pInventory		= new CInventory();				//インベントリ(アイテムウインドウ)
 	m_pInventoryCursor	= new CInventoryCursor();		//アイテムカーソル
 	m_pCommandWindow	= new CCommandWindow();			//コマンドウインドウ
-	m_pCommandCursor	= new CCommandCursor();		//コマンドカーソル
-
+	m_pCommandCursor	= new CCommandCursor();			//コマンドカーソル
 	//装備ウィンドウ
 	//m_pEquipmentInventory = new CEquipmentInventory();	//装備アイテムウィンドウ
 	m_pEquipmentInventoryCursor = new CEquipmentInventoryCursor();	//装備ウィンドウカーソル
@@ -97,6 +93,7 @@ CGameScene::CGameScene():
 	m_pTrickWindowCursor = new CTrickWindowCursor();	//ワザウィンドウカーソル
 
 	m_pMiniMap = new CMiniMap();						//ミニマップ
+	m_pHierarchiNum = new CHierarchieNum();				//現在の階層数をフェードイン中に表示する
 }
 
 //---------------------------------------------------------------------------------------
@@ -153,6 +150,9 @@ CGameScene::~CGameScene()
 	delete m_pTrickWindowCursor;	//技ウィンドウカーソル
 
 	delete m_pMiniMap;				//ミニマップ
+	delete m_pHierarchiNum;			//フェードイン中に表示する階層数
+
+	m_nGameClaer = 0;
 }
 
 //---------------------------------------------------------------------------------------
@@ -544,6 +544,11 @@ void CGameScene::InitObj()
 				m_pFieldObjMaker->PutObj(MODEL_STAIRS,i,j);
 		}
 	}
+
+	//フェードの状態をフェードインに設定
+	CFade::ChangeState(FADEMODE_IN);
+	//ユニットを一時行動不能状態に設定
+	CUnit::ChangeMoveCanFlg(false);
 }
 //---------------------------------------------------------------------------------------
 //全オブジェクト破棄
@@ -599,6 +604,9 @@ void CGameScene::UpdateObj()
 	//マップの再生成フラグが立っていたら処理
 	if(m_MapMake && m_OldMapMake)
 	{
+		//フェードアウトフラグを立てる
+		m_pFade->ChangeState(FADEMODE_OUT);
+
 		//マップデータの再生成
 		CMapData::MapGeneration();
 
@@ -755,27 +763,39 @@ void CGameScene::UpdateObj()
 	m_pMiniMap ->Update();
 	
 	//フェードイン開始フラグが立っていた場合、フェードの処理を行う
-	if(m_bFadeStart)
-	{
-		//フェードインの更新
-		m_pFade ->Update();
-	}
+	//フェードインの更新
+	m_pFade ->Update();
+
 	//フェードインが完了したら、ステートを変更する
 	if(m_pFade ->GetFadeAlpha() >= 255)
 	{
-		//フェード状態初期化
-		m_bFadeStart = false;
-		m_bFadeSuccess = false;
+		//フェードの状態を格納
+		int FadeMode = m_pFade->GetFadeState();
 
-		//ゲームクリアできたかによって次に以降するシーンを変更する
-		if(m_bGameClaer)
+		//フェードの状態で処理を分岐
+		switch(FadeMode)
 		{
-			CGameState::StateUpdate(STATE_GAMECLEAR);
+			//フェード状態がフェードインの状態だった場合
+		case FADEMODE_IN:
+			//ユニットを一時行動不能状態に設定
+			CUnit::ChangeMoveCanFlg(true);
+			break;
+			//フェード状態がフェードアウトだった場合
+		case FADEMODE_OUT:
+			{
+				//ゲームクリアできたかによって次に以降するシーンを変更する
+				if(m_nGameClaer == GAME_CLEAR)
+				{
+					CGameState::StateUpdate(STATE_GAMECLEAR);
+				}
+				else if(m_nGameClaer == GAME_OVER)
+				{
+					CGameState::StateUpdate(STATE_GAMEOVER);
+				}
+			}
+			break;
 		}
-		else
-		{
-			CGameState::StateUpdate(STATE_GAMEOVER);
-		}
+		CFade::ChangeState(FADEMODE_NON);
 	}
 }
 //---------------------------------------------------------------------------------------
@@ -841,10 +861,10 @@ void CGameScene::DrawObj()
 		m_pMenuSelect ->Draw();
 		//メニューウィンドウテクスチャ描画
 		m_pMenuWindow ->Draw();
-
-		//操作説明描画
-		m_pOperation ->Draw();
 	}
+
+	//操作説明描画
+	m_pOperation ->Draw();
 
 	//-----アイテムウィンドウ-----
 
@@ -912,17 +932,18 @@ void CGameScene::DrawObj()
 		//技ウィンドウのカーソルを描画
 		m_pTrickWindowCursor->Draw();
 	}
-
-	//フェードが開始されていれば、描画を行う
-	if(m_bFadeStart)
-	{
-		m_pFade ->Draw();
-	}
+	//フェードの描画
+	m_pFade ->Draw();
+	//フェードの状態を格納
+	int FadeMode = m_pFade->GetFadeState();
+	//フェードの状態が、フェードインの場合、階層数を表示
+	if(FadeMode == FADEMODE_IN)
+		m_pHierarchiNum->Draw();
 }
 //ゲームのクリア状況を変更する
-void CGameScene::GameClearFlgChange(bool Change)
+void CGameScene::GameClearStateChange(int Change)
 {
-	m_bGameClaer = Change;
+	m_nGameClaer = Change;
 }
 
 //=======================================================================================

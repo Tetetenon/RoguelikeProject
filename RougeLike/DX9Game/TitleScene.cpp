@@ -2,6 +2,7 @@
 #include "define.h"
 #include "Input.h"
 #include "GameState.h"
+#include "Fade.h"
 
 bool CTitleScene::m_bCreate = false;		//生成成功フラグ
 
@@ -19,10 +20,6 @@ m_pGraphics(NULL)
 	m_pPress = new CPressSpace();
 	//生成成功
 	m_bCreate = true;
-	//フェード完了フラグを初期化
-	m_bFadeSuccess = false;
-	//フェードイン開始フラグを初期化
-	m_bFadeStart = false;
 }
 
 
@@ -113,14 +110,10 @@ void CTitleScene::Update()
 	if(CInput::GetKeyTrigger(DIK_SPACE))
 	{
 		//フェードイン開始フラグを立てる
-		m_bFadeStart = true;
+		CFade::ChangeState(FADEMODE_OUT);
 	}
-	//フェードイン開始フラグが立っていた場合、フェードの処理を行う
-	if(m_bFadeStart)
-	{
-		//フェードインの更新
-		m_pFade ->Update();
-	}
+	//フェードインの更新
+	m_pFade ->Update();
 	//フェードインが完了したら、ステートを変更する
 	if(m_pFade ->GetFadeAlpha() >= 255)
 	{
@@ -166,11 +159,8 @@ void CTitleScene::Draw()
 	//プレススペース描画
 	m_pPress ->Draw();
 	
-	//フェードが開始されていれば、描画を行う
-	if(m_bFadeStart)
-	{
-		m_pFade ->Draw();
-	}
+	//フェード描画
+	m_pFade ->Draw();
 	
 	//描画設定を元に戻す(不透明)
 	pD->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
