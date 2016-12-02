@@ -106,12 +106,12 @@ bool CGameWindow::OnIdle(long lCount)
 {
 	// この辺でフレーム数カウント
 	DWORD dwCurrentTime = timeGetTime();			// 現在のタイマ値を取得
-	if ((dwCurrentTime - m_dwFPSLastTime) >= 500) 
+	if ((dwCurrentTime - m_dwFPSLastTime) >= 1000) 
 	{	// 0.5 秒ごとに計測
 		// フレーム数を計算
 		if (m_pGameMainScene) 
 		{
-			m_pGameMainScene->SetFPS(m_dwFrameCount * 1000 / (dwCurrentTime - m_dwFPSLastTime));
+			m_pGameMainScene->SetFPS(m_dwFrameCount);
 		}
 		m_dwFPSLastTime = dwCurrentTime;	// タイマ値を更新
 		m_dwFrameCount = 0;					// フレームカウンタをリセット
@@ -191,7 +191,6 @@ bool CGameWindow::OnIdle(long lCount)
 		if (m_pGameMainScene) 
 		{
 			m_pGameMainScene-> Render();		// レンダリング処理
-			m_dwFrameCount++;					// フレームカウント＋１
 		}
 		break;
 	case STATE_TITLE:
@@ -200,7 +199,6 @@ bool CGameWindow::OnIdle(long lCount)
 		if(m_pTitleScene)
 		{
 			m_pTitleScene -> Render();			//レンダリング
-			m_dwFrameCount++;					// フレームカウント＋１
 		}
 		break;
 	case STATE_GAMEOVER:
@@ -209,7 +207,6 @@ bool CGameWindow::OnIdle(long lCount)
 		if(m_pResultscene)
 		{
 			m_pResultscene -> Render();			//レンダリング
-			m_dwFrameCount++;					// フレームカウント＋１
 		}
 		break;
 	case STATE_GAMECLEAR:
@@ -218,7 +215,6 @@ bool CGameWindow::OnIdle(long lCount)
 		if(m_pGameClearScene)
 		{
 			m_pGameClearScene ->Render();		//レンダリング
-			m_dwFrameCount ++;					//フレームカウント
 		}
 	}
 	return true;

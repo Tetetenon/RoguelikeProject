@@ -1,32 +1,29 @@
 #pragma once
-#include "C2DTexture.h"
 #include "MapData.h"
+#include "C2DTexture.h"
 
-//ミニマップの１ポリゴンのサイズ
-#define POLYGON_SIZE		(200 / MAP_SIZE)
-#define POLYGON_HALF_SIZE	(POLYGON_SIZE / 2)
+class CEditTexture;
 
-class CMiniMap
+class CMiniMap : public C2DTexture
 {
+public:
+	enum
+	{
+		GRID_SIZE = 7,
+		LINE_SPACE = 1,
+		GRID_NUM = MAP_SIZE,
+		POLYGON_WIDTH = GRID_SIZE * GRID_NUM + (GRID_NUM - 1) * LINE_SPACE,
+		POLYGON_HEIGHT = GRID_SIZE * GRID_NUM + (GRID_NUM - 1) * LINE_SPACE,
+		POLYGON_ORIGIN_X = 550,
+		POLYGON_ORIGIN_Y = 30,
+		MINIMAP_ALPHA = 175,
+	};
 private:
-	static C2DTexture	m_MapPolygon[MAP_SIZE][MAP_SIZE];	//マップデータを格納する
-	static bool			m_DrawFlg[MAP_SIZE][MAP_SIZE];		//マップデータの描画フラグを立てる
+
+	CEditTexture*		m_pEditTexture;						//ミニマップテクスチャ生成
 public:
 	CMiniMap(void);								//コンストラクタ
 	~CMiniMap(void);							//デストラクタ
-
-	void Init();								//初期化
-	void Fin();									//終了処理
-
-	void Draw ();								//描画
-	void Update();								//更新
-
-	static void DrawFlgUp(int nX,int nZ);				//到達した部分の描画フラグを立てる
-	static bool GetDrawFlg(int nX,int nZ);				//指定された位置の描画フラグを返す
-
-	static void SetIcon(int nX,int nZ,int nNumber);		//指定された位置に指定されたアイコンを設置する
-	static void Delete(int nX,int nZ);					//指定された位置の情報を地形情報に戻す
-
-	static void MiniMapBack(int nX,int nZ);				//指定した位置のマップ状態をもとに戻す
+	void Update();								// 更新
+	void Draw () override;						//描画
 };
-

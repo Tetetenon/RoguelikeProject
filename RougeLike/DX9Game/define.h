@@ -98,6 +98,8 @@ enum
 //ï∂éöÉTÉCÉY
 #define FontScale		45.0f
 
+//
+#define RIKU_TAKAHASHI	(0)
 
 #endif
 

@@ -482,9 +482,6 @@ void CGameScene::InitObj()
 	//マップの初期化
 	m_pMap ->Init();
 
-	//ミニマップの初期化
-	m_pMiniMap->Init();
-
 	//リストでつなげられているすべてのオブジェクトデータの初期化
 	C3DObj* pObj = m_pObj;
 	for(;pObj;pObj = pObj ->GetNext())
@@ -592,9 +589,6 @@ void CGameScene::FinObj()
 
 	//-----技ウィンドウカーソル-----
 	m_pTrickWindowCursor ->Fin();
-
-	//ミニマップの終了処理
-	m_pMiniMap ->Fin();
 }
 //---------------------------------------------------------------------------------------
 //全オブジェクト更新
@@ -635,9 +629,6 @@ void CGameScene::UpdateObj()
 
 		//アイテム生成数をリセット
 		CItemGenerator::ResetMakeItemNum();
-
-		//ミニマップデータを初期化
-		m_pMiniMap->Init();
 
 		//プレイヤー位置再設定
 		m_pPlayer -> SetPos();
@@ -759,9 +750,6 @@ void CGameScene::UpdateObj()
 	//ステータスウィンドウのサイズの更新
 	m_pStatesWindow->WindowSizeUpdate();
 
-	//ミニマップの更新
-	m_pMiniMap ->Update();
-	
 	//フェードイン開始フラグが立っていた場合、フェードの処理を行う
 	//フェードインの更新
 	m_pFade ->Update();
@@ -797,6 +785,9 @@ void CGameScene::UpdateObj()
 		}
 		CFade::ChangeState(FADEMODE_NON);
 	}
+
+	// ミニマップの更新
+	m_pMiniMap->Update();
 }
 //---------------------------------------------------------------------------------------
 //全オブジェクト描画

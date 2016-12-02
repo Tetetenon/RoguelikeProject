@@ -115,7 +115,10 @@ void CItemDescriptionFrame::FontDataSet(void)
 	//全てのアイテム説明文フォントの設定
 	for(int i = 0;i < ITEM_NUM_MAX;i++)
 	{
-		lstrcpyn(m_Description[i],_T(NULL),sizeof(_TCHAR) * DESCRIPTION_FONT_MAX / 2);
+		#if RIKU_TAKAHASHI
+		#error 高橋が変えた場所
+		#endif //  RIK_T
+		::SecureZeroMemory(m_Description, sizeof(_TCHAR) * DESCRIPTION_FONT_MAX * ITEM_MAX);
 		switch(i)
 		{
 		case ITEM_APPLE:

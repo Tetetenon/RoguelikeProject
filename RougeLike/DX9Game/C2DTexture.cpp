@@ -91,6 +91,15 @@ void C2DTexture::SetPos(float fPosX,float fPosY,float fHalfSizeX,float fHalfSize
 	m_aVertex[2].pos = D3DXVECTOR3(fPosX - (fHalfSizeX / 2),fPosY + (fHalfSizeY / 2),0.0f);
 	m_aVertex[3].pos = D3DXVECTOR3(fPosX + (fHalfSizeX / 2),fPosY + (fHalfSizeY / 2),0.0f);
 }
+
+void C2DTexture::SetPosLeftUpOrigin(float fPosX, float fPosY, float fWidth, float fHeight)
+{
+	m_aVertex[0].pos = D3DXVECTOR3(fPosX,fPosY,0.0f);
+	m_aVertex[1].pos = D3DXVECTOR3(fPosX + fWidth,fPosY,0.0f);
+	m_aVertex[2].pos = D3DXVECTOR3(fPosX,fPosY + fHeight,0.0f);
+	m_aVertex[3].pos = D3DXVECTOR3(fPosX + fWidth,fPosY + fHeight,0.0f);
+}
+
 //---------------------------------------------------------------------------------------
 //ポリゴンのアルファ値を設定する
 //---------------------------------------------------------------------------------------

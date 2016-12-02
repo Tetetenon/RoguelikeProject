@@ -155,9 +155,6 @@ void CUnit::Fin()
 
 	//マーキング消去
 	CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-
-	//ミニマップ上から自身を削除
-	CMiniMap::Delete(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 	
 	//現在自分が選択しているステートのユニットの数-1
 	CTurn::SumCount(m_nStateNumber);

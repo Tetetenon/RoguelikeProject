@@ -261,6 +261,9 @@
     <Filter Include="UI関連\アイテムウィンドウ\説明文\ItemDescriptionFrame">
       <UniqueIdentifier>{fcec6c33-eaaa-49e1-aea2-e1a9608f652c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="システム\EditTexture">
+      <UniqueIdentifier>{830cf07b-142d-44ae-87a7-97822560fda4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameWnd.cpp">
@@ -460,6 +463,12 @@
     </ClCompile>
     <ClCompile Include="ItemWindowCursor.cpp">
       <Filter>UI関連\アイテムウィンドウ\アイテム選択\ItemWindowCursor</Filter>
+    </ClCompile>
+    <ClCompile Include="EditTexture.cpp">
+      <Filter>システム\EditTexture</Filter>
+    </ClCompile>
+    <ClCompile Include="WinMain.cpp">
+      <Filter>システム\Main</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -666,6 +675,9 @@
     </ClInclude>
     <ClInclude Include="ItemWindowCursor.h">
       <Filter>UI関連\アイテムウィンドウ\アイテム選択\ItemWindowCursor</Filter>
+    </ClInclude>
+    <ClInclude Include="EditTexture.h">
+      <Filter>システム\EditTexture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -56,9 +56,6 @@ CEnemy::~CEnemy(void)
 		//マーキング消去
 		CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 
-		//ミニマップ上の情報を消去
-		CMiniMap::Delete(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-
 		//ジェネレーターの生成数を減算
 		CEnemyGenerator::SumMakeEnemyNum();
 	}
@@ -275,10 +272,6 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 
 	pEnemy -> m_nUnit_Pos_X = PosX;
 	pEnemy -> m_nUnit_Pos_Z = PosZ;
-	
-
-	//ミニマップ上に自身の位置を設定
-	CMiniMap::SetIcon(pEnemy -> m_nUnit_Pos_X,pEnemy -> m_nUnit_Pos_Z,TEXTURE_RED_TEXTURE);
 
 	//経験値蓄積値を設定
 	pEnemy -> m_nExp = m_nEnemyData[STATES_EXP];
@@ -531,9 +524,6 @@ void CEnemy::InputUpdate()
 					//マーキング消去
 					CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 
-					//ミニマップ上の位置情報を削除
-					CMiniMap::Delete(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-
 					//向きフラグ上
 					m_bDirectionFlg[Forword] = true;
 
@@ -544,17 +534,11 @@ void CEnemy::InputUpdate()
 					//移動完了
 					MoveCompletion = true;
 
-					//ミニマップの状態をもとに戻す
-					CMiniMap::MiniMapBack(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-
 					//配列上を移動
 					m_nUnit_Pos_Z--;
 					
 					//マーキング
 					CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
-
-					//ミニマップ上に自身の位置を設定
-					CMiniMap::SetIcon(m_nUnit_Pos_X,m_nUnit_Pos_Z,TEXTURE_RED_TEXTURE);
 
 					//操作決定待ちに存在するユニットの数-1
 					CTurn::SumCount(m_nStateNumber);
@@ -573,9 +557,6 @@ void CEnemy::InputUpdate()
 				{
 					//マーキング消去
 					CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-
-					//ミニマップ上の位置情報を削除
-					CMiniMap::Delete(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 					
 					//向きフラグ下
 					m_bDirectionFlg[Back] = true;
@@ -587,17 +568,11 @@ void CEnemy::InputUpdate()
 					//移動完了
 					MoveCompletion = true;
 
-					//ミニマップの状態をもとに戻す
-					CMiniMap::MiniMapBack(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-
 					//配列上を移動
 					m_nUnit_Pos_Z ++;
 					
 					//マーキング
 					CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
-
-					//ミニマップ上に自身の位置を設定
-					CMiniMap::SetIcon(m_nUnit_Pos_X,m_nUnit_Pos_Z,TEXTURE_RED_TEXTURE);
 
 					//操作決定待ちに存在するユニットの数-1
 					CTurn::SumCount(m_nStateNumber);
@@ -616,9 +591,6 @@ void CEnemy::InputUpdate()
 					//マーキング消去
 					CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 
-					//ミニマップ上の位置情報を削除
-					CMiniMap::Delete(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-
 					//向きフラグ右
 					m_bDirectionFlg[Right] = true;
 
@@ -629,17 +601,11 @@ void CEnemy::InputUpdate()
 					//移動完了
 					MoveCompletion = true;
 
-					//ミニマップの状態をもとに戻す
-					CMiniMap::MiniMapBack(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-
 					//配列上を移動
 					m_nUnit_Pos_X ++;
 					
 					//マーキング
 					CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
-
-					//ミニマップ上に自身の位置を設定
-					CMiniMap::SetIcon(m_nUnit_Pos_X,m_nUnit_Pos_Z,TEXTURE_RED_TEXTURE);
 
 					//操作決定待ちに存在するユニットの数-1
 					CTurn::SumCount(m_nStateNumber);
@@ -658,9 +624,6 @@ void CEnemy::InputUpdate()
 					//マーキング消去
 					CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 
-					//ミニマップ上の位置情報を削除
-					CMiniMap::Delete(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-
 					//向きフラグ左
 					m_bDirectionFlg[Left] = true;
 
@@ -671,17 +634,11 @@ void CEnemy::InputUpdate()
 					//移動完了
 					MoveCompletion = true;
 
-					//ミニマップの状態をもとに戻す
-					CMiniMap::MiniMapBack(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-
 					//配列上を移動
 					m_nUnit_Pos_X --;
 					
 					//マーキング
 					CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
-
-					//ミニマップ上に自身の位置を設定
-					CMiniMap::SetIcon(m_nUnit_Pos_X,m_nUnit_Pos_Z,TEXTURE_RED_TEXTURE);
 
 					//操作決定待ちに存在するユニットの数-1
 					CTurn::SumCount(m_nStateNumber);
@@ -1007,9 +964,6 @@ bool CEnemy::A_StarMove()
 	//マーキング消去
 	CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 
-	//ミニマップ上の位置情報を削除
-	CMiniMap::Delete(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-
 	//向きフラグ設定
 
 	//フラグ初期化
@@ -1132,18 +1086,12 @@ bool CEnemy::A_StarMove()
 	m_bDestination = false;
 	m_fTimer = 0.0f;
 
-	//ミニマップの状態をもとに戻す
-	CMiniMap::MiniMapBack(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-
 	//配列上を移動
 	m_nUnit_Pos_X = SearchPositionX;
 	m_nUnit_Pos_Z = SearchPositionZ;
 	
 	//マーキング
 	CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
-
-	//ミニマップ上に自身の位置を設定
-	CMiniMap::SetIcon(m_nUnit_Pos_X,m_nUnit_Pos_Z,TEXTURE_RED_TEXTURE);
 
 	//操作決定待ちに存在するユニットの数-1
 	CTurn::SumCount(m_nStateNumber);

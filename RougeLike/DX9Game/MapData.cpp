@@ -15,9 +15,10 @@
 
 
 //静的メンバ実体定義
-Map						CMapData::m_TerrainMap[MAP_SIZE][MAP_SIZE];				//地形マップ情報
-Map						CMapData::m_UnitMap[MAP_SIZE][MAP_SIZE];				//ユニットマップ
-Map						CMapData::m_ItemMap[MAP_SIZE][MAP_SIZE];				//アイテムマップ
+//Map						CMapData::m_TerrainMap[MAP_SIZE][MAP_SIZE];				//地形マップ情報
+//Map						CMapData::m_UnitMap[MAP_SIZE][MAP_SIZE];				//ユニットマップ
+//Map						CMapData::m_ItemMap[MAP_SIZE][MAP_SIZE];				//アイテムマップ
+Map						CMapData::m_MapData[MAP_SIZE][MAP_SIZE];				// 新しいマップ情報
 
 LPDIRECT3DVERTEXBUFFER9 CMapData::m_pD3DVtxBuff;								//頂点バッファインタフェースへのポインタ
 LPDIRECT3DINDEXBUFFER9	CMapData::m_pD3DIdxBuff;								//インデックスバッファ
@@ -71,14 +72,12 @@ CMapData::CMapData(void)
 	for(int i = 0;i < MAP_SIZE;i++)
 	{
 		for(int j = 0;j < MAP_SIZE;j++)
-			m_ItemMap[i][j].m_Map_Situation = 0;
+		{
+			m_MapData[i][j].m_item = 0;
+			m_MapData[i][j].m_unit = (ObjectNumber)0;
+			m_MapData[i][j].m_isDark = FALSE;
 	}
-
-	//ユニットマップ初期化
-	for(int i = 0;i < MAP_SIZE;i++)
-	{
-		for(int j = 0;j < MAP_SIZE;j++)
-			m_UnitMap[i][j].m_Map_Situation = 0;
+			
 	}
 
 	//デバイス格納
@@ -277,7 +276,7 @@ void CMapData:: Draw()
 	{
 		for(int j = 0;j<MAP_SIZE;j++)
 		{
-			switch(m_TerrainMap[i][j].m_Map_Situation)
+			switch(m_MapData[i][j].m_terrain)
 			{
 				//床
 				case FLOOR:
@@ -319,6 +318,9 @@ void CMapData:: Draw()
 void CMapData:: Fin()
 {
 }
+
+
+
 //---------------------------------------------------------------------------------------
 // 指定した地形の状態を返す
 //---------------------------------------------------------------------------------------
@@ -327,7 +329,7 @@ int CMapData::Get_TerrainMapSituation (int PosX,int PosY)
 	//範囲外を読み込んだ場合、エラー値を返す
 	if(PosX < 0 || PosX > MAP_SIZE || PosY < 0 || PosY > MAP_SIZE)
 		return ERROR_NUM;
-	return m_TerrainMap[PosY][PosX].m_Map_Situation;
+	return m_MapData[PosY][PosX].m_terrain;
 }
 //---------------------------------------------------------------------------------------
 // 指定した位置のユニット生存状態を返す
@@ -337,7 +339,7 @@ int CMapData::Get_UnitMapSituation(int PosX,int PosY)
 	//範囲外を読み込んだ場合、エラー値を返す
 	if(PosX < 0 || PosX > MAP_SIZE || PosY < 0 || PosY > MAP_SIZE)
 		return ERROR_NUM;
-	return m_UnitMap[PosY][PosX].m_Map_Situation;
+	return m_MapData[PosY][PosX].m_unit;
 }
 //---------------------------------------------------------------------------------------
 // 指定した位置のアイテム状態を返す
@@ -347,7 +349,15 @@ int CMapData::Get_ItemMapSituation(int PosX,int PosY)
 	//範囲外を読み込んだ場合、エラー値を返す
 	if(PosX < 0 || PosX > MAP_SIZE || PosY < 0 || PosY > MAP_SIZE)
 		return ERROR_NUM;
-	return m_ItemMap[PosY][PosX].m_Map_Situation;
+	return m_MapData[PosY][PosX].m_item;
+}
+
+//---------------------------------------------------------------------------------------
+// マップデータを手に入れる
+//---------------------------------------------------------------------------------------
+const Map& CMapData::Get_MapData(int x,int y)
+{
+	return m_MapData[y][x];
 }
 
 
@@ -356,28 +366,73 @@ int CMapData::Get_ItemMapSituation(int PosX,int PosY)
 //---------------------------------------------------------------------------------------
 void CMapData:: Back_UnitMap(int PosX,int PosY)
 {
-	m_UnitMap[PosY][PosX].m_Map_Situation = 0;
+	m_MapData[PosY][PosX].m_unit = (ObjectNumber)0;
 }
+
+//---------------------------------------------------------------------------------------
+// 可視化
+//---------------------------------------------------------------------------------------
+void CMapData::SetDark(int PosX,int PosY, BOOL isDark)
+{
+	if (PosX < 0 ) return;
+	if (PosX >= MAP_SIZE) return;
+	if (PosY < 0 ) return;
+	if (PosY >= MAP_SIZE) return;
+	m_MapData[PosY][PosX].m_isDark = isDark;
+}
+
+void CMapData::SetRoomVisible(int room)
+{
+	for (int x = 0; x < MAP_SIZE; ++x)
+	{
+		for (int y = 0; y < MAP_SIZE; ++y)
+		{
+			const Map& node = CMapData::Get_MapData(x,y);
+			if (node.m_roomnumber == room)
+			{
+				CMapData::SetDark(x,y, TRUE);
+			}
+		}
+	}
+}
+
+void CMapData::SetVisibleProcess(int PosX, int PosY)
+{
+	// 部屋かどうか
+	const Map& node = CMapData::Get_MapData(PosX,PosY);
+	if (node.m_roomnumber == 0)
+	{ // 通路
+		CMapData::SetDark(PosX,PosY,TRUE);
+	}
+	else
+	{ // 部屋
+		// 暗ければ全部照らす
+		if (node.m_isDark) return;
+		// 部屋全てを照らす
+		CMapData::SetRoomVisible(node.m_roomnumber);
+	}
+}
+
 //---------------------------------------------------------------------------------------
 // 指定した位置情報を変更する
 //---------------------------------------------------------------------------------------
 void CMapData:: Set_UnitMap(int PosX,int PosY,int Change)
 {
-	m_UnitMap[PosY][PosX].m_Map_Situation = Change;
+	m_MapData[PosY][PosX].m_unit = (ObjectNumber)Change;
 }
 //---------------------------------------------------------------------------------------
 // 指定した位置情報をもとに戻す
 //---------------------------------------------------------------------------------------
 void CMapData:: Back_ItemMap(int PosX,int PosY)
 {
-	m_ItemMap[PosY][PosX].m_Map_Situation = 0;
+	m_MapData[PosY][PosX].m_item = 0;
 }
 //---------------------------------------------------------------------------------------
 // 指定した位置情報を変更する
 //---------------------------------------------------------------------------------------
 void CMapData:: Set_ItemMap(int PosX,int PosY,int Change)
 {
-	m_ItemMap[PosY][PosX].m_Map_Situation = Change;
+	m_MapData[PosY][PosX].m_item = Change;
 }
 //---------------------------------------------------------------------------------------
 // マップをすべて初期化する
@@ -388,9 +443,11 @@ void CMapData::AllInitMapData()
 	{
 		for(int j = 0;j < MAP_SIZE;j++)
 		{
-			m_TerrainMap[j][i].m_Map_Situation = IN_THE_WALL;
-			m_UnitMap[j][i].m_Map_Situation = 0;
-			m_ItemMap[j][i].m_Map_Situation = 0;
+			m_MapData[j][i].m_terrain = IN_THE_WALL;
+			m_MapData[j][i].m_item = 0;
+			m_MapData[j][i].m_unit = (ObjectNumber)0;
+			m_MapData[j][i].m_isDark = FALSE;
+			m_MapData[j][i].m_roomnumber = 0;
 		}
 	}
 
@@ -438,6 +495,9 @@ void CMapData::MapGeneration()
 	CFade::ChangeState(FADEMODE_IN);
 	//ユニットを一時行動不能状態に設定
 	CUnit::ChangeMoveCanFlg(false);
+
+	// 一部分可視化
+	
 	
 	//10階層移動したら、シーンをゲームクリアに遷移させる
 	if(m_nHierarchyNum > 10)
@@ -637,8 +697,6 @@ void CMapData::MakeRoom()
 		nMakeRoomPos_X = rand()%(m_Section[i].right - nRoomSize_X / 2);
 
 		//一定値以下にならない様に調整
-		//while(nMakeRoomPos_X <= m_Section[i].left + 2)
-		//	nMakeRoomPos_X = rand()%(m_Section[i].right - nRoomSize_X / 2 - 2);
 		while(m_Section[i].left >= nMakeRoomPos_X - nRoomSize_X / 2 || m_Section[i].right <= nMakeRoomPos_X + nRoomSize_X / 2 || nMakeRoomPos_X <= m_Section[i].left)
 			nMakeRoomPos_X = rand()%(m_Section[i].right - nRoomSize_X / 2 - 1);
 
@@ -647,9 +705,6 @@ void CMapData::MakeRoom()
 		nMakeRoomPos_Y = rand()%(m_Section[i].bottom - nRoomSize_Y / 2);
 
 		//一定値以下にならない様に調整
-		//while(nMakeRoomPos_Y <= m_Section[i].top + 2)
-		//	nMakeRoomPos_Y = rand()%(m_Section[i].bottom - nRoomSize_Y / 2 - 2);
-		
 		while(m_Section[i].top >= nMakeRoomPos_Y - nRoomSize_Y / 2 || m_Section[i].bottom <= nMakeRoomPos_Y + nRoomSize_Y / 2 || nMakeRoomPos_Y <= m_Section[i].top)
 			nMakeRoomPos_Y = rand()%(m_Section[i].bottom - nRoomSize_Y / 2);
 
@@ -664,7 +719,8 @@ void CMapData::MakeRoom()
 		{
 			for(int k = m_Room[i].left;k < m_Room[i].right;k++)
 			{
-				m_TerrainMap[j][k].m_Map_Situation = FLOOR;
+				m_MapData[j][k].m_terrain = FLOOR;
+				m_MapData[j][k].m_roomnumber = i + 1;
 			}
 		}
 	}
@@ -736,20 +792,20 @@ void CMapData::MakeRoot()
 				//右の部屋から境界線まで通路を作成
 				for(int k = m_Room[i].right;k <= nBorderLine;k++)
 				{
-					m_TerrainMap[RightRootStertPoint][k].m_Map_Situation = FLOOR;
+					m_MapData[RightRootStertPoint][k].m_terrain = FLOOR;
 				}
 				
 				//左の部屋から境界線まで通路を作成
 				for(int k = m_Room[j].left;k >= nBorderLine;k--)
 				{
-					m_TerrainMap[LeftRootStertPoint][k].m_Map_Situation = FLOOR;
+					m_MapData[LeftRootStertPoint][k].m_terrain = FLOOR;
 				}
 				
 	
 				//境界線を埋めて通路作成
 				for(int k = RightRootStertPoint;k != LeftRootStertPoint;)
 				{
-					m_TerrainMap[k][nBorderLine].m_Map_Situation = FLOOR;
+					m_MapData[k][nBorderLine].m_terrain = FLOOR;
 				
 					//左の通路位置より作業位置が高ければ下げていく
 					if(k > LeftRootStertPoint)
@@ -786,7 +842,7 @@ void CMapData::StairsSet()
 	}
 
 	//階段を設置する!
-	m_TerrainMap[StairsPos_Y][StairsPos_X].m_Map_Situation = STAIRS;
+	m_MapData[StairsPos_Y][StairsPos_X].m_terrain = STAIRS;
 }
 
 //---------------------------------------------------------------------------------------
@@ -821,7 +877,7 @@ bool CMapData::CheckInTheRoom(int PosX,int PosY)
 bool CMapData::CheckStairs(int PosX,int PosY)
 {
 	//指定位置に階段があれば正
-	if(m_TerrainMap[PosY][PosX].m_Map_Situation == STAIRS)
+	if(m_MapData[PosY][PosX].m_terrain == STAIRS)
 	{
 		return true;
 	}

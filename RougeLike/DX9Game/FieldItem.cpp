@@ -37,8 +37,6 @@ CMeshObj(pScene)
 //---------------------------------------------------------------------------------------
 CFieldItem::~CFieldItem(void)
 {
-	//ミニマップ上から自身を削除する
-	CMiniMap::Delete((int)m_Pos.x,(int)m_Pos.y);
 	//シーン上から自身を削除する
 	m_pScene ->DelItem(this);
 }
@@ -139,8 +137,6 @@ void CFieldItem::Generation(CMeshObj *pGeneration)
 	//マップデータ上に自身の存在を設定
 	CMapData::Set_ItemMap((int)pFieldItem ->m_Pos.x,(int)pFieldItem ->m_Pos.y,pFieldItem ->m_FieldID);
 
-	//ミニマップ上に自身をセット
-	CMiniMap::SetIcon((int)pFieldItem ->m_Pos.x,(int)pFieldItem ->m_Pos.y,TEXTURE_ORANGE_TEXTURE);
 	//ワールドマトリックスからローカル座標抽出
 	D3DXMATRIX world = pGeneration ->GetWorld();
 

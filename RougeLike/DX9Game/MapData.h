@@ -2,6 +2,7 @@
 
 #include "EnemyGenerator.h"
 #include "ItemGenerator.h"
+#include "define.h"
 
 #include "Structure.h"
 
@@ -18,11 +19,27 @@
 //生成できる部屋の最大数
 #define ROOM_MAX_NUM	(MAP_SIZE / SECTION_MIN_SIZE) * (MAP_SIZE / SECTION_MIN_SIZE)
 
+//マップの状況
+enum Situation
+{
+	WALL_UP  = 1,	//壁(上向き)
+	WALL_DOWN,		//壁(下向き)
+	WALL_RIGH,		//壁(右向き)
+	WALL_LEFT,		//壁(左向き)
+	FLOOR,			//床
+	STAIRS,			//階段
+	IN_THE_WALL = 99,	//壁の中
+	etc
+};
 
 //マップ情報を格納する構造体
 struct Map
 {
-	int m_Map_Situation;		//マップ状況(壁、床、壁の中、プレイヤーがいる、エネミーがいる…ect)
+	Situation m_terrain;
+	int m_item;
+	ObjectNumber m_unit;
+	int m_isDark;
+	int m_roomnumber;
 };
 
 //A*アルゴリズムで使用する際に用いる構造体
@@ -44,18 +61,6 @@ struct AStarList
 	AStarList* NextData;
 };
 
-//マップの状況
-enum Situation
-{
-	WALL_UP  = 1,	//壁(上向き)
-	WALL_DOWN,		//壁(下向き)
-	WALL_RIGH,		//壁(右向き)
-	WALL_LEFT,		//壁(左向き)
-	FLOOR,			//床
-	STAIRS,			//階段
-	IN_THE_WALL = 99,	//壁の中
-	etc
-};
 
 //マップ情報の管理
 class CMapData
@@ -63,9 +68,10 @@ class CMapData
 private:
 
 	//-----マップデータ-----
-	static Map						m_TerrainMap[MAP_SIZE][MAP_SIZE];			//マップ情報
-	static Map						m_ItemMap[MAP_SIZE][MAP_SIZE];				//マップ上のアイテム情報格納
-	static Map						m_UnitMap[MAP_SIZE][MAP_SIZE];				//マップ上のユニット情報格納
+	//static Map						m_TerrainMap[MAP_SIZE][MAP_SIZE];			//マップ情報
+	//static Map						m_ItemMap[MAP_SIZE][MAP_SIZE];				//マップ上のアイテム情報格納
+	//static Map						m_UnitMap[MAP_SIZE][MAP_SIZE];				//マップ上のユニット情報格納
+	static Map						m_MapData[MAP_SIZE][MAP_SIZE];				// 新しいマップ情報
 
 	static bool						m_bCheckFlg[MAP_SIZE][MAP_SIZE];			//確認が完了したか
 	static int						m_nCost[MAP_SIZE][MAP_SIZE];				//現在地からの移動コスト
@@ -107,6 +113,9 @@ public:
 	//現在の階層数を取得
 	static int GetHierarchieNum()	{return m_nHierarchyNum;}
 
+	// ----地形情報の取得
+	static const Map& Get_MapData(int,int);
+
 	//-----地形マップ状態取得-----
 	static int Get_TerrainMapSituation (int,int);				//地形配列の位置を指定し状態を返す
 
@@ -119,6 +128,11 @@ public:
 	//-----ユニットマップ操作-----
 	static void Back_UnitMap	(int,int);				//指定した位置情報を元に戻す。
 	static void Set_UnitMap		(int,int,int);			//指定した位置情報を指定した値に変更する。
+
+	//-----可視化-----
+	static void SetDark(int,int, BOOL);
+	static void SetVisibleProcess(int,int);
+	static void SetRoomVisible(int);
 
 	//-----アイテムマップ操作-----
 	static void Back_ItemMap	(int,int);				//指定した位置情報を元に戻す。

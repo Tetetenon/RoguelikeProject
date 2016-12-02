@@ -1,12 +1,130 @@
-﻿2016/11/25 16:56:39 にビルドを開始しました。
-     1>ノード 2 上のプロジェクト "C:\Users\40029\Documents\RoguelikeProject\RougeLike\DX9Game\DX9Game.vcxproj" (build ターゲット)。
-     1>InitializeBuildStatus:
+﻿2016/12/02 10:01:52 にビルドを開始しました。
+     1>ノード 2 上のプロジェクト "C:\Users\40029\Documents\RoguelikeProject\RougeLike\DX9Game\DX9Game.vcxproj" (rebuild ターゲット)。
+     1>_PrepareForClean:
+         ファイル "Debug\DX9Game.lastbuildstate" を削除しています。
+       InitializeBuildStatus:
          "AlwaysCreate" が指定されたため "Debug\DX9Game.unsuccessfulbuild" を作成しています。
        ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt ItemWindowCursor.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt 2DWindow.cpp Battle.cpp C2DTexture.cpp C3DObj.cpp Camera.cpp EditTexture.cpp EffectObj.cpp EquipmentCommandCursor.cpp EquipmentCommandWindow.cpp EquipmentWindow.cpp EquipmentWindowCursor.cpp Fade.cpp GameClear.cpp GameClearScene.cpp HierarchieNum.cpp ItemCommandCursor.cpp ItemCommandWindow.cpp ItemDescriptionFrame.cpp LevelUp.cpp MiniMap.cpp Operation.cpp Particle.cpp ResultScene.cpp DeleteObj.cpp Enemy.cpp EnemyGenerator.cpp FieldItem.cpp FieldObj.cpp FieldObjMaker.cpp GameState.cpp GameWnd.cpp Graphics.cpp HitObj.cpp Input.cpp ItemWindow.cpp ItemWindowCursor.cpp Item.cpp ItemGenerator.cpp Main.cpp MapData.cpp MenuSelect.cpp MenuWindow.cpp MenuWindow_Back.cpp Mesh.cpp MeshObj.cpp MessageWindow.cpp ModelManager.cpp Player.cpp PressSpace.cpp Result.cpp GameScene.cpp HPDraw.cpp Sky.cpp StatesCharacter.cpp StatesFont.cpp StatesValue.cpp StatesWindow.cpp TextureManager.cpp Title.cpp TitleScene.cpp Trick.cpp TrickWindow.cpp TrickWindowCursor.cpp Turn.cpp Unit.cpp Circle.cpp Window.cpp WinMain.cpp
+         WinMain.cpp
+         Window.cpp
+         Circle.cpp
+         Unit.cpp
+         Turn.cpp
+         TrickWindowCursor.cpp
+         TrickWindow.cpp
+         Trick.cpp
+         TitleScene.cpp
+         Title.cpp
+         TextureManager.cpp
+         StatesWindow.cpp
+         StatesValue.cpp
+         StatesFont.cpp
+         StatesCharacter.cpp
+         Sky.cpp
+         HPDraw.cpp
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\hpdraw.cpp(159): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+         GameScene.cpp
+         Result.cpp
+         PressSpace.cpp
+         コードを生成中...
+         コンパイル中...
+         Player.cpp
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\player.cpp(151): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\player.cpp(257): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\player.cpp(803): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\player.cpp(815): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\player.cpp(927): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+         ModelManager.cpp
+         MessageWindow.cpp
+         MeshObj.cpp
+         Mesh.cpp
+         MenuWindow_Back.cpp
+         MenuWindow.cpp
+         MenuSelect.cpp
+         MapData.cpp
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\mapdata.cpp(922): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\mapdata.cpp(923): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\mapdata.cpp(924): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\mapdata.cpp(925): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\mapdata.cpp(935): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\mapdata.cpp(1046): warning C4244: '=' : 'int' から 'FLOAT' への変換です。データが失われる可能性があります。
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\mapdata.cpp(1047): warning C4244: '=' : 'int' から 'FLOAT' への変換です。データが失われる可能性があります。
+         Main.cpp
+         ItemGenerator.cpp
+         Item.cpp
          ItemWindowCursor.cpp
+         ItemWindow.cpp
+         Input.cpp
+         HitObj.cpp
+         Graphics.cpp
+         GameWnd.cpp
+         GameState.cpp
+         FieldObjMaker.cpp
+         コードを生成中...
+         コンパイル中...
+         FieldObj.cpp
+         FieldItem.cpp
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\fielditem.cpp(133): warning C4244: '=' : 'int' から 'FLOAT' への変換です。データが失われる可能性があります。
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\fielditem.cpp(134): warning C4244: '=' : 'int' から 'FLOAT' への変換です。データが失われる可能性があります。
+         EnemyGenerator.cpp
+         Enemy.cpp
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\enemy.cpp(97): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\enemy.cpp(104): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\enemy.cpp(111): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\enemy.cpp(120): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+         DeleteObj.cpp
+         ResultScene.cpp
+         Particle.cpp
+         Operation.cpp
+         MiniMap.cpp
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\minimap.cpp(43): warning C4482: 非標準の拡張機能が使用されています: enum '`anonymous-namespace'::GRID_TYPE' が限定名で使用されます
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\minimap.cpp(44): warning C4482: 非標準の拡張機能が使用されています: enum '`anonymous-namespace'::GRID_TYPE' が限定名で使用されます
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\minimap.cpp(51): warning C4482: 非標準の拡張機能が使用されています: enum 'Situation' が限定名で使用されます
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\minimap.cpp(52): warning C4482: 非標準の拡張機能が使用されています: enum '`anonymous-namespace'::GRID_TYPE' が限定名で使用されます
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\minimap.cpp(53): warning C4482: 非標準の拡張機能が使用されています: enum '`anonymous-namespace'::GRID_TYPE' が限定名で使用されます
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\minimap.cpp(54): warning C4482: 非標準の拡張機能が使用されています: enum 'Situation' が限定名で使用されます
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\minimap.cpp(55): warning C4482: 非標準の拡張機能が使用されています: enum '`anonymous-namespace'::GRID_TYPE' が限定名で使用されます
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\minimap.cpp(57): warning C4482: 非標準の拡張機能が使用されています: enum '`anonymous-namespace'::GRID_TYPE' が限定名で使用されます
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\minimap.cpp(76): warning C4482: 非標準の拡張機能が使用されています: enum '`anonymous-namespace'::GRID_TYPE' が限定名で使用されます
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\minimap.cpp(119): warning C4482: 非標準の拡張機能が使用されています: enum '`anonymous-namespace'::GRID_TYPE' が限定名で使用されます
+         LevelUp.cpp
+         ItemDescriptionFrame.cpp
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\itemdescriptionframe.cpp(87): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
+     1>c:\users\40029\documents\roguelikeproject\rougelike\dx9game\itemdescriptionframe.cpp(89): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
+         ItemCommandWindow.cpp
+         ItemCommandCursor.cpp
+         HierarchieNum.cpp
+         GameClearScene.cpp
+         GameClear.cpp
+         Fade.cpp
+         EquipmentWindowCursor.cpp
+         EquipmentWindow.cpp
+         EquipmentCommandWindow.cpp
+         コードを生成中...
+         コンパイル中...
+         EquipmentCommandCursor.cpp
+         EffectObj.cpp
+         EditTexture.cpp
+         Camera.cpp
+         C3DObj.cpp
+         C2DTexture.cpp
+         Battle.cpp
+         2DWindow.cpp
+         コードを生成中...
        ManifestResourceCompile:
-         すべての出力が最新のものです。
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"Debug\DX9Game.exe.embed.manifest.res" Debug\DX9Game_manifest.rc 
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\40029\Documents\RoguelikeProject\RougeLike\Debug\DX9Game.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\DX9Game.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\40029\Documents\RoguelikeProject\RougeLike\Debug\DX9Game.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\40029\Documents\RoguelikeProject\RougeLike\Debug\DX9Game.lib" /MACHINE:X86 Debug\DX9Game.exe.embed.manifest.res
          Debug\2DWindow.obj
@@ -14,6 +132,7 @@
          Debug\C2DTexture.obj
          Debug\C3DObj.obj
          Debug\Camera.obj
+         Debug\EditTexture.obj
          Debug\EffectObj.obj
          Debug\EquipmentCommandCursor.obj
          Debug\EquipmentCommandWindow.obj
@@ -75,17 +194,87 @@
          Debug\Unit.obj
          Debug\Circle.obj
          Debug\Window.obj
+         Debug\WinMain.obj
        Manifest:
+         ファイル "Debug\DX9Game.exe.embed.manifest" を削除しています。
          C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"Debug\DX9Game.exe.embed.manifest" /manifest Debug\DX9Game.exe.intermediate.manifest
-         すべての出力が最新のものです。
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"Debug\DX9Game.exe.embed.manifest.res" Debug\DX9Game_manifest.rc 
        LinkEmbedManifest:
-         すべての出力が最新のものです。
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\40029\Documents\RoguelikeProject\RougeLike\Debug\DX9Game.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\DX9Game.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\40029\Documents\RoguelikeProject\RougeLike\Debug\DX9Game.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\40029\Documents\RoguelikeProject\RougeLike\Debug\DX9Game.lib" /MACHINE:X86 Debug\DX9Game.exe.embed.manifest.res
+         Debug\2DWindow.obj
+         Debug\Battle.obj
+         Debug\C2DTexture.obj
+         Debug\C3DObj.obj
+         Debug\Camera.obj
+         Debug\EditTexture.obj
+         Debug\EffectObj.obj
+         Debug\EquipmentCommandCursor.obj
+         Debug\EquipmentCommandWindow.obj
+         Debug\EquipmentWindow.obj
+         Debug\EquipmentWindowCursor.obj
+         Debug\Fade.obj
+         Debug\GameClear.obj
+         Debug\GameClearScene.obj
+         Debug\HierarchieNum.obj
+         Debug\ItemCommandCursor.obj
+         Debug\ItemCommandWindow.obj
+         Debug\ItemDescriptionFrame.obj
+         Debug\LevelUp.obj
+         Debug\MiniMap.obj
+         Debug\Operation.obj
+         Debug\Particle.obj
+         Debug\ResultScene.obj
+         Debug\DeleteObj.obj
+         Debug\Enemy.obj
+         Debug\EnemyGenerator.obj
+         Debug\FieldItem.obj
+         Debug\FieldObj.obj
+         Debug\FieldObjMaker.obj
+         Debug\GameState.obj
+         Debug\GameWnd.obj
+         Debug\Graphics.obj
+         Debug\HitObj.obj
+         Debug\Input.obj
+         Debug\ItemWindow.obj
+         Debug\ItemWindowCursor.obj
+         Debug\Item.obj
+         Debug\ItemGenerator.obj
+         Debug\Main.obj
+         Debug\MapData.obj
+         Debug\MenuSelect.obj
+         Debug\MenuWindow.obj
+         Debug\MenuWindow_Back.obj
+         Debug\Mesh.obj
+         Debug\MeshObj.obj
+         Debug\MessageWindow.obj
+         Debug\ModelManager.obj
+         Debug\Player.obj
+         Debug\PressSpace.obj
+         Debug\Result.obj
+         Debug\GameScene.obj
+         Debug\HPDraw.obj
+         Debug\Sky.obj
+         Debug\StatesCharacter.obj
+         Debug\StatesFont.obj
+         Debug\StatesValue.obj
+         Debug\StatesWindow.obj
+         Debug\TextureManager.obj
+         Debug\Title.obj
+         Debug\TitleScene.obj
+         Debug\Trick.obj
+         Debug\TrickWindow.obj
+         Debug\TrickWindowCursor.obj
+         Debug\Turn.obj
+         Debug\Unit.obj
+         Debug\Circle.obj
+         Debug\Window.obj
+         Debug\WinMain.obj
          DX9Game.vcxproj -> C:\Users\40029\Documents\RoguelikeProject\RougeLike\Debug\DX9Game.exe
        FinalizeBuildStatus:
          ファイル "Debug\DX9Game.unsuccessfulbuild" を削除しています。
          "Debug\DX9Game.lastbuildstate" のタッチ タスクを実行しています。
-     1>プロジェクト "C:\Users\40029\Documents\RoguelikeProject\RougeLike\DX9Game\DX9Game.vcxproj" (build ターゲット) のビルドが完了しました。
+     1>プロジェクト "C:\Users\40029\Documents\RoguelikeProject\RougeLike\DX9Game\DX9Game.vcxproj" (rebuild ターゲット) のビルドが完了しました。
 
 ビルドに成功しました。
 
-経過時間 00:00:01.04
+経過時間 00:00:37.91

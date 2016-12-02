@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -14,16 +14,19 @@
     <ProjectGuid>{0120CA36-D058-4381-B4DD-EA54A9A103F2}</ProjectGuid>
     <RootNamespace>DX9Game</RootNamespace>
     <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -101,6 +104,7 @@
     <ClCompile Include="C2DTexture.cpp" />
     <ClCompile Include="C3DObj.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="EditTexture.cpp" />
     <ClCompile Include="EffectObj.cpp" />
     <ClCompile Include="EquipmentCommandCursor.cpp" />
     <ClCompile Include="EquipmentCommandWindow.cpp" />
@@ -162,6 +166,7 @@
     <ClCompile Include="Unit.cpp" />
     <ClCompile Include="Circle.cpp" />
     <ClCompile Include="Window.cpp" />
+    <ClCompile Include="WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2DWindow.h" />
@@ -169,6 +174,7 @@
     <ClInclude Include="C2DTexture.h" />
     <ClInclude Include="C3DObj.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="EditTexture.h" />
     <ClInclude Include="EffectObj.h" />
     <ClInclude Include="EquipmentCommandCursor.h" />
     <ClInclude Include="EquipmentCommandWindow.h" />

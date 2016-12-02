@@ -1,35 +1,104 @@
+#include <Windows.h>
 #include "MiniMap.h"
 #include "TextureManager.h"
+#include "EditTexture.h"
+#include "MapData.h"
+
+namespace
+{
+	enum GRID_TYPE
+	{
+		TYPE_PLAYER = 0,
+		TYPE_ENEMY,
+		TYPE_ITEM,
+		TYPE_FLOOR,
+		TYPE_STAIRS,
+		TYPE_WALL,
+		TYPE_LINE,
+		TYPE_SENTINEL,
+	};
+}
+
+static DWORD GRID_COLOR[TYPE_SENTINEL] = {
+	D3DCOLOR_RGBA(  0,  0,255,CMiniMap::MINIMAP_ALPHA),	// PLAYER
+	D3DCOLOR_RGBA(255,  0,  0,CMiniMap::MINIMAP_ALPHA),	// ENEMY
+	D3DCOLOR_RGBA(255,255,  0,CMiniMap::MINIMAP_ALPHA),	// ITEM
+	D3DCOLOR_RGBA(255,255,255,CMiniMap::MINIMAP_ALPHA),	// FLOOR
+	D3DCOLOR_RGBA(  0,255,  0,CMiniMap::MINIMAP_ALPHA),	// STAIRS
+	D3DCOLOR_RGBA(  0,  0,  0,CMiniMap::MINIMAP_ALPHA),	// WALL
+	D3DCOLOR_RGBA(  0,  0,  0,CMiniMap::MINIMAP_ALPHA),	// LINE
+
+};
+
+static void WriteGridForTexture(int x, int y, DWORD col, CEditTexture* pTex)
+{
+	const int _x = x * CMiniMap::GRID_SIZE + x * CMiniMap::LINE_SPACE;
+	const int _y = y * CMiniMap::GRID_SIZE + y * CMiniMap::LINE_SPACE;
+	pTex->FillColor(_x,_y,CMiniMap::GRID_SIZE,CMiniMap::GRID_SIZE,col);
+}
+
+static GRID_TYPE GetUnitType(const Map& map_data)
+{
+	if (map_data.m_unit == OBJ_NUM_PLAYER)
+		return GRID_TYPE::TYPE_PLAYER;
+	return GRID_TYPE::TYPE_ENEMY;
+}
+
+static GRID_TYPE GetTerrainType(const Map& map_data)
+{
+	switch (map_data.m_terrain)
+	{
+	case Situation::FLOOR:
+		if (map_data.m_isDark == FALSE) return GRID_TYPE::TYPE_WALL;
+		return GRID_TYPE::TYPE_FLOOR;
+	case Situation::STAIRS:
+		return GRID_TYPE::TYPE_STAIRS;
+	default:
+		return GRID_TYPE::TYPE_WALL;
+	}
+}
+
+static bool IsUnitExist(const Map& map_data)
+{
+	return map_data.m_unit >= 1 ? true : false;
+}
+
+static bool IsItemIExit(const Map& map_data)
+{
+	return map_data.m_item >= 1 ? true : false;
+}
+
+static GRID_TYPE GetGridTypeByMapData(const Map& map_data)
+{
+	if (IsUnitExist(map_data)) 
+		return GetUnitType(map_data);
+	else if (IsItemIExit(map_data)) 
+		return GRID_TYPE::TYPE_ITEM;
+	return GetTerrainType(map_data);
+}
+
+static DWORD GetGridColorByMapData(const Map& map_data)
+{
+	return GRID_COLOR[GetGridTypeByMapData(map_data)];
+}
+
+static void WriteGrid(int x, int y, CEditTexture* pMiniMap)
+{
+	const DWORD col = GetGridColorByMapData(CMapData::Get_MapData(x,y));
+	WriteGridForTexture(x,y,col, pMiniMap);
+}
 
 
-C2DTexture	CMiniMap::m_MapPolygon[MAP_SIZE][MAP_SIZE];	//マップデータを格納する
-bool		CMiniMap::m_DrawFlg[MAP_SIZE][MAP_SIZE];		//マップデータの描画フラグを立てる
 //---------------------------------------------------------------------------------------
 //コンストラクタ
 //---------------------------------------------------------------------------------------
 CMiniMap::CMiniMap(void)
+	: m_pEditTexture(NULL)
 {
-	//全ての描画フラグを初期化する
-	for(int i = 0;i < MAP_SIZE;i++)
-	{
-		for(int j = 0;j < MAP_SIZE;j++)
-		{
-			m_DrawFlg[i][j] = false;
-		}
-	}
-
-	//全てのマップデータを設定
-	for(int i = 0;i < MAP_SIZE;i++)
-	{
-		for(int j = 0;j < MAP_SIZE;j++)
-		{
-			//位置情報の設定
-			m_MapPolygon[i][j].SetPos(SCREEN_WIDTH - 215.0f + i * POLYGON_SIZE + POLYGON_HALF_SIZE, 50 + j * POLYGON_SIZE + POLYGON_HALF_SIZE,POLYGON_SIZE,POLYGON_SIZE);
-
-			//アルファ値を設定する
-			m_MapPolygon[i][j].SetAlpha(255 * 0.9);
-		}
-	}
+	m_pEditTexture = new CEditTexture(POLYGON_WIDTH,POLYGON_HEIGHT,CGraphics::GetDevice());
+	//
+	m_pEditTexture->FillColor(D3DCOLOR_RGBA(0,0,0,0));	
+	SetPosLeftUpOrigin(POLYGON_ORIGIN_X,POLYGON_ORIGIN_Y,POLYGON_WIDTH,POLYGON_HEIGHT);
 }
 
 
@@ -38,157 +107,49 @@ CMiniMap::CMiniMap(void)
 //---------------------------------------------------------------------------------------
 CMiniMap::~CMiniMap(void)
 {
+	delete m_pEditTexture;
 }
 
-
 //---------------------------------------------------------------------------------------
-//初期化
+//更新
 //---------------------------------------------------------------------------------------
-void CMiniMap::Init(void)
+void CMiniMap::Update()
 {
-	//全ての描画フラグを初期化する
-	for(int i = 0;i < MAP_SIZE;i++)
-	{
-		for(int j = 0;j < MAP_SIZE;j++)
-		{
-			m_DrawFlg[i][j] = false;
-			m_DrawFlg[i][j] = true;
-		}
-	}
-
-	//全てのマップデータを設定
-	for(int i = 0;i < MAP_SIZE;i++)
-	{
-		//地形確認
-		for(int j = 0;j < MAP_SIZE;j++)
-		{
-			int k = 0;
-			switch(CMapData::Get_TerrainMapSituation(i,j))
-			{
-			case STAIRS:
-				k = TEXTURE_PURPLE_TEXTURE;
-				break;
-			case FLOOR:
-				k = TEXTURE_FLOOR;
-				break;
-			default:
-				k = TEXTURE_WALL;
-				break;
-			}
-			//使用テクスチャの設定
-			m_MapPolygon[i][j].SetTextureID(k);
-		}
-	}
+	// ミニマップのクリア
+	m_pEditTexture->FillColor(GRID_COLOR[GRID_TYPE::TYPE_LINE]);
+	// 各グリッドの更新
+	for (int y = 0; y < MAP_SIZE; ++y)
+		for (int x = 0; x < MAP_SIZE; ++x)
+			WriteGrid(x,y,m_pEditTexture);
 }
-//---------------------------------------------------------------------------------------
-//終了処理
-//---------------------------------------------------------------------------------------
-void CMiniMap::Fin(void)
-{
-}
-
-//---------------------------------------------------------------------------------------
-//ミニマップ上の指定された位置にアイコンを設置する
-//---------------------------------------------------------------------------------------
-void CMiniMap::SetIcon(int nX,int nY,int nNumber)
-{
-	m_MapPolygon[nX][nY].SetTextureID(nNumber);
-}
-
-//---------------------------------------------------------------------------------------
-//指定したミニマップのデータをもとに戻す
-//---------------------------------------------------------------------------------------
-void CMiniMap::MiniMapBack(int nX,int nZ)
-{
-	//地形のマップデータを取得
-	int TerrainMapData = CMapData::Get_TerrainMapSituation(nX,nZ);
-	//アイテムのデータを取得
-	int ItemMapData = CMapData::Get_ItemMapSituation(nX,nZ);
-	//ユニットのデータを取得
-	int UnitMapData = CMapData::Get_UnitMapSituation(nX,nZ);
-
-	int TextureNumber = 0;
-	switch(TerrainMapData)
-	{
-	case STAIRS:
-		TextureNumber = TEXTURE_PURPLE_TEXTURE;
-		break;
-	case FLOOR:
-		TextureNumber = TEXTURE_FLOOR;
-		break;
-	default:
-		TextureNumber = TEXTURE_WALL;
-		break;
-	};
-	
-	if(ItemMapData)
-		TextureNumber = TEXTURE_ORANGE_TEXTURE;
-	if(UnitMapData >= OBJ_NUM_ENEMY)
-		TextureNumber = TEXTURE_RED_TEXTURE;
-	if(UnitMapData == OBJ_NUM_PLAYER)
-		TextureNumber = TEXTURE_BLUE_TEXTURE;
-	//使用テクスチャの設定
-	m_MapPolygon[nX][nZ].SetTextureID(TextureNumber);
-}
-
-//---------------------------------------------------------------------------------------
-//ミニマップ上の指定された位置を地形情報にする
-//---------------------------------------------------------------------------------------
-void CMiniMap::Delete(int nX,int nY)
-{
-
-	int nTextureNumber = 0;
-	switch(CMapData::Get_TerrainMapSituation(nX,nY))
-	{
-	case STAIRS:
-		nTextureNumber = TEXTURE_RED_TEXTURE;
-		break;
-	case FLOOR:
-		nTextureNumber = TEXTURE_FLOOR;
-		break;
-	default:
-		nTextureNumber = TEXTURE_WALL;
-		break;
-	}
-	//使用テクスチャの設定
-	m_MapPolygon[nX][nY].SetTextureID(nTextureNumber);
-}
-
-
 
 //---------------------------------------------------------------------------------------
 //描画
 //---------------------------------------------------------------------------------------
 void CMiniMap::Draw()
 {
-	//全てのポリゴンに対し処理を行う
-	for(int i = 0;i < MAP_SIZE;i++)
-	{
-		for(int j = 0;j < MAP_SIZE; j++)
-		{
-			//描画フラグが立っていた場合、描画を行う
-			if(m_DrawFlg[i][j])
-				m_MapPolygon[i][j].Draw();
-		}
-	}
-}
-//---------------------------------------------------------------------------------------
-//更新処理
-//---------------------------------------------------------------------------------------
-void CMiniMap::Update(void)
-{
-}
-//---------------------------------------------------------------------------------------
-//指定された位置の描画フラグを立てる
-//---------------------------------------------------------------------------------------
-void CMiniMap::DrawFlgUp (int nX,int nZ)
-{
-	m_DrawFlg[nX][nZ] = true;
-}
-//---------------------------------------------------------------------------------------
-//指定された位置の描画フラグを返す
-//---------------------------------------------------------------------------------------
-bool CMiniMap::GetDrawFlg(int nX,int nZ)
-{
-	return m_DrawFlg[nX][nZ];
+	//デバイス取得
+	LPDIRECT3DDEVICE9 pDevice = CGraphics::GetDevice();
+
+	//αブレンディングを行う
+	pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	// 透過処理を行う
+	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+	//頂点フォーマットの設定
+	pDevice ->SetFVF(FVF_VERTEX_2D);
+
+	//テクスチャのセット
+	pDevice ->SetTexture(0,*m_pEditTexture);
+
+	
+	//ポリゴンの描画
+	pDevice -> DrawPrimitiveUP(
+		D3DPT_TRIANGLESTRIP,          //プリミティブの種類List（三角形描く）Strip(つなげて作る)
+		NUM_POLYGON,                 //ポリゴン数
+		m_aVertex,            //配列の先頭アドレス
+		sizeof(VERTEX_2D)            //データの大きさ
+		);
+
+
 }

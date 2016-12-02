@@ -31,11 +31,15 @@ bool	CPlayer::m_bState_Change_Flg = false;;	//外部からのステート変更がかかったか
 #define SPEED 0.0f
 
 using namespace std;
+
+#define DEBUG_MODE	(0)
+
 //---------------------------------------------------------------------------------------
 //コンストラクタ
 //---------------------------------------------------------------------------------------
 CPlayer::CPlayer(CGameScene* pScene):
-CUnit(pScene)
+CUnit(pScene),
+m_nEquipmentInterval(0)
 {
 	//オブジェクトのIDを設定
 	m_uID = ID_PLAYER;
@@ -461,25 +465,22 @@ void CPlayer::InputUpdate()
 						//マーキング消去
 						CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 
-						//ミニマップ上の位置情報を削除
-						CMiniMap::Delete(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-
 						//目的地に到達していない
 						m_bDestination = false;
 						m_fTimer = 0.0f;
-
-						//ミニマップの状態をもとに戻す
-						CMiniMap::MiniMapBack(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 						
 						//移動先を本来の位置に設定
 						m_nUnit_Pos_X = PosX;
 						m_nUnit_Pos_Z = PosZ;
 
+						//可視化
+						CMapData::SetVisibleProcess(PosX,PosZ);
+
+
+						CMapData::SetDark(PosX,PosZ,TRUE);
+
 						//マーキング
 						CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
-
-						//ミニマップ上に位置情報をセット
-						CMiniMap::SetIcon(m_nUnit_Pos_X,m_nUnit_Pos_Z,TEXTURE_BLUE_TEXTURE);
 
 						//入力待ちに存在するユニットの数-1
 						CTurn::SumCount(m_nStateNumber);
@@ -872,9 +873,6 @@ void CPlayer::SetPos()
 	//マーキング
 	CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
 
-	//ミニマップ上に自身の位置を設定
-	CMiniMap::SetIcon(m_nUnit_Pos_X,m_nUnit_Pos_Z,TEXTURE_BLUE_TEXTURE);
-
 	//移動ステートに存在するユニットの数-1
 	CTurn::SumCount(m_nStateNumber);
 	
@@ -892,6 +890,9 @@ void CPlayer::SetPos()
 
 	//入力時間初期化
 	m_fTimer = 0.0f;
+	
+	// 可視化
+	CMapData::SetVisibleProcess(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 
 	//目的地に到達している
 	m_bDestination = true;

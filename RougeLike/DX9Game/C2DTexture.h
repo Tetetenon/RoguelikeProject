@@ -17,6 +17,7 @@ public:
 	void SetVertex();							//ポリゴン情報を設定する
 
 	void SetPos(float fPosX,float fPosY,float fHalfSizeX,float fHalfSizeY);	//ポリゴンの位置情報を設定する
+	void SetPosLeftUpOrigin(float fPosX, float fPosY, float fWidth, float fHeight);
 	void SetTextureID(int nID)	{m_nTextureID = nID;}				//テクスチャIDを設定する
 	void SetAlpha(int nAlpha);												//ポリゴンのアルファ値を設定する
 };
