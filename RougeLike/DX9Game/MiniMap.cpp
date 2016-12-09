@@ -39,6 +39,7 @@ static void WriteGridForTexture(int x, int y, DWORD col, CEditTexture* pTex)
 
 static GRID_TYPE GetUnitType(const Map& map_data)
 {
+	if (map_data.m_isVisible == FALSE) return GRID_TYPE::TYPE_WALL;
 	if (map_data.m_unit == OBJ_NUM_PLAYER)
 		return GRID_TYPE::TYPE_PLAYER;
 	return GRID_TYPE::TYPE_ENEMY;
@@ -49,13 +50,19 @@ static GRID_TYPE GetTerrainType(const Map& map_data)
 	switch (map_data.m_terrain)
 	{
 	case Situation::FLOOR:
-		if (map_data.m_isDark == FALSE) return GRID_TYPE::TYPE_WALL;
+		if (map_data.m_isVisible == FALSE) return GRID_TYPE::TYPE_WALL;
 		return GRID_TYPE::TYPE_FLOOR;
 	case Situation::STAIRS:
 		return GRID_TYPE::TYPE_STAIRS;
 	default:
 		return GRID_TYPE::TYPE_WALL;
 	}
+}
+
+static GRID_TYPE GetItemType(const Map& map_data)
+{
+	if (map_data.m_isVisible == FALSE) return GRID_TYPE::TYPE_WALL;
+	return  GRID_TYPE::TYPE_ITEM;
 }
 
 static bool IsUnitExist(const Map& map_data)
@@ -73,7 +80,7 @@ static GRID_TYPE GetGridTypeByMapData(const Map& map_data)
 	if (IsUnitExist(map_data)) 
 		return GetUnitType(map_data);
 	else if (IsItemIExit(map_data)) 
-		return GRID_TYPE::TYPE_ITEM;
+		return GetItemType(map_data);
 	return GetTerrainType(map_data);
 }
 

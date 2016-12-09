@@ -38,7 +38,7 @@ struct Map
 	Situation m_terrain;
 	int m_item;
 	ObjectNumber m_unit;
-	int m_isDark;
+	int m_isVisible;
 	int m_roomnumber;
 };
 

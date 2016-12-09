@@ -417,49 +417,49 @@ void CUnit::AttackUpdate()
 		//現在の戦闘ステートを取得する
 		int nBattleState = CTurn::GetBattleState();
 
-	//現在の戦闘ステート状態によって、更新内容を分岐させる
-	switch(nBattleState)
-	{
-		//相手の方向に突撃する
-	case BATTLE_STATE_GO:
-		BattleGo();
-		break;
-		
-		//今の位置から本来の位置へと戻る
-	case BATTLE_STATE_RETURN:
-		BattleReturn();
-		break;
+		//現在の戦闘ステート状態によって、更新内容を分岐させる
+		switch(nBattleState)
+		{
+			//相手の方向に突撃する
+		case BATTLE_STATE_GO:
+			BattleGo();
+			break;
+			
+			//今の位置から本来の位置へと戻る
+		case BATTLE_STATE_RETURN:
+			BattleReturn();
+			break;
 
-		//相手の検索、ダメージの計算
-	case BATTLE_STATE_SEARCH:
-		AttackSwitch();
-		break;
+			//相手の検索、ダメージの計算
+		case BATTLE_STATE_SEARCH:
+			AttackSwitch();
+			break;
 
-		//相手に攻撃が当たった
-	case BATTLE_STATE_HIT:
-			BattleHit();
-		break;
-		
-		//ダメージ受けた表現を行う
-	case BATTLE_STATE_FLASHING:
-			BattleFlasing();
-		break;
-		
-		//メッセージウインドウにダメージ結果を送る
-	case BATTLE_STATE_WINDOW:
-			BattleWindow();
-		break;
+			//相手に攻撃が当たった
+		case BATTLE_STATE_HIT:
+				BattleHit();
+			break;
+			
+			//ダメージ受けた表現を行う
+		case BATTLE_STATE_FLASHING:
+				BattleFlasing();
+			break;
+			
+			//メッセージウインドウにダメージ結果を送る
+		case BATTLE_STATE_WINDOW:
+				BattleWindow();
+			break;
 
-		//算出されたダメージを実際に相手から減らす
-	case BATTLE_STATE_DAMAGE:
-			BattleDamage();
-		break;
+			//算出されたダメージを実際に相手から減らす
+		case BATTLE_STATE_DAMAGE:
+				BattleDamage();
+			break;
 
-		//戦闘終了、ステート関連の設定
-	case BATTLE_STATE_END:
-			BattleEnd();
-		break;
-	}
+			//戦闘終了、ステート関連の設定
+		case BATTLE_STATE_END:
+				BattleEnd();
+			break;
+		}
 	}
 }
 

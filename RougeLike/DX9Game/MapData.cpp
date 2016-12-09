@@ -75,7 +75,7 @@ CMapData::CMapData(void)
 		{
 			m_MapData[i][j].m_item = 0;
 			m_MapData[i][j].m_unit = (ObjectNumber)0;
-			m_MapData[i][j].m_isDark = FALSE;
+			m_MapData[i][j].m_isVisible = FALSE;
 	}
 			
 	}
@@ -378,7 +378,7 @@ void CMapData::SetDark(int PosX,int PosY, BOOL isDark)
 	if (PosX >= MAP_SIZE) return;
 	if (PosY < 0 ) return;
 	if (PosY >= MAP_SIZE) return;
-	m_MapData[PosY][PosX].m_isDark = isDark;
+	m_MapData[PosY][PosX].m_isVisible = isDark;
 }
 
 void CMapData::SetRoomVisible(int room)
@@ -407,7 +407,7 @@ void CMapData::SetVisibleProcess(int PosX, int PosY)
 	else
 	{ // 部屋
 		// 暗ければ全部照らす
-		if (node.m_isDark) return;
+		if (node.m_isVisible) return;
 		// 部屋全てを照らす
 		CMapData::SetRoomVisible(node.m_roomnumber);
 	}
@@ -446,7 +446,7 @@ void CMapData::AllInitMapData()
 			m_MapData[j][i].m_terrain = IN_THE_WALL;
 			m_MapData[j][i].m_item = 0;
 			m_MapData[j][i].m_unit = (ObjectNumber)0;
-			m_MapData[j][i].m_isDark = FALSE;
+			m_MapData[j][i].m_isVisible = FALSE;
 			m_MapData[j][i].m_roomnumber = 0;
 		}
 	}
@@ -788,6 +788,10 @@ void CMapData::MakeRoot()
 	
 				//通路のスタート位置を左の部屋の左側から設定
 				LeftRootStertPoint = rand()%(m_Room[j].top - m_Room[j].bottom) + m_Room[j].top;
+
+				//
+				// test
+				//
 
 				//右の部屋から境界線まで通路を作成
 				for(int k = m_Room[i].right;k <= nBorderLine;k++)

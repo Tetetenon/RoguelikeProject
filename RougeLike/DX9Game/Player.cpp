@@ -57,6 +57,9 @@ m_nEquipmentInterval(0)
 	D3DXCreateFont(pDevice,24,0,1,0,FALSE,SHIFTJIS_CHARSET,OUT_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH,NULL,&m_pFont);
 	//フォント描画位置を設定
 	SetFontPos();
+
+	//現在こうげき中のユニット番号初期化
+	m_nAttackNumber = 0;
 }
 
 //---------------------------------------------------------------------------------------
@@ -146,13 +149,14 @@ void CPlayer::Init()
 	ifs.close();
 
 	//-----ステータスの設定-----
-
 	//名前の設定
 	_stprintf(m_szName, _T("赤ずきん"));
 
 	//HPを設定
 	m_nMaxHP = PlayerData[STATES_MAX_HP];
 	m_nHP = PlayerData[STATES_HP];
+
+	m_nHP = 1;
 
 	//攻撃力を設定
 	m_nAttack = PlayerData[STATES_AT];

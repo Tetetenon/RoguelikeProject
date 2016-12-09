@@ -11,11 +11,11 @@ enum GameState
 
 	GAME_STATE_STAND_BY_PLAYER = 0,	//入力待ち(プレイヤー)
 	GAME_STATE_STAND_BY_OTHER,		//入力待ち
-	GAME_STATE_ITEM_USE,				//アイテム使用
-	GAME_STATE_MOVE,					//移動中
+	GAME_STATE_ITEM_USE,			//アイテム使用
+	GAME_STATE_MOVE,				//移動中
 	GAME_STATE_ACT,					//行動中
 	GAME_STATE_ATTACK,				//攻撃
-	GAME_STATE_TURN_END,				//何も行動しない
+	GAME_STATE_TURN_END,			//何も行動しない
 	GAME_STATE_MAX
 };
 
