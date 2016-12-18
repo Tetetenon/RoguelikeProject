@@ -535,6 +535,7 @@ void CMapData::DivideMap()
 
 	//３パターンの中から、ランダムに選択し、区画を分ける
 	m_nDividPattern = rand()%4;
+	m_nDividPattern = 2;
 
 	switch(m_nDividPattern)
 	{
@@ -667,7 +668,7 @@ void CMapData::MakeRoom()
 	int nMakeRoomPos_Y;
 
 	//作った部屋のかずだけ設定処理を行う
-	for(int i = 0;i <= m_CountMakeRoom;i++)
+	for(int i = 0;i < m_CountMakeRoom;i++)
 	{
 		//区画のサイズを計算する
 		nSectionSize_X = m_Section[i].right - m_Section[i].left;	//区画の横幅

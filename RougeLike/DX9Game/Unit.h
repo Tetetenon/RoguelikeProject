@@ -247,7 +247,6 @@ public:
 	void BattleFlasing();			//相手の描画を点滅させる
 	void BattleWindow();			//メッセージウインドウにメッセージを送る
 	void BattleDamage();			//相手に算出されたダメージを与える
-	void BattleDelete();			//HPが無くなったら、消滅エフェクトを出す
 	void BattleEnd();				//戦闘ステートが最後まで行ったので、バトルステート初期化、自身のターンステート更新
 	virtual void TurnEndUpdate();	//ターン終了更新
 
@@ -268,7 +267,6 @@ public:
 
 	int		GetNumber()						{return m_nUnitNumber;}				//ユニットの番号の取得
 	void	Delete();															//HPをチェックし削除を判定	
-	static void DeleteMakeCount();												//ユニット生成数をクリアする
 
 	//-----ステータスゲッター-----
 	//レベルを取得

@@ -264,6 +264,9 @@
     <Filter Include="システム\EditTexture">
       <UniqueIdentifier>{830cf07b-142d-44ae-87a7-97822560fda4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="3Dモデル\ユニット\UnitManager">
+      <UniqueIdentifier>{a372c8cf-38ac-4552-b4ee-760a3ea6bba8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameWnd.cpp">

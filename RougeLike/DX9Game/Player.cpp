@@ -156,7 +156,7 @@ void CPlayer::Init()
 	m_nMaxHP = PlayerData[STATES_MAX_HP];
 	m_nHP = PlayerData[STATES_HP];
 
-	m_nHP = 1;
+	//m_nHP = 1;
 
 	//UŒ‚—Í‚ğİ’è
 	m_nAttack = PlayerData[STATES_AT];

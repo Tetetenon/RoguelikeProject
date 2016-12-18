@@ -1,0 +1,119 @@
+﻿  2DWindow.cpp
+  Battle.cpp
+  C2DTexture.cpp
+  C3DObj.cpp
+  Camera.cpp
+  EditTexture.cpp
+  EffectObj.cpp
+  EquipmentCommandCursor.cpp
+  EquipmentCommandWindow.cpp
+  EquipmentWindow.cpp
+  EquipmentWindowCursor.cpp
+  Fade.cpp
+  GameClear.cpp
+  GameClearScene.cpp
+  HierarchieNum.cpp
+  ItemCommandCursor.cpp
+  ItemCommandWindow.cpp
+  ItemDescriptionFrame.cpp
+ItemDescriptionFrame.cpp(87): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
+ItemDescriptionFrame.cpp(89): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
+  LevelUp.cpp
+  MiniMap.cpp
+MiniMap.cpp(42): warning C4482: 非標準の拡張機能が使用されています: enum '`anonymous-namespace'::GRID_TYPE' が限定名で使用されます
+MiniMap.cpp(44): warning C4482: 非標準の拡張機能が使用されています: enum '`anonymous-namespace'::GRID_TYPE' が限定名で使用されます
+MiniMap.cpp(45): warning C4482: 非標準の拡張機能が使用されています: enum '`anonymous-namespace'::GRID_TYPE' が限定名で使用されます
+MiniMap.cpp(52): warning C4482: 非標準の拡張機能が使用されています: enum 'Situation' が限定名で使用されます
+MiniMap.cpp(53): warning C4482: 非標準の拡張機能が使用されています: enum '`anonymous-namespace'::GRID_TYPE' が限定名で使用されます
+MiniMap.cpp(54): warning C4482: 非標準の拡張機能が使用されています: enum '`anonymous-namespace'::GRID_TYPE' が限定名で使用されます
+MiniMap.cpp(55): warning C4482: 非標準の拡張機能が使用されています: enum 'Situation' が限定名で使用されます
+MiniMap.cpp(56): warning C4482: 非標準の拡張機能が使用されています: enum '`anonymous-namespace'::GRID_TYPE' が限定名で使用されます
+MiniMap.cpp(58): warning C4482: 非標準の拡張機能が使用されています: enum '`anonymous-namespace'::GRID_TYPE' が限定名で使用されます
+MiniMap.cpp(64): warning C4482: 非標準の拡張機能が使用されています: enum '`anonymous-namespace'::GRID_TYPE' が限定名で使用されます
+MiniMap.cpp(65): warning C4482: 非標準の拡張機能が使用されています: enum '`anonymous-namespace'::GRID_TYPE' が限定名で使用されます
+MiniMap.cpp(126): warning C4482: 非標準の拡張機能が使用されています: enum '`anonymous-namespace'::GRID_TYPE' が限定名で使用されます
+  コンパイル中...
+  Operation.cpp
+  Particle.cpp
+  ResultScene.cpp
+  DeleteObj.cpp
+  Enemy.cpp
+Enemy.cpp(97): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+Enemy.cpp(104): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+Enemy.cpp(111): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+Enemy.cpp(120): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+  EnemyGenerator.cpp
+  FieldItem.cpp
+FieldItem.cpp(133): warning C4244: '=' : 'int' から 'FLOAT' への変換です。データが失われる可能性があります。
+FieldItem.cpp(134): warning C4244: '=' : 'int' から 'FLOAT' への変換です。データが失われる可能性があります。
+  FieldObj.cpp
+  FieldObjMaker.cpp
+  GameState.cpp
+  GameWnd.cpp
+  Graphics.cpp
+  HitObj.cpp
+  Input.cpp
+  ItemWindow.cpp
+  ItemWindowCursor.cpp
+  Item.cpp
+  ItemGenerator.cpp
+  Main.cpp
+  MapData.cpp
+MapData.cpp(926): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
+MapData.cpp(927): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
+MapData.cpp(928): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
+MapData.cpp(929): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
+MapData.cpp(939): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+MapData.cpp(1050): warning C4244: '=' : 'int' から 'FLOAT' への変換です。データが失われる可能性があります。
+MapData.cpp(1051): warning C4244: '=' : 'int' から 'FLOAT' への変換です。データが失われる可能性があります。
+  コンパイル中...
+  MenuSelect.cpp
+  MenuWindow.cpp
+  MenuWindow_Back.cpp
+  Mesh.cpp
+  MeshObj.cpp
+  MessageWindow.cpp
+  ModelManager.cpp
+  Player.cpp
+Player.cpp(153): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+Player.cpp(261): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+Player.cpp(807): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+Player.cpp(819): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+Player.cpp(931): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+  PressSpace.cpp
+  Result.cpp
+  GameScene.cpp
+  HPDraw.cpp
+HPDraw.cpp(159): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+  Sky.cpp
+  StatesCharacter.cpp
+  StatesFont.cpp
+  StatesValue.cpp
+  StatesWindow.cpp
+  TextureManager.cpp
+  Title.cpp
+  TitleScene.cpp
+  コンパイル中...
+  Trick.cpp
+  TrickWindow.cpp
+  TrickWindowCursor.cpp
+  Turn.cpp
+  Unit.cpp
+  Circle.cpp
+  UnitManager.cpp
+  Window.cpp
+  WinMain.cpp
+  コード生成しています。
+  コード生成が終了しました。
+  DX9Game.vcxproj -> C:\Users\40029\Documents\RoguelikeProject\RougeLike\Release\DX9Game.exe
