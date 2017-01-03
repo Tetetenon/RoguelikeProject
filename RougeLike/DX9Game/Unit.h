@@ -113,7 +113,7 @@ class CUnit :
 	public CMeshObj
 {
 protected:
-
+	static int m_Debug;
 	//-----ユニットステータス-----
 	char					m_szName[5];					//名前
 	int						m_nID;							//ユニットの種類識別ID
@@ -128,12 +128,10 @@ protected:
 	int						m_nXp;							//倒して得られる経験値
 	int						m_nMoney;						//お金
 	int						m_nSatiety;						//満腹度
-
 	int						m_nTrickNumber;					//今から使用する技の番号
 
-	static int				m_nAttackNumber;				//攻撃を行っているユニットの番号
-
-	static bool				m_bMoveCanFlg;					//移動可能フラグ
+	bool					m_bTurn;						//自身のターン処理が1度でもされたか
+	bool					m_bTurnEndFlg;					//自身のターンが終了したか確認する
 
 	//レベルアップ時ステータス上昇値
 	int						m_nHPUpNum;						//レベルアップ時HP上昇値
@@ -148,10 +146,6 @@ protected:
 	bool					m_bDirectionFlg[MaxDirection];	//向くべき方向をフラグで管理する
 	D3DXVECTOR3				m_Angle;						//向く角度
 	float					m_fOldAngle;					//今の角度
-
-	//-----リスト構造用変数-----
-	CUnit*					m_pNextUnit;					//次のポインタ
-	CUnit*					m_pBackUnit;					//前のポインタ
 
 	CUnit*					m_pBattleUnit;					//戦闘を行う敵のポインタ
 	CUnit*					m_pBattleNext;					//戦闘をおこなうユニットの前のユニットを指す
@@ -189,12 +183,9 @@ public:
 	
 	virtual void Init();									//初期化
 	virtual void Fin();										//終了
-	virtual void Update();									//更新
+	void WaitUpdate();										//待機更新
+	void TurnUpdate();										//行動更新	
 	virtual void Draw();									//描画
-	
-	//-----他オブジェクトの探索-----
-	CUnit* FindUnit(UINT u_UnitID,CUnit* p = NULL);				//ユニットの探索
-	CFieldItem* ItemFind(UINT u_UnitID,CFieldItem* p = NULL);	//アイテムの探索
 
 	//ステート別更新
 	virtual void InputUpdate();		//入力更新
@@ -259,12 +250,6 @@ public:
 	//ターン初めの状態異常の処理を行う
 	void TurnStartStateProcessing();
 
-	//リスト構造関連
-	CUnit*  GetNextUnit ()					{return m_pNextUnit;}				//次のポインタの取得
-	void	SetNextUnit (CUnit *pNext)		{m_pNextUnit = pNext;}				//次のポインタの設定
-	CUnit*	GetBackUnit ()					{return m_pBackUnit;}				//前のポインタの取得
-	void	SetBackUnit (CUnit *pBack)		{m_pBackUnit = pBack;}				//前のポインタの設定
-
 	int		GetNumber()						{return m_nUnitNumber;}				//ユニットの番号の取得
 	void	Delete();															//HPをチェックし削除を判定	
 
@@ -294,6 +279,14 @@ public:
 	//足元のアイテムの確認
 	void ChackFeetItem();
 
-	//ユニット全ての行動可能フラグを変更する
-	static void ChangeMoveCanFlg(bool ChangeFlg);
+	//ユニットのターンステート情報の取得
+	int GetUnitTurnState();
+	//ユニットの処理状況の取得
+	bool GetUnitProc();
+
+	//自身のターンが終了したか確認する
+	bool GetTurnEndFlg() { return m_bTurnEndFlg; }
+	//ターン終了状態を変更する
+	void setTurnEndFlg(bool ChangeFlg) { m_bTurnEndFlg = ChangeFlg; }
+
 };

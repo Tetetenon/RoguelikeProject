@@ -3,9 +3,10 @@
 #include "define.h"
 #include "GameState.h"
 //親クラスはC3DObj
+#include"Unit.h"
 
 #include "Sky.h"
-
+#include"UnitManager.h"
 #include "Turn.h"
 
 #define CAMERA_POS_X 0.0f
@@ -26,6 +27,7 @@
 
 
 D3DXMATRIX CCamera::m_view;	//ビューマトリックス
+CCamera* CCamera::m_pCamera = NULL;
 
 //---------------------------------------------------------------------------------------
 //コンストラクタ
@@ -70,7 +72,38 @@ CCamera::CCamera(CGameScene* pScene):
 CCamera::~CCamera(void)
 {
 }
-
+//---------------------------------------------------------------------------------------
+//オブジェクトの作成
+//---------------------------------------------------------------------------------------
+void CCamera::Create(CGameScene* pScene)
+{
+	//ポインタの中身がなければ作成
+	if (!m_pCamera)
+	{
+		m_pCamera = new CCamera(pScene);
+	}
+}
+//---------------------------------------------------------------------------------------
+//オブジェクトの削除
+//---------------------------------------------------------------------------------------
+void CCamera::Delete()
+{
+	//NULLチェック
+	if (m_pCamera)
+	{
+		//削除
+		delete m_pCamera;
+		//中身をきれいにする
+		m_pCamera = NULL;
+	}
+}
+//---------------------------------------------------------------------------------------
+//オブジェクトのポインタを渡す
+//---------------------------------------------------------------------------------------
+CCamera* CCamera::GetPointer()
+{
+	return m_pCamera;
+}
 //---------------------------------------------------------------------------------------
 //初期化
 //---------------------------------------------------------------------------------------
@@ -81,11 +114,11 @@ void CCamera::Init ()
 	D3DXMatrixTranslation(&world,CAMERA_POS_X,CAMERA_POS_Y,CAMERA_POS_Z);
 	SetWorld(world);
 
-	//スカイドーム生成
-	m_pSky = (CSky*)Find(ID_SKY);
+	//スカイドーム取得
+	m_pSky = CSky::GetPointer();
 
 	//プレイヤーオブジェクトの探索、設定
-	m_pPlayer = (CPlayer*)Find(ID_PLAYER);
+	m_pPlayer = CUnitManager::Find(OBJ_NUM_PLAYER);
 }
 //---------------------------------------------------------------------------------------
 //更新
@@ -103,53 +136,53 @@ void CCamera::Update()
 //---------------------------------------------------------------------------------------
 void CCamera::PostUpdate()
 {
-	//戦闘時以外カメラ位置を更新
-	if(CTurn::GetState() != GAME_STATE_ATTACK)
+	//視野に基づいた左手座標系パースペクティブ射影行列の作成
+	D3DXMatrixPerspectiveFovLH(&m_proj,m_fFovy,m_fAspect,m_fZNear,m_fZFar);
+
+	if(m_pPlayer)
 	{
-		//視野に基づいた左手座標系パースペクティブ射影行列の作成
-		D3DXMatrixPerspectiveFovLH(&m_proj,m_fFovy,m_fAspect,m_fZNear,m_fZFar);
-
-		if(m_pPlayer)
+		D3DXVECTOR3 Pos = m_pPlayer ->GetPos();
+		if(m_bSwitch)
 		{
-			D3DXVECTOR3 Pos = m_pPlayer ->GetPos();
-			if(m_bSwitch)
-			{
-				m_pos = D3DXVECTOR3(CAMERA_POS_X,DEBUG_CAMERA_POS_Y,DEBUG_CAMERA_POS_Z);
+			m_pos = D3DXVECTOR3(CAMERA_POS_X,DEBUG_CAMERA_POS_Y,DEBUG_CAMERA_POS_Z);
 
-				D3DXVec3TransformCoord(&m_at,&D3DXVECTOR3(LOOK_POS_X,LOOK_POS_Y,LOOK_POS_Z),&m_pPlayer ->GetWorld());
-				
-				m_at.x = 0.0f;
-				m_at.y = 1.0f;
-				m_at.z = 0.0f;
-			}
-			else
-			{
-				m_pos = D3DXVECTOR3(Pos.x + CAMERA_POS_X,CAMERA_POS_Y,Pos.z  + CAMERA_POS_Z);
-
-				D3DXMATRIX PlayerWorld = m_pPlayer ->GetWorld();
-
-				D3DXVec3TransformCoord(&m_at,&D3DXVECTOR3(LOOK_POS_X,LOOK_POS_Y,LOOK_POS_Z),&PlayerWorld);
-				
-				m_at.x = PlayerWorld._41;
-				m_at.y = 1.0f;
-				m_at.z = PlayerWorld._43;
-			}
-
-			D3DXVec3TransformNormal(&m_Up,&D3DXVECTOR3(UP_DIR_X,UP_DIR_Y,UP_DIR_Z),&m_pPlayer ->GetWorld());
+			D3DXVec3TransformCoord(&m_at,&D3DXVECTOR3(LOOK_POS_X,LOOK_POS_Y,LOOK_POS_Z),&m_pPlayer ->GetWorld());
 			
-			m_Up.x = 0.0f;
-			m_Up.y = 1.0f;
-			m_Up.z = 0.0f;
-
-			D3DXMatrixLookAtLH(&m_view,&m_pos,&m_at,&m_Up);
-
-			SetPos(m_pos);
+			m_at.x = 0.0f;
+			m_at.y = 1.0f;
+			m_at.z = 0.0f;
 		}
 		else
 		{
-			//左手座標系ビュー行列の作成
-			D3DXMatrixLookAtLH(&m_view,&GetPos(),&(GetPos() + GetForward()),&GetUp());
+			//戦闘時以外カメラ位置を更新
+			if (m_pPlayer->GetUnitTurnState() != CTurn::GameState::GAME_STATE_ATTACK)
+			{
+					m_pos = D3DXVECTOR3(Pos.x + CAMERA_POS_X,CAMERA_POS_Y,Pos.z  + CAMERA_POS_Z);
+
+					D3DXMATRIX PlayerWorld = m_pPlayer ->GetWorld();
+
+					D3DXVec3TransformCoord(&m_at,&D3DXVECTOR3(LOOK_POS_X,LOOK_POS_Y,LOOK_POS_Z),&PlayerWorld);
+					
+					m_at.x = PlayerWorld._41;
+					m_at.y = 1.0f;
+					m_at.z = PlayerWorld._43;
+			}
 		}
+
+		D3DXVec3TransformNormal(&m_Up,&D3DXVECTOR3(UP_DIR_X,UP_DIR_Y,UP_DIR_Z),&m_pPlayer ->GetWorld());
+		
+		m_Up.x = 0.0f;
+		m_Up.y = 1.0f;
+		m_Up.z = 0.0f;
+
+		D3DXMatrixLookAtLH(&m_view,&m_pos,&m_at,&m_Up);
+
+		SetPos(m_pos);
+	}
+	else
+	{
+		//左手座標系ビュー行列の作成
+		D3DXMatrixLookAtLH(&m_view,&GetPos(),&(GetPos() + GetForward()),&GetUp());
 	}
 	
 	//スカイドームポインタNULLチェック
@@ -196,5 +229,5 @@ void CCamera::DrawAlpha()
 //---------------------------------------------------------------------------------------
 void CCamera::Fin()
 {
-
+	m_pSky = NULL;
 }

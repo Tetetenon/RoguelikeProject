@@ -1,24 +1,51 @@
-﻿  2DWindow.cpp
-  Battle.cpp
-  C2DTexture.cpp
+﻿  Battle.cpp
   C3DObj.cpp
   Camera.cpp
-  EditTexture.cpp
+Camera.cpp(140): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+  DeleteObj.cpp
   EffectObj.cpp
-  EquipmentCommandCursor.cpp
+  Enemy.cpp
+Enemy.cpp(36): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Enemy.cpp(86): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+Enemy.cpp(93): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+Enemy.cpp(100): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+Enemy.cpp(109): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+Enemy.cpp(120): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Enemy.cpp(295): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Enemy.cpp(460): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Enemy.cpp(495): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Enemy.cpp(557): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Enemy.cpp(578): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Enemy.cpp(591): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Enemy.cpp(640): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Enemy.cpp(672): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Enemy.cpp(818): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+  EnemyGenerator.cpp
+EnemyGenerator.cpp(51): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
   EquipmentCommandWindow.cpp
-  EquipmentWindow.cpp
-  EquipmentWindowCursor.cpp
-  Fade.cpp
-  GameClear.cpp
-  GameClearScene.cpp
+  FieldItem.cpp
+  FieldObj.cpp
+  FieldObjMaker.cpp
+  GameScene.cpp
+  GameWnd.cpp
   HierarchieNum.cpp
-  ItemCommandCursor.cpp
+  HitObj.cpp
   ItemCommandWindow.cpp
-  ItemDescriptionFrame.cpp
-ItemDescriptionFrame.cpp(87): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
-ItemDescriptionFrame.cpp(89): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
+ItemCommandWindow.cpp(99): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+  ItemGenerator.cpp
+  ItemManager.cpp
   LevelUp.cpp
+  Main.cpp
+  コンパイル中...
+  MapData.cpp
+MapData.cpp(942): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+  MapObjManager.cpp
+  MeshObj.cpp
   MiniMap.cpp
 MiniMap.cpp(42): warning C4482: 非標準の拡張機能が使用されています: enum '`anonymous-namespace'::GRID_TYPE' が限定名で使用されます
 MiniMap.cpp(44): warning C4482: 非標準の拡張機能が使用されています: enum '`anonymous-namespace'::GRID_TYPE' が限定名で使用されます
@@ -32,88 +59,69 @@ MiniMap.cpp(58): warning C4482: 非標準の拡張機能が使用されていま
 MiniMap.cpp(64): warning C4482: 非標準の拡張機能が使用されています: enum '`anonymous-namespace'::GRID_TYPE' が限定名で使用されます
 MiniMap.cpp(65): warning C4482: 非標準の拡張機能が使用されています: enum '`anonymous-namespace'::GRID_TYPE' が限定名で使用されます
 MiniMap.cpp(126): warning C4482: 非標準の拡張機能が使用されています: enum '`anonymous-namespace'::GRID_TYPE' が限定名で使用されます
-  コンパイル中...
-  Operation.cpp
   Particle.cpp
-  ResultScene.cpp
-  DeleteObj.cpp
-  Enemy.cpp
-Enemy.cpp(97): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-Enemy.cpp(104): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-Enemy.cpp(111): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-Enemy.cpp(120): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-  EnemyGenerator.cpp
-  FieldItem.cpp
-FieldItem.cpp(133): warning C4244: '=' : 'int' から 'FLOAT' への変換です。データが失われる可能性があります。
-FieldItem.cpp(134): warning C4244: '=' : 'int' から 'FLOAT' への変換です。データが失われる可能性があります。
-  FieldObj.cpp
-  FieldObjMaker.cpp
-  GameState.cpp
-  GameWnd.cpp
-  Graphics.cpp
-  HitObj.cpp
-  Input.cpp
-  ItemWindow.cpp
-  ItemWindowCursor.cpp
-  Item.cpp
-  ItemGenerator.cpp
-  Main.cpp
-  MapData.cpp
-MapData.cpp(926): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
-MapData.cpp(927): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
-MapData.cpp(928): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
-MapData.cpp(929): warning C4244: '=' : 'float' から 'LONG' への変換です。データが失われる可能性があります。
-MapData.cpp(939): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-MapData.cpp(1050): warning C4244: '=' : 'int' から 'FLOAT' への変換です。データが失われる可能性があります。
-MapData.cpp(1051): warning C4244: '=' : 'int' から 'FLOAT' への変換です。データが失われる可能性があります。
-  コンパイル中...
-  MenuSelect.cpp
-  MenuWindow.cpp
-  MenuWindow_Back.cpp
-  Mesh.cpp
-  MeshObj.cpp
-  MessageWindow.cpp
-  ModelManager.cpp
   Player.cpp
-Player.cpp(153): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Player.cpp(49): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Player.cpp(138): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
           C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-Player.cpp(261): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Player.cpp(179): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Player.cpp(252): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
           C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-Player.cpp(807): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Player.cpp(484): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Player.cpp(545): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Player.cpp(564): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Player.cpp(660): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Player.cpp(720): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Player.cpp(738): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Player.cpp(802): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
           C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-Player.cpp(819): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Player.cpp(814): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
           C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-Player.cpp(931): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
-  PressSpace.cpp
-  Result.cpp
-  GameScene.cpp
-  HPDraw.cpp
-HPDraw.cpp(159): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Player.cpp(836): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Player.cpp(879): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Player.cpp(926): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
           C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
   Sky.cpp
   StatesCharacter.cpp
-  StatesFont.cpp
-  StatesValue.cpp
-  StatesWindow.cpp
-  TextureManager.cpp
-  Title.cpp
-  TitleScene.cpp
-  コンパイル中...
-  Trick.cpp
   TrickWindow.cpp
-  TrickWindowCursor.cpp
-  Turn.cpp
+TrickWindow.cpp(103): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+TrickWindow.cpp(106): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
   Unit.cpp
-  Circle.cpp
+Unit.cpp(254): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Unit.cpp(259): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Unit.cpp(264): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Unit.cpp(269): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Unit.cpp(274): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Unit.cpp(279): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Unit.cpp(284): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Unit.cpp(388): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+Unit.cpp(393): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+Unit.cpp(398): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+Unit.cpp(403): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+Unit.cpp(408): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+Unit.cpp(413): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+Unit.cpp(418): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+Unit.cpp(423): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+Unit.cpp(607): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+Unit.cpp(681): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+Unit.cpp(730): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+Unit.cpp(1145): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+Unit.cpp(1159): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+Unit.cpp(1179): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+Unit.cpp(1193): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+Unit.cpp(1233): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+Unit.cpp(1247): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+Unit.cpp(1284): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+Unit.cpp(1298): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+Unit.cpp(1318): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+Unit.cpp(1391): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+Unit.cpp(1421): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+Unit.cpp(1557): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+Unit.cpp(1570): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Unit.cpp(1580): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+Unit.cpp(1725): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Unit.cpp(1744): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+Unit.cpp(1762): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
   UnitManager.cpp
-  Window.cpp
   WinMain.cpp
-  コード生成しています。
-  コード生成が終了しました。
-  DX9Game.vcxproj -> C:\Users\40029\Documents\RoguelikeProject\RougeLike\Release\DX9Game.exe
+WinMain.cpp(37): error C3861: '_CrtSetBreakAlloc': 識別子が見つかりませんでした

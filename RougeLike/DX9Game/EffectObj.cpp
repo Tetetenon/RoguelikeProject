@@ -1,7 +1,7 @@
 #include "EffectObj.h"
 #include "ModelManager.h"
 #include "GameScene.h"
-
+#include"EffectObjManager.h"
 
 //---------------------------------------------------------------------------------------
 //コンストラクタ
@@ -10,6 +10,14 @@ CEffectObj::CEffectObj(CGameScene *pScene):
 CMeshObj(pScene),
 m_nLifeTime(OBJ_LIFE)
 {
+	//自身の番号を設定
+	m_nEffectID = CEffectObjManager::GetEffectNumber();
+
+	//次のエフェクト番号の設定
+	CEffectObjManager::SetEffectNumber(m_nEffectID + 1);
+
+	//マネージャーに追加
+	CEffectObjManager::Add(m_nEffectID,this);
 }
 
 //---------------------------------------------------------------------------------------
@@ -27,15 +35,6 @@ void CEffectObj::Update()
 	//生存時間を減算
 	m_nLifeTime --;
 
-	//もし、生存時間が無くなれば、
-	if(m_nLifeTime <= 0)
-	{
-		//自身の削除
-		delete this;
-
-		return;
-	}
-
 	//親関数の更新
 	CMeshObj::Update();
 }
@@ -44,9 +43,6 @@ void CEffectObj::Update()
 //---------------------------------------------------------------------------------------
 void CEffectObj::Fin()
 {
-	//親の更新
+	//親の終了処理
 	CMeshObj::Fin();
-
-	//自身の削除
-	delete this;
 }

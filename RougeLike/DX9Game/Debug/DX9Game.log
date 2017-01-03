@@ -1,1 +1,99 @@
-﻿  DX9Game.vcxproj -> C:\Users\40029\Documents\RoguelikeProject\RougeLike\Debug\DX9Game.exe
+﻿  Unit.cpp
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(250): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(255): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(260): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(265): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(270): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(275): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(280): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(361): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(366): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(371): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(376): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(381): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(386): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(391): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(396): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(580): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(654): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(703): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(1118): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(1132): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(1152): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(1166): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(1206): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(1220): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(1257): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(1271): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(1291): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(1364): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(1394): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(1530): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(1543): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(1553): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::BattleState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(1698): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(1717): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\unit.cpp(1735): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+  GameScene.cpp
+  EffectObjManager.cpp
+  EffectObj.cpp
+  コードを生成中...
+  コンパイル中...
+  Player.cpp
+d:\desktop\rogue変更用\rougelike\dx9game\player.cpp(49): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\player.cpp(138): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+d:\desktop\rogue変更用\rougelike\dx9game\player.cpp(179): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\player.cpp(252): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+d:\desktop\rogue変更用\rougelike\dx9game\player.cpp(484): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\player.cpp(545): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\player.cpp(564): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\player.cpp(660): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\player.cpp(720): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\player.cpp(738): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\player.cpp(802): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+d:\desktop\rogue変更用\rougelike\dx9game\player.cpp(814): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+d:\desktop\rogue変更用\rougelike\dx9game\player.cpp(836): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\player.cpp(879): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\player.cpp(926): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+  MapData.cpp
+d:\desktop\rogue変更用\rougelike\dx9game\mapdata.cpp(942): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+  Main.cpp
+  HitObj.cpp
+  GameWnd.cpp
+  FieldObj.cpp
+  FieldItem.cpp
+  Enemy.cpp
+d:\desktop\rogue変更用\rougelike\dx9game\enemy.cpp(36): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\enemy.cpp(86): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+d:\desktop\rogue変更用\rougelike\dx9game\enemy.cpp(93): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+d:\desktop\rogue変更用\rougelike\dx9game\enemy.cpp(100): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+d:\desktop\rogue変更用\rougelike\dx9game\enemy.cpp(109): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : 'sprintf' の宣言を確認してください。
+d:\desktop\rogue変更用\rougelike\dx9game\enemy.cpp(120): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\enemy.cpp(295): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\enemy.cpp(328): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\enemy.cpp(471): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\enemy.cpp(506): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\enemy.cpp(568): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\enemy.cpp(589): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\enemy.cpp(602): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\enemy.cpp(651): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\enemy.cpp(683): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+d:\desktop\rogue変更用\rougelike\dx9game\enemy.cpp(829): warning C4482: 非標準の拡張機能が使用されています: enum 'CTurn::GameState' が限定名で使用されます
+  DeleteObj.cpp
+  C3DObj.cpp
+  コードを生成中...
+  スキップ中... (関連する変更は検出されませんでした)
+  UnitManager.cpp
+  MapObjManager.cpp
+  Camera.cpp
+  DX9Game.vcxproj -> D:\DeskTop\Rogue変更用\RougeLike\Debug\DX9Game.exe

@@ -23,6 +23,12 @@
 #include "Player.h"
 #include "GameState.h"
 
+#include"UnitManager.h"
+#include"ItemManager.h"
+#include"MapObjManager.h"
+#include"ParticleManager.h"
+#include"EffectObjManager.h"
+
 bool	CGameScene::m_MapMake = false;
 bool	CGameScene::m_OldMapMake = false;
 int		CGameScene::m_nPlayerLevel = 0;
@@ -34,10 +40,7 @@ int	CGameScene::m_nGameClaer = 0;	//ゲームをクリアできたか
 //---------------------------------------------------------------------------------------
 CGameScene::CGameScene():
 	m_pGraph(NULL),
-	m_pObj(NULL),
-	m_FPS(),
-	m_pUnit(NULL),
-	m_pItemDevice(NULL)
+	m_FPS()
 {
 	//デバッグ文字の初期化
 	m_szDebug[0] = _T('\0');
@@ -47,10 +50,22 @@ CGameScene::CGameScene():
 
 	srand((unsigned int)time(NULL));			//時間で乱数の初期化を行う
 
+
+	//シングルトンの作成
+	CCamera::Create(this);
+	CSky::Create(this);
+	CUnitManager::Create();
+	CItemManager::Create();
+	CMapObjManager::Create();
+	CParticleManager::Create();
+	CEffectObjManager::Create();
+
+	//シングルトンのポインタの取得
+	m_pCamera	= CCamera::GetPointer();			//カメラ
+	m_pSky		= CSky::GetPointer();				//スカイドーム
+
 	
 	//メンバクラスのコンストラクタを起動
-	m_pCamera			= new CCamera(this);			//カメラ
-	m_pPlayer			= new CPlayer(this);			//プレイヤー
 	m_pFieldObjMaker	= new CFieldObjMaker(this);		//フィールドオブジェクト
 
 	m_pFade				= new CFade();					//フェードアウト
@@ -59,12 +74,10 @@ CGameScene::CGameScene():
 	m_pHPDraw			= new CHPDraw();				//ステータスウインドウ
 
 	//アイテムウィンドウ
-	//m_pInventory		= new CInventory();				//インベントリ(アイテムウインドウ)
 	m_pInventoryCursor	= new CInventoryCursor();		//アイテムカーソル
 	m_pCommandWindow	= new CCommandWindow();			//コマンドウインドウ
 	m_pCommandCursor	= new CCommandCursor();			//コマンドカーソル
 	//装備ウィンドウ
-	//m_pEquipmentInventory = new CEquipmentInventory();	//装備アイテムウィンドウ
 	m_pEquipmentInventoryCursor = new CEquipmentInventoryCursor();	//装備ウィンドウカーソル
 	m_pEquipmentCommandWindow = new CEquipmentCommandWindow();	//装備コマンドウィンドウ
 	m_pEquipmentCommandCursor = new CEquipmentCommandCursor();	//装備コマンドカーソル
@@ -85,8 +98,6 @@ CGameScene::CGameScene():
 	m_pStatesCharacter	= new CStatesCharacter();		//キャラクターウィンドウ
 	m_pStatesFont		= new CStatesFont();			//ステータスフォント
 	m_pStatesValue		= new CStatesValue();			//ステータス数値
-	
-	m_pSky = new CSky(this);							//スカイドーム
 
 	m_pOperation = new COperation();					//操作説明
 
@@ -94,6 +105,8 @@ CGameScene::CGameScene():
 
 	m_pMiniMap = new CMiniMap();						//ミニマップ
 	m_pHierarchiNum = new CHierarchieNum();				//現在の階層数をフェードイン中に表示する
+
+	m_pPlayer			= new CPlayer(this);			//プレイヤー
 }
 
 //---------------------------------------------------------------------------------------
@@ -101,15 +114,19 @@ CGameScene::CGameScene():
 //---------------------------------------------------------------------------------------
 CGameScene::~CGameScene()
 {
+	//シングルトンの削除
+	CCamera::Delete();
+	CSky::Delete();
+	//シングルトンのポインタの中身をきれいに
+	m_pCamera	= NULL;			//カメラ
+	m_pSky		= NULL;			//スカイドーム
+
 	//メンバクラスのポインタを消去
-	delete m_pPlayer;			//プレイヤー
 	delete m_pEnemyGenerator;	//エネミージェネレーター
 
 	delete m_pFieldObjMaker;	//フィールドオブジェ生成
 
 	delete m_pFade;				//フェードアウト
-
-	delete m_pCamera;			//カメラ
 
 	delete m_pMessageWindow;	//メッセージウインドウ
 
@@ -122,7 +139,6 @@ CGameScene::~CGameScene()
 	delete m_pCommandCursor;	//コマンドカーソル破棄
 
 	//装備ウィンドウ
-	//delete m_pEquipmentInventory;	//装備ウィンドウ
 	delete m_pEquipmentInventoryCursor;	//装備ウィンドウカーソル
 	delete m_pEquipmentCommandWindow;	//装備コマンドウィンドウ
 	delete m_pEquipmentCommandCursor;	//装備コマンドカーソル
@@ -142,8 +158,6 @@ CGameScene::~CGameScene()
 	delete m_pStatesCharacter;	//キャラクターウィンドウ
 	delete m_pStatesFont;		//ステータス文字
 	delete m_pStatesValue;		//ステータス数値
-	
-	delete m_pSky;				//スカイドーム
 
 	delete m_pOperation;		//操作説明
 
@@ -153,6 +167,19 @@ CGameScene::~CGameScene()
 	delete m_pHierarchiNum;			//フェードイン中に表示する階層数
 
 	m_nGameClaer = 0;
+
+	//マネージャーの削除
+	CUnitManager::Destroy();
+	CItemManager::Delete();
+	CMapObjManager::Delete();
+	CParticleManager::Delete();
+	CEffectObjManager::Delete();
+
+	//プレイヤーのポインタを解放
+	if (m_pPlayer)
+	{
+		m_pPlayer = NULL;
+	}
 }
 
 //---------------------------------------------------------------------------------------
@@ -259,221 +286,6 @@ void CGameScene::Draw()
 	// デバッグ文字列描画
 	m_pGraph->DrawText(0, 0, m_szDebug);
 }
-
-//---------------------------------------------------------------------------------------
-//シーンにオブジェクトを追加
-//---------------------------------------------------------------------------------------
-void	CGameScene::Add(C3DObj* pObj)
-{
-	//すでにオブジェクトがセットされていればそのオブジェクトの次のポインタ位置に
-	//指定されたオブジェクトを追加する
-	if(m_pObj)
-	{
-		m_pObj ->SetBack(pObj);
-		pObj ->SetNext(m_pObj);
-	}
-	else
-	{
-		pObj ->SetNext(NULL);
-	}
-	m_pObj = pObj;
-	pObj ->SetBack(NULL);
-}
-//---------------------------------------------------------------------------------------
-//シーンからオブジェクトを削除
-//---------------------------------------------------------------------------------------
-void	CGameScene::Del(C3DObj* pObj)
-{
-	//データを退避
-	C3DObj * pBack = pObj ->GetBack();
-	C3DObj *pNext = pObj ->GetNext();
-
-	//後ろのポインタにデータがあればつなぎなおす
-	if(pBack)
-	{
-		pBack ->SetNext(pNext);
-	}
-	else
-	{
-		m_pObj = pNext;
-	}
-
-	//後ろのデータの前ポインタを設定しなおす
-	if(pNext)
-	{
-		pNext ->SetBack(pBack);
-	}
-}
-
-//---------------------------------------------------------------------------------------
-//オブジェクト探索
-//---------------------------------------------------------------------------------------
-C3DObj* CGameScene::Find(UINT uID,C3DObj *p)
-{
-	//(分岐条件)?真:偽
-	//渡されたオブジェクト情報に中身があればそのオブジェクトの次から走査する
-	//無ければ、オブジェクトの先頭から順次操作を行う
-	C3DObj* pObj = (p)? p->GetNext():m_pObj;
-
-	//リスト走査し、指定されたIDと一致するオブジェクトがリスト構造の終端まで走査した場合、
-	//処理を終了する
-	while(pObj)
-	{
-		if(uID && pObj ->GetID() == uID)
-		{
-			break;
-		}
-		pObj = pObj ->GetNext();
-	}
-
-	//走査の結果(一致したオブジェクトデータか存在しなかったNULL)を返す
-	return pObj;
-}
-
-//---------------------------------------------------------------------------------------
-//シーンにユニットを追加
-//---------------------------------------------------------------------------------------
-void	CGameScene::AddUnit(CUnit* pUnit)
-{
-	//すでにオブジェクトがセットされていればそのオブジェクトの次のポインタ位置に
-	//指定されたオブジェクトを追加する
-	if(m_pUnit)
-	{
-		m_pUnit ->SetBackUnit(pUnit);
-		pUnit ->SetNextUnit(m_pUnit);
-	}
-	else
-	{
-		pUnit ->SetNextUnit(NULL);
-	}
-	m_pUnit = pUnit;
-	pUnit ->SetBackUnit(NULL);
-}
-//---------------------------------------------------------------------------------------
-//シーンからユニットを削除
-//---------------------------------------------------------------------------------------
-void	CGameScene::DelUnit(CUnit* pUnit)
-{
-	//データを退避
-	CUnit *pBack = pUnit ->GetBackUnit();
-	CUnit *pNext = pUnit ->GetNextUnit();
-
-	//後ろのポインタにデータがあればつなぎなおす
-	if(pBack)
-	{
-		pBack ->SetNextUnit(pNext);
-	}
-	else
-	{
-		m_pUnit = pNext;
-	}
-
-	//後ろのデータの前ポインタを設定しなおす
-	if(pNext)
-	{
-		pNext ->SetBackUnit(pBack);
-	}
-}
-
-//---------------------------------------------------------------------------------------
-//ユニット探索
-//---------------------------------------------------------------------------------------
-CUnit* CGameScene::FindUnit(UINT uNumber,CUnit *p)
-{
-	//(分岐条件)?真:偽
-	//渡されたオブジェクト情報に中身があればそのオブジェクトの次から走査する
-	//無ければ、オブジェクトの先頭から順次操作を行う
-	CUnit* pObj = (p)? p->GetNextUnit():m_pUnit;
-
-	//リスト走査し、指定されたIDと一致するオブジェクトがリスト構造の終端まで走査した場合、
-	//処理を終了する
-	while(pObj)
-	{
-		if(uNumber && pObj ->GetNumber() == uNumber)
-		{
-			break;
-		}
-		pObj = pObj ->GetNextUnit();
-	}
-
-	//走査の結果(一致したオブジェクトデータか存在しなかったNULL)を返す
-	return pObj;
-}
-//---------------------------------------------------------------------------------------
-//シーンにアイテムを追加
-//---------------------------------------------------------------------------------------
-void	CGameScene::AddItem(CFieldItem* pItem)
-{
-	//すでにオブジェクトがセットされていればそのオブジェクトの次のポインタ位置に
-	//指定されたオブジェクトを追加する
-	if(m_pItemDevice)
-	{
-		m_pItemDevice ->SetBackFieldItem(pItem);
-		pItem ->SetNextFieldItem(m_pItemDevice);
-	}
-
-	else
-	{
-		pItem ->SetNextFieldItem(NULL);
-	}
-	m_pItemDevice = pItem;
-	pItem ->SetBackFieldItem(NULL);
-}
-//---------------------------------------------------------------------------------------
-//シーンからアイテム削除
-//---------------------------------------------------------------------------------------
-void	CGameScene::DelItem(CFieldItem* pItem)
-{
-	//データを退避
-	CFieldItem *pBack = pItem ->GetBackFieldItem();
-	CFieldItem *pNext = pItem ->GetNextFieldItem();
-
-	//後ろのポインタにデータがあればつなぎなおす
-	if(pBack)
-	{
-		pBack ->SetNextFieldItem(pNext);
-	}
-
-	else
-	{
-		m_pItemDevice = pNext;
-	}
-
-	//後ろのデータの前ポインタを設定しなおす
-	if(pNext)
-	{
-		pNext ->SetBackFieldItem(pBack);
-	}
-}
-
-//---------------------------------------------------------------------------------------
-//アイテム探索
-//---------------------------------------------------------------------------------------
-CFieldItem* CGameScene::FindItem(UINT uNumber,CFieldItem *p)
-{
-	//(分岐条件)?真:偽
-	//渡されたオブジェクト情報に中身があればそのオブジェクトの次から走査する
-	//無ければ、オブジェクトの先頭から順次操作を行う
-	CFieldItem* pObj = (p)? p->GetNextFieldItem():m_pItemDevice;
-
-	int nNumber;
-
-	//リスト走査し、指定されたIDと一致するオブジェクトがリスト構造の終端まで走査した場合、
-	//処理を終了する
-	while(pObj)
-	{
-		nNumber = pObj ->GetFieldID();
-		if(uNumber && nNumber == uNumber)
-		{
-			break;
-		}
-		pObj = pObj ->GetNextFieldItem();
-	}
-
-	//走査の結果(一致したオブジェクトデータか存在しなかったNULL)を返す
-	return pObj;
-}
-
 //---------------------------------------------------------------------------------------
 //全オブジェクト初期化
 //---------------------------------------------------------------------------------------
@@ -482,22 +294,22 @@ void CGameScene::InitObj()
 	//マップの初期化
 	m_pMap ->Init();
 
-	//リストでつなげられているすべてのオブジェクトデータの初期化
-	C3DObj* pObj = m_pObj;
-	for(;pObj;pObj = pObj ->GetNext())
-	{
-		pObj ->Init();
-	}
-	// 初期化後処理
-	for (pObj = m_pObj; pObj; pObj = pObj->GetNext()) {
-		pObj->PostInit();
-	}
+	//全てのオブジェクトの初期化
+	CItemManager::Init();		//アイテムマネージャーの管理オブジェクトの初期化
+	CUnitManager::Init();		//ユニットマネージャーの管理オブジェクトの初期化
+	CMapObjManager::Init();		//フィールドオブジェマネージャーの管理オブジェクトの初期化
+	CParticleManager::Init();	//パーティクルマネージャーの初期化
+	CEffectObjManager::Init();	//エフェクトマネージャーの初期化
+	//プレイヤーのポインタを取得する
+	CMapObjManager::PlayerSet();
+
+	//カメラの初期化
+	m_pCamera->Init();
+	//スカイドームの初期化
+	m_pSky->Init();
 
 	//この時点のプレイヤーのレベルを取得する
 	m_nPlayerLevel = m_pPlayer->GetLevel();
-
-	//エネミーのプレイヤーポインタの初期化
-	CEnemy::PlayerPointInit();
 
 	//メッセージウインドウの初期化
 	m_pMessageWindow ->Init();
@@ -545,7 +357,7 @@ void CGameScene::InitObj()
 	//フェードの状態をフェードインに設定
 	CFade::ChangeState(FADEMODE_IN);
 	//ユニットを一時行動不能状態に設定
-	CUnit::ChangeMoveCanFlg(false);
+	CUnitManager::ChangeMoveCanFlg(false);
 }
 //---------------------------------------------------------------------------------------
 //全オブジェクト破棄
@@ -553,13 +365,14 @@ void CGameScene::InitObj()
 void CGameScene::FinObj()
 {
 	//途中でリストが変わる可能性を考慮し、退避用ポインタを持つ
-	C3DObj* pObj = m_pObj;
-	C3DObj* pNext;
-	for(;pObj;pObj = pNext)
-	{
-		pNext = pObj ->GetNext();
-		pObj ->Fin();
-	}
+
+	//各マネージャーで管理するオブジェクトの終了処理を行う
+	CUnitManager::Fin();
+	CItemManager::Fin();
+	CMapObjManager::Fin();
+	CParticleManager::Fin();
+	CEffectObjManager::Fin();
+
 	//メッセージウインドウの終了処理
 	m_pMessageWindow ->Fin();
 
@@ -604,8 +417,16 @@ void CGameScene::UpdateObj()
 		//マップデータの再生成
 		CMapData::MapGeneration();
 
-		//フィールドオブジェクト削除フラグを下げる
-		CFieldObj::DeleteObjFlgDown();
+		//フィールドオブジェクト削除
+		CMapObjManager::Fin();
+		//エネミーオブジェクト削除
+		CUnitManager::EnemyDelete();
+		//アイテムオブジェクトの削除
+		CItemManager::Fin();
+		//パーティクルオブジェクトの削除
+		CParticleManager::Fin();
+		//エフェクトオブジェクトの削除
+		CEffectObjManager::Fin();
 		
 		//配列情報から、オブジェクトを置くべき位置にオブジェクトを設置
 		for(int i = 0;i < MAP_SIZE;i++)
@@ -633,17 +454,8 @@ void CGameScene::UpdateObj()
 		//プレイヤー位置再設定
 		m_pPlayer -> SetPos();
 
-		//この時点のプレイヤーのレベルを取得する
-		m_nPlayerLevel = m_pPlayer->GetLevel();
-
 		//マップ再生成フラグを倒す
 		m_MapMake = false;
-
-		//エネミーの削除フラグを倒す
-		CEnemy::CanGeneration();
-
-		//アイテムの削除フラグを倒す
-		CFieldItem::CleatePermit();
 
 		//初期配置エネミーの設定
 		m_pEnemyGenerator ->MakeEnemy();
@@ -656,28 +468,18 @@ void CGameScene::UpdateObj()
 	//マップ再生成フラグ状況を保存しておく
 	m_OldMapMake = m_MapMake;
 
-	//途中でリストが変わる可能性を考慮し、退避用ポインタを持つ
-	C3DObj* pObj = m_pObj;
-	C3DObj* pNext;
-	for(;pObj;pObj = pNext)
-	{
-		pNext = pObj ->GetNext();
-		pObj ->Update();
-	}
+	//各マネージャーの持つオブジェクトの更新
+	CUnitManager::Update();
+	CItemManager::Update();
+	CMapObjManager::Update();
+	CParticleManager::Update();
+	CEffectObjManager::Update();
 
-	//マップの再生成フラグが立っていたら処理する
-	if(m_MapMake && !m_OldMapMake)
-	{
-		//エネミーの削除フラグ立てる
-		CEnemy::DeleteEnemy();
+	//ジェネレーターの更新
+	m_pEnemyGenerator->Update();
+	m_pFieldGenerator->Update();
 
-		//フィールドアイテムの削除フラグ立てる
-		CFieldItem::DeleteAllItem();
-
-		//フィールドオブジェクト削除フラグを立てる
-		CFieldObj::DeleteObjFlgUp();
-	}
-
+	m_pCamera->Update();
 	m_pCamera -> PostUpdate();		//カメラ更新
 	m_pMessageWindow ->Update();	//メッセージウインドウ更新
 	m_pHPDraw ->Update();			//HP更新
@@ -766,7 +568,7 @@ void CGameScene::UpdateObj()
 			//フェード状態がフェードインの状態だった場合
 		case FADEMODE_IN:
 			//ユニットを一時行動不能状態に設定
-			CUnit::ChangeMoveCanFlg(true);
+			CUnitManager::ChangeMoveCanFlg(true);
 			break;
 			//フェード状態がフェードアウトだった場合
 		case FADEMODE_OUT:
@@ -805,12 +607,10 @@ void CGameScene::DrawObj()
 	m_pMap -> Draw();
 
 	//不透明描画
-	C3DObj* pObj = m_pObj;
-
-	for(;pObj;pObj = pObj->GetNext())
-	{
-		pObj ->Draw();
-	}
+	CMapObjManager::Draw(false);
+	CItemManager::Draw();
+	CUnitManager::Draw();
+	CEffectObjManager::Draw();
 	
 	pD ->SetRenderState(D3DRS_ALPHABLENDENABLE,TRUE);
 
@@ -822,11 +622,9 @@ void CGameScene::DrawObj()
 	pD ->SetRenderState(D3DRS_ZWRITEENABLE,FALSE);
 
 	//透明描画
-	pObj = m_pObj;
-	for(;pObj;pObj = pObj->GetNext())
-	{
-		pObj -> DrawAlpha();
-	}
+	//フィールド上のオブジェクトの半透明のオブジェクトのみ描画する
+	CMapObjManager::Draw(true);
+	CParticleManager::Draw();
 
 	pD ->SetRenderState(D3DRS_ALPHABLENDENABLE,FALSE);
 

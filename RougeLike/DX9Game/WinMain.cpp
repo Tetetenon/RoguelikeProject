@@ -12,7 +12,8 @@
 	#define _CRTDBG_MAP_ALLOC
 	#include <crtdbg.h>
 
-	#define new ::new(_NORMAL_BLOCK,__FILE__,__LINE__)
+	//#define new ::new(_NORMAL_BLOCK,__FILE__,__LINE__)
+	#define new new(_NORMAL_BLOCK,__FILE__,__LINE__)
 #endif
 
 //-------- ライブラリのリンク（こう記述しておけば別途リンク設定が不要となる）
@@ -31,8 +32,12 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPTSTR lpCmdLine,
 {
 #if _DEBUG
 	//メモリリークの検知
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+  ::_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF);
 #endif
+
+  _CrtSetBreakAlloc(8799);
+
 	return appWinMain(hInstance,hPrevInst,lpCmdLine,iCmdShow);
 }
 

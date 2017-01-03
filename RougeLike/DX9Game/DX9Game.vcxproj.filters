@@ -64,9 +64,6 @@
     <Filter Include="フィールド\MapData">
       <UniqueIdentifier>{32b3139a-d70a-4c95-bbc0-38771e76e97c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="システム\ModelManager">
-      <UniqueIdentifier>{493e30e8-5c27-471b-b443-eb8e6df85e25}</UniqueIdentifier>
-    </Filter>
     <Filter Include="UI関連\MessageWindow">
       <UniqueIdentifier>{52fbf56e-1fe6-4ea8-ab9d-90d3ce0f7920}</UniqueIdentifier>
     </Filter>
@@ -108,9 +105,6 @@
     </Filter>
     <Filter Include="システム\Structure">
       <UniqueIdentifier>{4e69db97-66b0-4e8b-ad1d-cb7819f095c1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="システム\TextureManager">
-      <UniqueIdentifier>{ec0ef751-212b-4993-b1d9-072d3507abf0}</UniqueIdentifier>
     </Filter>
     <Filter Include="システム\Window">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
@@ -264,8 +258,29 @@
     <Filter Include="システム\EditTexture">
       <UniqueIdentifier>{830cf07b-142d-44ae-87a7-97822560fda4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="3Dモデル\ユニット\UnitManager">
-      <UniqueIdentifier>{a372c8cf-38ac-4552-b4ee-760a3ea6bba8}</UniqueIdentifier>
+    <Filter Include="システム\マネージャー">
+      <UniqueIdentifier>{538adc35-1cb1-4d86-8703-c77ac059140d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\マネージャー\ModelManager">
+      <UniqueIdentifier>{493e30e8-5c27-471b-b443-eb8e6df85e25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\マネージャー\ParticleManager">
+      <UniqueIdentifier>{92046c81-d143-4fef-971b-4b7c3f761f43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\マネージャー\TextureManager">
+      <UniqueIdentifier>{ec0ef751-212b-4993-b1d9-072d3507abf0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\マネージャー\MapObjManager">
+      <UniqueIdentifier>{fc12eb19-4a9c-4201-bfb8-888cf3ab4250}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\マネージャー\ItemManager">
+      <UniqueIdentifier>{c63bc30a-3609-4a8e-950b-799382c1c4d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\マネージャー\UnitManager">
+      <UniqueIdentifier>{7b4fd615-6c46-4388-8ae3-a6423605c074}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="システム\マネージャー\HitObjManager">
+      <UniqueIdentifier>{1fc9d427-e18e-4cc1-a074-2648e17293ce}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -336,10 +351,10 @@
       <Filter>アイテム\ItemGenerator</Filter>
     </ClCompile>
     <ClCompile Include="ModelManager.cpp">
-      <Filter>システム\ModelManager</Filter>
+      <Filter>システム\マネージャー\ModelManager</Filter>
     </ClCompile>
     <ClCompile Include="TextureManager.cpp">
-      <Filter>システム\TextureManager</Filter>
+      <Filter>システム\マネージャー\TextureManager</Filter>
     </ClCompile>
     <ClCompile Include="GameState.cpp">
       <Filter>システム\GameState</Filter>
@@ -473,6 +488,21 @@
     <ClCompile Include="WinMain.cpp">
       <Filter>システム\Main</Filter>
     </ClCompile>
+    <ClCompile Include="UnitManager.cpp">
+      <Filter>システム\マネージャー\UnitManager</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemManager.cpp">
+      <Filter>システム\マネージャー\ItemManager</Filter>
+    </ClCompile>
+    <ClCompile Include="MapObjManager.cpp">
+      <Filter>システム\マネージャー\MapObjManager</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleManager.cpp">
+      <Filter>システム\マネージャー\ParticleManager</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectObjManager.cpp">
+      <Filter>システム\マネージャー\HitObjManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -542,10 +572,10 @@
       <Filter>アイテム\ItemGenerator</Filter>
     </ClInclude>
     <ClInclude Include="ModelManager.h">
-      <Filter>システム\ModelManager</Filter>
+      <Filter>システム\マネージャー\ModelManager</Filter>
     </ClInclude>
     <ClInclude Include="TextureManager.h">
-      <Filter>システム\TextureManager</Filter>
+      <Filter>システム\マネージャー\TextureManager</Filter>
     </ClInclude>
     <ClInclude Include="GameState.h">
       <Filter>システム\GameState</Filter>
@@ -682,8 +712,23 @@
     <ClInclude Include="EditTexture.h">
       <Filter>システム\EditTexture</Filter>
     </ClInclude>
+    <ClInclude Include="UnitManager.h">
+      <Filter>システム\マネージャー\UnitManager</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemManager.h">
+      <Filter>システム\マネージャー\ItemManager</Filter>
+    </ClInclude>
+    <ClInclude Include="MapObjManager.h">
+      <Filter>システム\マネージャー\MapObjManager</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleManager.h">
+      <Filter>システム\マネージャー\ParticleManager</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectObjManager.h">
+      <Filter>システム\マネージャー\HitObjManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram11.cd" />
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

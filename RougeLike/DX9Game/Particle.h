@@ -61,6 +61,8 @@ private:
 
 	float				m_fLifeTime;		//生存時間
 
+	int					m_nID;				//パーティクル一意の番号
+	bool				m_bDeleteFlg;		//削除フラグ
 	struct TGrain 
 	{
 		TGrain*		m_pBack;
@@ -112,4 +114,7 @@ public:
 	static void Generation(C3DObj* pGenetator,int Pattern);		//自身の生成
 
 	void SetParmData_Delete(D3DXMATRIX world);					//パラメーターデータを設定する（消滅）
+	
+	//削除フラグの状態を取得
+	bool GetDeleteFlg() { return m_bDeleteFlg; }
 };

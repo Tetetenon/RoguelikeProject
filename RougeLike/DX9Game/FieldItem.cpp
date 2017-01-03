@@ -5,10 +5,9 @@
 #include "ModelManager.h"
 #include "TextureManager.h"
 #include "MiniMap.h"
+#include"ItemManager.h"
 
-//静的メンバ定義
-int		CFieldItem::m_MakeItemNum = 1;
-bool	CFieldItem::m_Delete = false;
+int CFieldItem::n_Debug = 0;
 
 //---------------------------------------------------------------------------------------
 //コンストラクタ
@@ -21,14 +20,14 @@ CMeshObj(pScene)
 	//使用するモデルの番号
 	m_nMeshNumber = MODEL_TREASUREBOX;
 
-	//シーンのポインタを取得
-	m_pScene = pScene;
-
 	//リストの初期化
 	m_pNextFieldItem = m_pBackFieldItem = NULL;
 
-	//シーンにオブジェクトを追加する
-	m_pScene -> AddItem(this);
+	n_Debug++;
+	if (n_Debug == 1)
+	{
+		int a = 0;
+	}
 }
 
 
@@ -37,8 +36,11 @@ CMeshObj(pScene)
 //---------------------------------------------------------------------------------------
 CFieldItem::~CFieldItem(void)
 {
-	//シーン上から自身を削除する
-	m_pScene ->DelItem(this);
+	n_Debug--;
+	if (n_Debug == 0)
+	{
+		int a = 0;
+	}
 }
 
 //---------------------------------------------------------------------------------------
@@ -46,12 +48,8 @@ CFieldItem::~CFieldItem(void)
 //---------------------------------------------------------------------------------------
 void CFieldItem::Update		()
 {
-	//もし全アイテムデリートフラグが立っていたら削除を行う
-	if(m_Delete)
-		delete this;
-
 	if(!m_ItemDelete)
-		delete this;
+		Fin();
 }
 //---------------------------------------------------------------------------------------
 //描画処理
@@ -69,7 +67,6 @@ void CFieldItem::Draw	()
 void CFieldItem::Fin		()
 {
 	CMeshObj::Fin();
-	delete this;
 }
 //---------------------------------------------------------------------------------------
 //自身の削除
@@ -78,7 +75,8 @@ void CFieldItem::Delete		()
 {
 	m_ItemDelete = false;
 	CMeshObj::Fin();
-	delete this;
+	//マネージャー上から自身を削除する
+	CItemManager::Del(m_FieldID);
 }
 
 //---------------------------------------------------------------------------------------
@@ -94,10 +92,10 @@ void CFieldItem::Generation(CMeshObj *pGeneration)
 	CFieldItem* pFieldItem = new CFieldItem(pGeneration ->GetScene());
 
 	//アイテムの番号を設定する
-	pFieldItem ->m_FieldID = m_MakeItemNum;
+	pFieldItem ->m_FieldID = CItemManager::GetNextItemID();
 
 	//アイテムの生成カウントを加算
-	m_MakeItemNum ++;
+	CItemManager::NextItemID(pFieldItem->m_FieldID + 1);
 
 	//IDの設定
 	pFieldItem ->m_Item.SetID(1 + rand()%ITEM_SHIELD);
@@ -130,8 +128,8 @@ void CFieldItem::Generation(CMeshObj *pGeneration)
 	{
 
 		//アイテムの位置情報の再設定
-		pFieldItem ->m_Pos.x = (rand()%MAP_SIZE);
-		pFieldItem ->m_Pos.y = (rand()%MAP_SIZE);
+		pFieldItem ->m_Pos.x = (float)(rand()%MAP_SIZE);
+		pFieldItem ->m_Pos.y = (float)(rand()%MAP_SIZE);
 	}
 
 	//マップデータ上に自身の存在を設定
@@ -172,14 +170,7 @@ void CFieldItem::Generation(CMeshObj *pGeneration)
 
 	//アイテムサークルの位置を指定
 	pFieldItem ->m_Circle.SetPos(D3DXVECTOR3(world._41,world._42,world._43));
-}
-//---------------------------------------------------------------------------------------
-//全アイテムの削除フラグを立てる
-//---------------------------------------------------------------------------------------
-void	CFieldItem::DeleteAllItem()
-{
-	m_Delete = true;
 
-	//生成数を初期化
-	m_MakeItemNum = 0;
+	//マネージャーにオブジェクトを追加する
+	CItemManager::Add(pFieldItem->m_FieldID, pFieldItem);
 }

@@ -13,11 +13,14 @@ class CEffectObj :
 {
 protected:
 	int m_nLifeTime;	//生存時間
+	int m_nEffectID;	//オブジェクト固有の番号			
 public:
 	CEffectObj(CGameScene *pScene);				//コンストラクタ
 	~CEffectObj(void);								//デストラクタ
 
 	void Update();									//更新
 	void Fin();										//終了処理
+
+	int GetLifeTime() { return m_nLifeTime; }		//生存時間を返す
 };
 

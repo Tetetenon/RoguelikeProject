@@ -100,10 +100,10 @@ void CTrickWindow::UpDate()
 			CTurn::SumCount(CPlayer::GetState());
 
 			//技を使用
-			CPlayer::SetState(GAME_STATE_ATTACK);
+			CPlayer::SetState(CTurn::GameState::GAME_STATE_ATTACK);
 
 			//戦闘ステートに存在するユニットの数+1
-			CTurn::AddCount(GAME_STATE_ATTACK);
+			CTurn::AddCount(CTurn::GameState::GAME_STATE_ATTACK);
 			
 			//自身のフラグを倒す
 			m_bDrawFlg = false;

@@ -5,6 +5,8 @@
 
 #include "MessageWindow.h"
 
+#include"UnitManager.h"
+
 #include <stdlib.h>
 #include <tchar.h>
 
@@ -494,7 +496,7 @@ void CMapData::MapGeneration()
 	//フェードの状態をフェードインに設定
 	CFade::ChangeState(FADEMODE_IN);
 	//ユニットを一時行動不能状態に設定
-	CUnit::ChangeMoveCanFlg(false);
+	CUnitManager::ChangeMoveCanFlg(false);
 
 	// 一部分可視化
 	
@@ -924,10 +926,10 @@ RECT CMapData::GetRoomFloorPlan(int nRoomNumber)
 
 	//範囲外の数値が渡された
 	RECT ReturnNum;
-	ReturnNum.top		= 0.0f;
-	ReturnNum.bottom	= 0.0f;
-	ReturnNum.right		= 0.0f;
-	ReturnNum.left		= 0.0f;
+	ReturnNum.top		= (LONG)0.0f;
+	ReturnNum.bottom	= (LONG)0.0f;
+	ReturnNum.right		= (LONG)0.0f;
+	ReturnNum.left		= (LONG)0.0f;
 
 	return ReturnNum;
 }
@@ -1048,8 +1050,8 @@ void CMapData::SearchPosition(int SearchPosX,int SearchPosZ,int EnemyPosX,int En
 			continue;
 
 		//親の位置を自身に設定する
-		m_AStarData[ChildPosZ][ChildPosX].m_ParentPos.x = SearchPosX;
-		m_AStarData[ChildPosZ][ChildPosX].m_ParentPos.y = SearchPosZ;
+		m_AStarData[ChildPosZ][ChildPosX].m_ParentPos.x = (float)SearchPosX;
+		m_AStarData[ChildPosZ][ChildPosX].m_ParentPos.y = (float)SearchPosZ;
 
 		//スコアの計算を行う
 		ASarSetData(ChildPosX,ChildPosZ,EnemyPosX,EnemyPosZ,PlayerPosX,PlayerPosZ);
@@ -1086,7 +1088,6 @@ void CMapData::SearchPosition(int SearchPosX,int SearchPosZ,int EnemyPosX,int En
 			//最後まで到達したら、その後ろにデータを追加し、接合させる
 			BackAstarData ->NextData = NextAStarData;
 		}
-
 	}
 }
 //---------------------------------------------------------------------------------------

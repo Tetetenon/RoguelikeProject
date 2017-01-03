@@ -15,6 +15,7 @@
 #include "EquipmentWindowCursor.h"
 #include "TextureManager.h"
 #include "MiniMap.h"
+#include "UnitManager.h"
 
 CInventoryCursor	CPlayer::m_InventoryCursor;	//アイテムウインドウのカーソルの位置を特定する
 CCommandCursor		CPlayer::m_CommandCursor;	//コマンドカーソルの位置を特定する
@@ -45,7 +46,7 @@ m_nEquipmentInterval(0)
 	m_uID = ID_PLAYER;
 
 	//ユニットのステートを設定
-	m_nStateNumber = GAME_STATE_STAND_BY_PLAYER;
+	m_nStateNumber = CTurn::GameState::GAME_STATE_STAND_BY_PLAYER;
 
 	//使用するモデル番号を設定
 	m_nMeshNumber = MODEL_PLAYER;
@@ -58,27 +59,11 @@ m_nEquipmentInterval(0)
 	//フォント描画位置を設定
 	SetFontPos();
 
-	//現在こうげき中のユニット番号初期化
-	m_nAttackNumber = 0;
-}
-
-//---------------------------------------------------------------------------------------
-//デストラクタ
-//---------------------------------------------------------------------------------------
-CPlayer::~CPlayer(void)
-{
-}
-
-//---------------------------------------------------------------------------------------
-//初期化
-//---------------------------------------------------------------------------------------
-void CPlayer::Init()
-{
 	//ユニットの番号を設定
 	m_nUnitNumber = OBJ_NUM_PLAYER;
 
 	//ユニット生成数をカウント
-	m_nMakeNumber ++;
+	m_nMakeNumber++;
 
 	//メッシュオブジェクトとして初期化
 	CMeshObj::Init();
@@ -91,60 +76,60 @@ void CPlayer::Init()
 
 	//メッシュデータの設定
 	SetMesh(CModelManager::GetMesh(m_nMeshNumber));
-	
-	//-----ステータスデータの読み込み-----
-    //ファイルの読み込み
-    ifstream ifs(PATH_DATA_PLAYER);
 
-    if(!ifs)
+	//-----ステータスデータの読み込み-----
+	//ファイルの読み込み
+	ifstream ifs(PATH_DATA_PLAYER);
+
+	if (!ifs)
 	{
 		LPCTSTR szMsg = _T("読み込み失敗!");
-   		 MessageBox(NULL, szMsg, NULL, MB_OK);
+		MessageBox(NULL, szMsg, NULL, MB_OK);
 	}
-    //txtファイルを1行ずつ読み込む
-    string str;
+	//txtファイルを1行ずつ読み込む
+	string str;
 	int i = 0;	//格納配列係数
 	int PlayerData[STATES_MAX];	//ステータス値
 
-    while(getline(ifs,str))
+	while (getline(ifs, str))
 	{
-        string token;
-        istringstream stream(str);
+		string token;
+		istringstream stream(str);
 
-        //1行のうち、文字列とコンマを分割する(コンマが出てくるまで読み込む)
-        while(getline(stream,token,','))
+		//1行のうち、文字列とコンマを分割する(コンマが出てくるまで読み込む)
+		while (getline(stream, token, ','))
 		{
 			PlayerData[i] = (int)stof(token);
 			i++;
-        }
-    }
+		}
+	}
 	//ファイルを閉じる
 	ifs.close();
 
 	//-----レベルアップデータの読み込み-----
-    //ファイルの読み込み
+	//ファイルの読み込み
 	ifstream ifsLevel(PATH_LEVEL_UP_PLAYER);
 
-    if(!ifsLevel)
+	if (!ifsLevel)
 	{
 		LPCTSTR szMsg = _T("読み込み失敗!");
-   		 MessageBox(NULL, szMsg, NULL, MB_OK);
+		MessageBox(NULL, szMsg, NULL, MB_OK);
 	}
-    //txtファイルを1行ずつ読み込む
+	//txtファイルを1行ずつ読み込む
 	int PlayerUpData[UPSTATES_MAX];	//レベルアップ時上昇値格納
 	i = 0;
-    while(getline(ifsLevel,str))
+	while (getline(ifsLevel, str))
 	{
-        string token;
-        istringstream stream(str);
+		string token;
+		istringstream stream(str);
 
-        //1行のうち、文字列とコンマを分割する(コンマが出てくるまで読み込む)
-        while(getline(stream,token,','))
+		//1行のうち、文字列とコンマを分割する(コンマが出てくるまで読み込む)
+		while (getline(stream, token, ','))
 		{
 			PlayerUpData[i] = (int)stof(token);
 			i++;
-        }
-    }
+		}
+	}
 	//ファイルを閉じる
 	ifs.close();
 
@@ -191,7 +176,7 @@ void CPlayer::Init()
 	CHPDraw::SetHP(m_nHP);
 
 	//ステートの設定
-	m_nStateNumber = m_State_Cpy = GAME_STATE_STAND_BY_PLAYER;
+	m_nStateNumber = m_State_Cpy = CTurn::GameState::GAME_STATE_STAND_BY_PLAYER;
 
 	//外部からのステート変更なし
 	m_bState_Change_Flg = false;
@@ -203,11 +188,17 @@ void CPlayer::Init()
 	m_nEquipmentInterval = 0;
 
 	m_bDirectionFlg[Forword] = true;
+
+	//シーン上にオブジェクトの追加
+	CUnitManager::Add(m_nUnitNumber, this);
+	//プレイヤーのポインタをマネージャーに設定させる
+	CUnitManager::SetPlayerPointer();
 }
+
 //---------------------------------------------------------------------------------------
-//終了処理
+//デストラクタ
 //---------------------------------------------------------------------------------------
-void CPlayer::Fin()
+CPlayer::~CPlayer(void)
 {
 	//メッシュオブジェクトとしての終了処理
 	CMeshObj::Fin();
@@ -490,7 +481,7 @@ void CPlayer::InputUpdate()
 						CTurn::SumCount(m_nStateNumber);
 
 						//ステートの遷移
-						m_nStateNumber =  m_State_Cpy = GAME_STATE_MOVE;
+						m_nStateNumber =  m_State_Cpy = CTurn::GameState::GAME_STATE_MOVE;
 
 						//移動ステートに存在するユニット数+1
 						CTurn::AddCount(m_nStateNumber);
@@ -551,7 +542,7 @@ void CPlayer::InputUpdate()
 				CTurn::SumCount(m_nStateNumber);
 
 				//ステートの遷移
-				m_nStateNumber =  m_State_Cpy = GAME_STATE_ATTACK;
+				m_nStateNumber =  m_State_Cpy = CTurn::GameState::GAME_STATE_ATTACK;
 
 				//攻撃ステートに存在するユニット数+1
 				CTurn::AddCount(m_nStateNumber);
@@ -570,7 +561,7 @@ void CPlayer::InputUpdate()
 			CTurn::SumCount(m_nStateNumber);
 
 			//自身のステートの設定
-			m_nStateNumber = GAME_STATE_TURN_END;
+			m_nStateNumber = CTurn::GameState::GAME_STATE_TURN_END;
 
 			//ターン終了に存在するユニットの数+1
 			CTurn::AddCount(m_nStateNumber);
@@ -666,7 +657,7 @@ void CPlayer::MoveUpdate()
 			CTurn::SumCount(m_nStateNumber);
 			
 			//ステートの遷移(ターンの終了)
-			m_nStateNumber =  m_State_Cpy = GAME_STATE_STAND_BY_PLAYER;
+			m_nStateNumber =  m_State_Cpy = CTurn::GameState::GAME_STATE_TURN_END;
 			
 			//入力待ちステートに存在するユニット数+1
 			CTurn::AddCount(m_nStateNumber);
@@ -726,7 +717,7 @@ void CPlayer::ActUpdate()
 	CTurn::SumCount(m_nStateNumber);
 
 	//ステートの遷移(ターンの終了)
-	m_nStateNumber =  m_State_Cpy = GAME_STATE_STAND_BY_PLAYER;
+	m_nStateNumber =  m_State_Cpy = CTurn::GameState::GAME_STATE_TURN_END;
 
 	//入力待ちに存在するユニットの数+1
 	CTurn::AddCount(m_nStateNumber);
@@ -739,14 +730,18 @@ void CPlayer::ActUpdate()
 //---------------------------------------------------------------------------------------
 void CPlayer::TurnEndUpdate()
 {
+	CUnit::TurnEndUpdate();
 	//ターン終了ステートに存在するユニットの数-1
 	CTurn::SumCount(m_nStateNumber);
 
 	//ステートの遷移(ターンの終了)
-	m_nStateNumber =  m_State_Cpy = GAME_STATE_STAND_BY_PLAYER;
+	m_nStateNumber =  m_State_Cpy = CTurn::GameState::GAME_STATE_STAND_BY_PLAYER;
 
 	//入力待ちステートに存在するユニットの数+1
 	CTurn::AddCount(m_nStateNumber);
+
+	//自身のターンが終了した。
+	m_bTurnEndFlg = true;
 }
 //---------------------------------------------------------------------------------------
 //アイテム更新
@@ -838,7 +833,7 @@ void CPlayer::ItemUpdate()
 	CTurn::SumCount(m_nStateNumber);
 
 	//ステートの遷移(ターンの終了)
-	m_nStateNumber =  m_State_Cpy = GAME_STATE_TURN_END;
+	m_nStateNumber =  m_State_Cpy = CTurn::GameState::GAME_STATE_TURN_END;
 
 	//入力待ちステートに存在するユニット数+1
 	CTurn::AddCount(m_nStateNumber);
@@ -881,7 +876,7 @@ void CPlayer::SetPos()
 	CTurn::SumCount(m_nStateNumber);
 	
 	//ステートの遷移(ターンの終了)
-	m_nStateNumber =  m_State_Cpy = GAME_STATE_STAND_BY_PLAYER;
+	m_nStateNumber =  m_State_Cpy = CTurn::GameState::GAME_STATE_STAND_BY_PLAYER;
 	
 	//入力待ちステートに存在するユニット数+1
 	CTurn::AddCount(m_nStateNumber);

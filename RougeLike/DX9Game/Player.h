@@ -26,8 +26,6 @@ public:
 	CPlayer(CGameScene* pScene);					//コンストラクタ
 	~CPlayer(void);								//デストラクタ
 
-	void Init();						//初期化
-	void Fin();							//終了処理
 
 	void Update();						//更新処理
 	void Draw();						//描画

@@ -5,6 +5,7 @@
 #include "define.h"
 #include "TextureManager.h"
 #include "Camera.h"
+#include"ParticleManager.h"
 
 #define FVF_PVERTEX			(D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_TEX1)
 
@@ -65,6 +66,17 @@ CParticle::CParticle(CGameScene* pScene)
 	m_pVertex = NULL;
 	m_pIndex = NULL;
 	m_fLifeTime = 30.0f;
+
+	//削除フラグの初期化
+	m_bDeleteFlg = false;
+
+	//IDを設定
+	m_nID = CParticleManager::GetNextID();
+	//次のID番号を指定する
+	CParticleManager::SetNextID(m_nID + 1);
+
+	//マネージャーへ登録
+	CParticleManager::Add(m_nID,this);
 }
 
 //---------------------------------------------------------------------------------------
@@ -94,6 +106,17 @@ CParticle::CParticle(CGameScene* pScene, TParticleParam* ppp)
 	{
 		SetParam(*ppp);
 	}
+
+	//削除フラグの初期化
+	m_bDeleteFlg = false;
+
+	//IDを設定
+	m_nID = CParticleManager::GetNextID();
+	//次のID番号を指定する
+	CParticleManager::SetNextID(m_nID + 1);
+
+	//マネージャーへ登録
+	CParticleManager::Add(m_nID, this);
 }
 
 //---------------------------------------------------------------------------------------
@@ -203,7 +226,6 @@ void CParticle::Fin(void)
 //---------------------------------------------------------------------------------------
 void CParticle::Delete(TGrain* p)
 {
-
 	//リスト構造を変更
 	//自身の前が存在するか
 	if (p->m_pBack) 
@@ -213,7 +235,6 @@ void CParticle::Delete(TGrain* p)
 	} 
 	else 
 	{
-
 		m_pUse = p->m_pNext;
 	}
 	//自身の次が存在するか
@@ -331,8 +352,8 @@ void CParticle::Update(void)
 	//生存時間が無くなれば、消去
 	if(m_fLifeTime <= 0)
 	{
-		//自身の削除
-		delete this;
+
+		m_bDeleteFlg = true;
 		return;
 	}
 
@@ -472,7 +493,7 @@ void CParticle::Update(void)
 			m_fTime = m_pp.fDuration;
 			m_uParticles = 0;
 
-			delete this;
+			m_bDeleteFlg = true;
 			return;
 		}
 	}

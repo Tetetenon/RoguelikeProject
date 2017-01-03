@@ -14,13 +14,10 @@ class CFieldItem :
 	public CItem
 {
 private:
+	static int n_Debug;
 	CItem			m_Item;
 	D3DXVECTOR2		m_Pos;					//配列上の位置情報
 	int				m_FieldID;				//フィールド上のアイテムのID
-
-	static int		m_MakeItemNum;			//アイテムの次に割り振られるID
-
-	static bool		m_Delete;				//全アイテムデリートフラグ
 
 	bool			m_ItemDelete;			//自身のデリートフラグ
 
@@ -45,9 +42,6 @@ public:
 	CItem	GetItemData()	{return m_Item;}
 
 	void	Delete();			//自身の削除
-
-	static void	DeleteAllItem();	//全アイテムのデリートフラグを立てる
-	static void	CleatePermit()	{m_Delete = false;};		//全アイテム削除フラグを倒す
 
 	//-----リスト構造関連-----
 	CFieldItem* GetNextFieldItem ()							{return m_pNextFieldItem;}	//次のポインタを取得

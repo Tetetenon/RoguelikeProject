@@ -12,15 +12,12 @@
 #include <math.h>
 
 #include "MapData.h"
+#include"UnitManager.h"
 
-
-
-CMeshObj*	CEnemy::m_Player = NULL;				//プレイヤー情報格納
 int			CEnemy::m_nEnemyData[STATES_MAX];		//ステータス情報格納
 int			CEnemy::m_nLevelUpData[UPSTATES_MAX];	//レベルアップ時上昇ステータス情報格納
 bool		CEnemy::m_bStatesLoad = false;			//ステータス情報ファイル読み込みフラグ
 bool		CEnemy::m_bLevelUpLoad = false;			//レベルアップ時上昇値ファイル読み込みフラグ
-bool		CEnemy::m_bDelete = false;				//全てのエネミーを削除するフラグ
 
 #define PATH_DATA_ENEMY		("../data/txt/Enemy.txt")
 #define PATH_LEVEL_UP_ENEMY ("../data/txt/LevelUp_Enemy.txt")
@@ -36,7 +33,7 @@ CUnit(pScene)
 	m_uID = ID_ENEMY;
 
 	//ユニットのステート状態を設定
-	m_nStateNumber = GAME_STATE_STAND_BY_OTHER;
+	m_nStateNumber = CTurn::GameState::GAME_STATE_STAND_BY_OTHER;
 }
 
 //---------------------------------------------------------------------------------------
@@ -59,14 +56,6 @@ CEnemy::~CEnemy(void)
 		//ジェネレーターの生成数を減算
 		CEnemyGenerator::SumMakeEnemyNum();
 	}
-}
-
-//---------------------------------------------------------------------------------------
-//プレイヤーポインタ初期化
-//---------------------------------------------------------------------------------------
-void CEnemy::PlayerPointInit()
-{
-	m_Player = NULL;
 }
 //---------------------------------------------------------------------------------------
 //エネミーの生成
@@ -128,7 +117,7 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 	pEnemy -> m_uID = ID_ENEMY;
 
 	//ユニットのステート状態を設定
-	pEnemy -> m_nStateNumber = GAME_STATE_STAND_BY_OTHER;
+	pEnemy -> m_nStateNumber = CTurn::GameState::GAME_STATE_STAND_BY_OTHER;
 
 	//メッシュの設定
 	pEnemy ->SetMesh(CModelManager::GetMesh(pEnemy ->m_nMeshNumber));
@@ -138,12 +127,6 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 
 	//生きている
 	pEnemy -> m_bSurvival = true;
-
-	//自機へのポインタを取得しておく
-	if(!m_Player)
-	{
-		m_Player = (CMeshObj*)pEnemy->Find(ID_PLAYER);
-	}
 
     //txtファイルを1行ずつ読み込む(1度読み込めばあとは読み込んだデータ変数を読み込む)
 	if(!m_bStatesLoad)
@@ -212,7 +195,7 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 	//-----ステータスの設定-----
 
 	//レベルを設定
-	pEnemy -> m_nLevel = CGameScene::GetPlayerLevel() + (rand() % 6 - 3);
+	pEnemy -> m_nLevel = CUnitManager::GetPlayerLevel() + (rand() % 6 - 3);
 
 	//値が0以下にならない様に設定する
 	if(pEnemy ->m_nLevel <= 0)
@@ -309,7 +292,7 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 	pEnemy -> m_bDestination = true;
 
 	//ステートの設定
-	pEnemy ->m_nStateNumber = GAME_STATE_STAND_BY_OTHER;
+	pEnemy ->m_nStateNumber = CTurn::GameState::GAME_STATE_STAND_BY_OTHER;
 
 	//入力待ちに存在するユニット数+1
 	CTurn::AddCount(pEnemy ->m_nStateNumber);
@@ -319,36 +302,35 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 
 	//ユニット生成数をカウント
 	m_nMakeNumber ++;
+
+	//シーン上にオブジェクトの追加
+	CUnitManager::Add(pEnemy->m_nUnitNumber, pEnemy);
 }
 //---------------------------------------------------------------------------------------
 //更新
 //---------------------------------------------------------------------------------------
 void CEnemy::Update()
 {
-	//もし、エネミーの削除フラグが立っていたら、エネミーを削除する
-	if(m_bDelete || m_nHP <= 0)
-	{
-		//マーキング消去
-		CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-	
-		//現在自分が選択しているステートのユニットの数-1
-		CTurn::SumCount(m_nStateNumber);
-
-		//自身の削除
-		delete this;
-	}
-	else
-	{
-		//ユニットとしての更新を行う
-		CUnit::Update();
-	}
+	//ユニットとしての更新を行う
+	CUnit::Update();
 }
 //---------------------------------------------------------------------------------------
 //入力更新(移動方向ルーチン)
 //---------------------------------------------------------------------------------------
 void CEnemy::InputUpdate()
 {
+	if (1)
+	{
+		//入力待ちに存在するユニットの数-1
+		CTurn::SumCount(m_nStateNumber);
 
+		//自身のステートの設定
+		m_nStateNumber = CTurn::GameState::GAME_STATE_TURN_END;
+
+		//攻撃に存在するユニットの数+1
+		CTurn::AddCount(m_nStateNumber);
+		return;
+	}
 	//移動できたか
 	bool MoveCompletion = false;
 
@@ -356,8 +338,8 @@ void CEnemy::InputUpdate()
 	MoveCompletion = A_StarMove();
 
 	//プレイヤーの位置情報を取得
-	int PlayerPos_X = m_Player->GetPosX();
-	int PlayerPos_Z = m_Player->GetPosZ();
+	int PlayerPos_X = CUnitManager::GetPlayerPosX();
+	int PlayerPos_Z = CUnitManager::GetPlayerPosZ();
 
 	//差を計算
 	int Distance_X = PlayerPos_X - m_nUnit_Pos_X;
@@ -486,270 +468,13 @@ void CEnemy::InputUpdate()
 			CTurn::SumCount(m_nStateNumber);
 
 			//自身のステートの設定
-			m_nStateNumber = GAME_STATE_ATTACK;
+			m_nStateNumber = CTurn::GameState::GAME_STATE_ATTACK;
 
 			//攻撃に存在するユニットの数+1
 			CTurn::AddCount(m_nStateNumber);
 			
 			//繰り出す技の番号を指定
 			m_nTrickNumber = TRICK_RANGE_FRONT;
-		}
-	}
-
-	if(0)
-	{
-		//回転度数
-		m_Angle = D3DXVECTOR3(0.0f,0.0f,0.0f);
-
-		
-		//-----移動ルーチン作成-----
-		if (m_Player)
-		{
-			
-
-			//差があれば移動
-			if(abs(Distance_X) >= 1 || abs(Distance_Z) >= 1)
-			{
-
-				//向きフラグ初期化
-				for(int i = 0;i < MaxDirection;i++)
-					m_bDirectionFlg[i] = false;
-
-				//上移動
-				//移動先が床ならば移動可能
-				if(Distance_Z > 0 
-					&& FLOOR == CMapData::Get_TerrainMapSituation(m_nUnit_Pos_X,m_nUnit_Pos_Z - 1) 
-					&& CMapData::Get_UnitMapSituation(m_nUnit_Pos_X,m_nUnit_Pos_Z - 1) == 0)
-				{
-					//マーキング消去
-					CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-
-					//向きフラグ上
-					m_bDirectionFlg[Forword] = true;
-
-					//指定位置に到達していない
-					m_bDestination = false;
-					m_fTimer = 0.0f;
-
-					//移動完了
-					MoveCompletion = true;
-
-					//配列上を移動
-					m_nUnit_Pos_Z--;
-					
-					//マーキング
-					CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
-
-					//操作決定待ちに存在するユニットの数-1
-					CTurn::SumCount(m_nStateNumber);
-
-					//自身のステートの設定
-					m_nStateNumber = GAME_STATE_MOVE;
-					
-					//移動ステートに存在するユニット+1
-					CTurn::AddCount(m_nStateNumber);
-				}
-				//下移動
-				//移動先が床ならば移動可能
-				else if(Distance_Z < 0 
-					&& FLOOR == CMapData::Get_TerrainMapSituation(m_nUnit_Pos_X,m_nUnit_Pos_Z + 1) 
-					&& CMapData::Get_UnitMapSituation(m_nUnit_Pos_X,m_nUnit_Pos_Z + 1) == 0)
-				{
-					//マーキング消去
-					CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-					
-					//向きフラグ下
-					m_bDirectionFlg[Back] = true;
-
-					//指定位置に到達していない
-					m_bDestination = false;
-					m_fTimer = 0.0f;
-
-					//移動完了
-					MoveCompletion = true;
-
-					//配列上を移動
-					m_nUnit_Pos_Z ++;
-					
-					//マーキング
-					CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
-
-					//操作決定待ちに存在するユニットの数-1
-					CTurn::SumCount(m_nStateNumber);
-
-					//自身のステートの設定
-					m_nStateNumber = GAME_STATE_MOVE;
-					
-					//移動ステートに存在するユニット+1
-					CTurn::AddCount(m_nStateNumber);
-				}
-				//右移動
-				if(Distance_X > 0 && 
-					FLOOR == CMapData::Get_TerrainMapSituation(m_nUnit_Pos_X + 1,m_nUnit_Pos_Z) && 
-					CMapData::Get_UnitMapSituation(m_nUnit_Pos_X + 1,m_nUnit_Pos_Z) == 0)
-				{
-					//マーキング消去
-					CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-
-					//向きフラグ右
-					m_bDirectionFlg[Right] = true;
-
-					//指定位置に到達していない
-					m_bDestination = false;
-					m_fTimer = 0.0f;
-
-					//移動完了
-					MoveCompletion = true;
-
-					//配列上を移動
-					m_nUnit_Pos_X ++;
-					
-					//マーキング
-					CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
-
-					//操作決定待ちに存在するユニットの数-1
-					CTurn::SumCount(m_nStateNumber);
-
-					//自身のステートの設定
-					m_nStateNumber = GAME_STATE_MOVE;
-					
-					//移動ステートに存在するユニット+1
-					CTurn::AddCount(m_nStateNumber);
-				}
-				//左移動
-				else if(Distance_X < 0 && 
-					FLOOR == CMapData::Get_TerrainMapSituation(m_nUnit_Pos_X - 1,m_nUnit_Pos_Z) && 
-					CMapData::Get_UnitMapSituation(m_nUnit_Pos_X - 1,m_nUnit_Pos_Z) == 0)
-				{
-					//マーキング消去
-					CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-
-					//向きフラグ左
-					m_bDirectionFlg[Left] = true;
-
-					//指定位置に到達していない
-					m_bDestination = false;
-					m_fTimer = 0.0f;
-
-					//移動完了
-					MoveCompletion = true;
-
-					//配列上を移動
-					m_nUnit_Pos_X --;
-					
-					//マーキング
-					CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
-
-					//操作決定待ちに存在するユニットの数-1
-					CTurn::SumCount(m_nStateNumber);
-
-					//自身のステートの設定
-					m_nStateNumber = GAME_STATE_MOVE;
-					
-					//移動ステートに存在するユニット+1
-					CTurn::AddCount(m_nStateNumber);
-				}
-				//移動できなかった場合、エネミーのターンを終了する
-				if(!MoveCompletion)
-				{
-					//入力待ちに存在するユニットの数-1
-					CTurn::SumCount(m_nStateNumber);
-
-					//自身のステートの設定
-					m_nStateNumber = GAME_STATE_TURN_END;
-
-					//ターン終了に存在するユニットの数+1
-					CTurn::AddCount(m_nStateNumber);
-				}
-				
-				//回頭
-				int nAngle = 0;		//ユニットの回転させる角度
-				
-				if(m_nStateNumber == GAME_STATE_MOVE)
-				{
-					//フラグの状況から角度を設定する
-					if(m_bDirectionFlg[0])
-					{
-						if(m_bDirectionFlg[1])
-							nAngle = 45;
-						else if(m_bDirectionFlg[3])
-							nAngle = 315;
-						else
-							nAngle = 0;
-					}
-				
-					else if(m_bDirectionFlg[2])
-					{
-						if(m_bDirectionFlg[1])
-							nAngle = 135;
-						else if(m_bDirectionFlg[3])
-							nAngle = 225;
-						else
-							nAngle = 180;
-					}
-					else if(m_bDirectionFlg[1])
-						nAngle = 90;
-					else if(m_bDirectionFlg[3])
-						nAngle = 270;
-				
-						
-					int OldAngle = (int)(m_fOldAngle* 180 / PI );
-					float RotateAngle = (float)(nAngle * PI / 180);
-				
-					m_Angle.y = RotateAngle - m_fOldAngle;
-				
-					m_fOldAngle = RotateAngle;
-				}
-			}
-			//移動できない
-			else
-			{
-				//入力待ちに存在するユニットの数-1
-				CTurn::SumCount(m_nStateNumber);
-
-				//自身のステートの設定
-				m_nStateNumber = GAME_STATE_TURN_END;
-
-				//ターン終了に存在するユニットの数+1
-				CTurn::AddCount(m_nStateNumber);
-			}
-
-			//ワールドマトリックスからローカル軸抽出、座標抽出
-			D3DXMATRIX world = GetWorld();
-
-			//それぞれの軸の値を格納する
-			D3DXVECTOR3 vX,vY,vZ,vP;
-			
-			vX = D3DXVECTOR3(world._11,world._12,world._13);	//vX:X軸回転
-			vY = D3DXVECTOR3(world._21,world._22,world._23);	//vY:Y軸回転
-			vZ = D3DXVECTOR3(world._31,world._32,world._33);	//vZ:Z軸回転
-			vP = D3DXVECTOR3(world._41,world._42,world._43);	//位置情報
-
-			world._41 = world._43 = 0.0f;	//原点へ移動させる
-				
-			m_Pos.x = (m_nUnit_Pos_X - (MAP_SIZE / 2)) * GRIDSIZE + GRIDSIZE / 2;
-			m_Pos.z = -((m_nUnit_Pos_Z) - (MAP_SIZE / 2)) * GRIDSIZE - GRIDSIZE / 2;
-
-			vP = vP + (m_Pos - vP) * (m_fTimer / (float)ACTION_TIME);
-
-			//回転行列の作成
-			D3DXMATRIX rot_X,rot_Y,rot_Z;
-			D3DXMatrixRotationAxis(&rot_X,&vX,m_Angle.x);		//&rot_YにvYとangle.yの値を掛け合わせた行列を格納する
-			D3DXMatrixRotationAxis(&rot_Y,&vY,m_Angle.y);		//&rot_Zに現在の角度(vY)に回転度数(angle.y)をかけた値の行列を格納
-			D3DXMatrixRotationAxis(&rot_Z,&vZ,m_Angle.z);		//&rot_Zに現在の角度(vZ)に回転度数(angle.z)をかけた値の行列を格納
-
-			//回転度数初期化
-			m_Angle = D3DXVECTOR3(0.0f,0.0f,0.0f);	
-
-			//計算結果の行列をワールド行列に反映させる
-			world *= (rot_Z *rot_Y * rot_X);
-
-			world._41 = vP.x;
-			world._42 = vP.y;
-			world._43 = vP.z;
-
-			//ワールドマトリックスを設定
-			SetWorld(world);
 		}
 	}
 }
@@ -777,8 +502,8 @@ void CEnemy::MoveUpdate()
 			//移動ステートに存在するユニットの数-1
 			CTurn::SumCount(m_nStateNumber);
 
-			//自身のステート状態を入力待ちに設定
-			m_nStateNumber = GAME_STATE_STAND_BY_OTHER;
+			//自身のステート状態をターンの終了に設定
+			m_nStateNumber = CTurn::GameState::GAME_STATE_TURN_END;
 
 			//入力待ちに存在するユニットの数+1
 			CTurn::AddCount(m_nStateNumber);
@@ -840,7 +565,7 @@ void CEnemy::ActUpdate()
 	CTurn::SumCount(m_nStateNumber);
 
 	//ステートの遷移(ターンの終了)
-	m_nStateNumber = GAME_STATE_STAND_BY_OTHER;
+	m_nStateNumber = CTurn::GameState::GAME_STATE_TURN_END;
 
 	//入力待ちに存在するユニットの数+1
 	CTurn::AddCount(m_nStateNumber);
@@ -861,7 +586,7 @@ void CEnemy::ItemUpdate()
 	CTurn::AddCount(m_nStateNumber);
 
 	//ステートの遷移(ターンの終了)
-	m_nStateNumber = GAME_STATE_STAND_BY_OTHER;
+	m_nStateNumber = CTurn::GameState::GAME_STATE_TURN_END;
 		
 }
 //---------------------------------------------------------------------------------------
@@ -869,14 +594,18 @@ void CEnemy::ItemUpdate()
 //---------------------------------------------------------------------------------------
 void CEnemy::TurnEndUpdate()
 {
+	CUnit::TurnEndUpdate();
 	//ターンエンドステートに存在するユニット数-1
 	CTurn::SumCount(m_nStateNumber);
 
 	//ステートの遷移(ターンの終了)
-	m_nStateNumber = GAME_STATE_STAND_BY_OTHER;
+	m_nStateNumber = CTurn::GameState::GAME_STATE_STAND_BY_OTHER;
 
 	//入力待ちに存在するユニットの数+1
 	CTurn::AddCount(m_nStateNumber);
+
+	//自身のターンが終了した
+	m_bTurnEndFlg = true;
 }
 //---------------------------------------------------------------------------------------
 //A*アルゴリズムを用いた移動を行う
@@ -891,8 +620,8 @@ bool CEnemy::A_StarMove()
 	int SearchPositionZ = m_nUnit_Pos_Z;
 
 	//プレイヤーの位置情報
-	int PlayerPositionX = m_Player->GetPosX();
-	int PlayerPositionZ = m_Player->GetPosZ();
+	int PlayerPositionX = CUnitManager::GetPlayerPosX();
+	int PlayerPositionZ = CUnitManager::GetPlayerPosZ();
 
 	//探索した位置をクローズ化
 	CMapData::CompleteCellCal(SearchPositionX,SearchPositionZ,2);
@@ -919,7 +648,7 @@ bool CEnemy::A_StarMove()
 		CTurn::SumCount(m_nStateNumber);
 
 		//自身のステートの設定
-		m_nStateNumber = GAME_STATE_TURN_END;
+		m_nStateNumber = CTurn::GameState::GAME_STATE_TURN_END;
 		
 		//移動ステートに存在するユニット+1
 		CTurn::AddCount(m_nStateNumber);
@@ -951,7 +680,7 @@ bool CEnemy::A_StarMove()
 		CTurn::SumCount(m_nStateNumber);
 
 		//自身のステートの設定
-		m_nStateNumber = GAME_STATE_TURN_END;
+		m_nStateNumber = CTurn::GameState::GAME_STATE_TURN_END;
 		
 		//移動ステートに存在するユニット+1
 		CTurn::AddCount(m_nStateNumber);
@@ -1097,7 +826,7 @@ bool CEnemy::A_StarMove()
 	CTurn::SumCount(m_nStateNumber);
 
 	//自身のステートの設定
-	m_nStateNumber = GAME_STATE_MOVE;
+	m_nStateNumber = CTurn::GameState::GAME_STATE_MOVE;
 	
 	//移動ステートに存在するユニット+1
 	CTurn::AddCount(m_nStateNumber);

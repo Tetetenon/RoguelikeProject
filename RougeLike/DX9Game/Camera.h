@@ -1,7 +1,8 @@
 #pragma once
 
 #include"C3DObj.h"
-#include "Player.h"
+
+class CUnit;
 
 enum ECamPos
 {
@@ -16,10 +17,11 @@ class CSky;
 class CCamera:public C3DObj 
 {
 private:
+	//変数
 	D3DXMATRIX m_proj;	//プロジェクションマトリックス
 	static D3DXMATRIX m_view;	//ビューマトリックス
 	CSky*		m_pSky;		// スカイドーム
-	CPlayer*	m_pPlayer;	//自機
+	CUnit*	m_pPlayer;	//自機
 
 	ECamPos		m_cp;	//カメラ種別
 	
@@ -38,9 +40,16 @@ private:
 
 	float m_nTimer;		//経過時間を図る
 	bool  m_bSwitch;	//画面切り替えフラグ
-public:
+
+	static CCamera* m_pCamera;	//シングルトン
+
+	//関数
 	CCamera(CGameScene* pScene);
 	virtual ~CCamera(void);
+public:
+	static void Create(CGameScene* pScene);	//オブジェクトの作成
+	static void Delete();	//オブジェクトの削除
+	static CCamera* GetPointer();	//オブジェクトポインタを渡す
 
 	virtual void Init ();	//初期化
 	virtual void Update();	//更新

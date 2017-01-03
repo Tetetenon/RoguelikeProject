@@ -14,6 +14,8 @@
 #include "EnemyGenerator.h"
 #include "TrickWindowCursor.h"
 #include "MiniMap.h"
+#include "UnitManager.h"
+#include"ItemManager.h"
 
 #define JUMP_INTERVAL 30	//ジャンプしてから次のジャンプまでの間隔
 
@@ -30,8 +32,7 @@
 
 //静的メンバ実体定義
 int	 CUnit::m_nMakeNumber = OBJ_NUM_PLAYER;	//生成したユニットの数
-int  CUnit::m_nAttackNumber = 0;				//攻撃を行っているユニットの番号
-bool CUnit::m_bMoveCanFlg = true;;					//移動可能フラグ
+int CUnit::m_Debug = 0;
 
 float	g_Timer = 0;		//処理を開始してからの時間計測
 int		g_Damage = 0;		//戦闘で発生するダメージ
@@ -39,17 +40,10 @@ int		g_Damage = 0;		//戦闘で発生するダメージ
 //コンストラクタ
 //---------------------------------------------------------------------------------------
 CUnit::CUnit(CGameScene* pScene):
-CMeshObj(pScene)
+CMeshObj(pScene),
+m_bTurn(false),
+m_pLevelUp(NULL)
 {
-	//シーンクラスのポインタ取得
-	m_pScene = pScene;
-
-	//リストの初期化
-	m_pNextUnit = m_pBackUnit = NULL;
-
-	//シーン上にオブジェクトの追加
-	m_pScene -> AddUnit(this);
-
 	//状態の初期化
 	m_nState = UNIT_STATE_HEALTH;	//健康
 	m_nState_Turn = 0;
@@ -100,6 +94,8 @@ CMeshObj(pScene)
 	{
 		m_bDirectionFlg[i] = false;
 	}
+
+	m_Debug++;
 }
 
 //---------------------------------------------------------------------------------------
@@ -129,7 +125,12 @@ CUnit::~CUnit(void)
 	m_pBattleBack = NULL;
 
 	//シーン上から自身のユニットポインタを削除する
-	m_pScene ->DelUnit(this);
+	//CUnitManager::Del(m_nUnitNumber);
+	m_Debug--;
+	if (m_Debug == 0)
+	{
+		int a = 0;
+	}
 }
 
 	
@@ -152,26 +153,18 @@ void CUnit::Init()
 //---------------------------------------------------------------------------------------
 void CUnit::Fin()
 {
-
 	//マーキング消去
 	CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 	
 	//現在自分が選択しているステートのユニットの数-1
 	CTurn::SumCount(m_nStateNumber);
-
-	//生成数を初期化する
-	m_nMakeNumber = OBJ_NUM_PLAYER;
-
-	//自身の削除
-	delete this;
 }
 
 //---------------------------------------------------------------------------------------
-//更新
+//待機更新
 //---------------------------------------------------------------------------------------
-void CUnit::Update()
+void CUnit::WaitUpdate()
 {
-
 	//レベルアップポリゴンの更新
 	if(m_pLevelUp != NULL)
 	{
@@ -186,24 +179,6 @@ void CUnit::Update()
 	}
 	//ユニットサークルの位置情報を設定
 	m_Circle.SetPos(C3DObj::GetPos());
-
-	//現在のプレイヤーのステート情報を取得
-	int nPlayerState = CPlayer::GetState();
-
-	if(nPlayerState == m_nStateNumber)
-	{
-		int Debug = 0;
-	}
-
-
-	int State = CTurn::GetState();	//ステート情報を一時的に格納
-	
-	//現在のステートを選択しているユニットの数を選択する
-	int StateSelectNum = CTurn::GetStateSelectNum(State);
-
-	//もし現在のステートを選択しているユニットが存在しなければ、そのステートをスキップする
-	if(StateSelectNum == 0)
-		CTurn::State_Advance(State + 1);
 
 	//待機中、飛んでいるようなモーションを行う
 	if(m_bJumpFlg)
@@ -247,92 +222,81 @@ void CUnit::Update()
 
 	//ワールドマトリックスを設定
 	SetWorld(world);
-
-	//もし、行動可能フラグが立っていなければ、処理をスキップ
-	if(!m_bMoveCanFlg)
-		return;
-
-	//現在のターンが、自身のターンであれば更新を行う
-	if(m_nStateNumber == State)
+}
+	
+//---------------------------------------------------------------------------------------
+//行動更新
+//---------------------------------------------------------------------------------------
+void CUnit::TurnUpdate()
+{
+	//状態異常の経過時間を減らす
+	//自身のターン処理が一度でも行われたか?
+	if (!m_bTurn)
 	{
-		//自身と同じステートにプレイヤーが存在する場合、プレイヤーを先に処理するため、スキップ
-		//自身がプレイヤーの場合、条件をスル―
-		if(m_nStateNumber != nPlayerState || m_nUnitNumber == OBJ_NUM_PLAYER)
-		{
-			//状態異常の経過時間を減らす
-			//自身のターンが始まったか確認する
-			if(m_nStateNumber != m_nOldStateNumber)
-			{
-				//入力待ち状態でのみ処理する
-				if(m_nStateNumber <= GAME_STATE_STAND_BY_OTHER)
-				{
-					//自身が状態異常になっているか確認する
-					if(m_nState_Turn != 0)
-						//状態異常の処理
-						TurnStartStateProcessing();
-				}
-			}
-
-			//旧ステート情報の確保
-			m_nOldStateNumber = m_nStateNumber;
-
-			//ステート状態によって処理を分岐させる
-			switch(State)
-			{
-			//入力待ち(プレイヤー)
-			case GAME_STATE_STAND_BY_PLAYER:
-				InputUpdate();
-				break;
-
-			//入力待ち(エネミー)
-			case GAME_STATE_STAND_BY_OTHER:
-				InputUpdate();
-				break;
-				
-			//アイテム
-			case GAME_STATE_ITEM_USE:
-				ItemUpdate();
-				break;
-				
-			//移動
-			case GAME_STATE_MOVE:
-				MoveUpdate();
-				break;
-				
-			//アクション
-			case GAME_STATE_ACT:
-				ActUpdate();
-				break;
-				
-			//攻撃
-			case GAME_STATE_ATTACK:
-				AttackUpdate();
-				break;
-
-			//ターン終了
-			case GAME_STATE_TURN_END:
-				TurnEndUpdate();
-				break;
-			}
-		}
+		//自身が状態異常になっているか確認する
+		if (m_nState_Turn != 0)
+			//状態異常の処理
+			TurnStartStateProcessing();
+		m_bTurn = true;
 	}
 
+	//旧ステート情報の確保
+	m_nOldStateNumber = m_nStateNumber;
+
+	//ステート状態によって処理を分岐させる
+	switch (m_nStateNumber)
+	{
+		//入力待ち(プレイヤー)
+	case CTurn::GameState::GAME_STATE_STAND_BY_PLAYER:
+		InputUpdate();
+		break;
+
+		//入力待ち(エネミー)
+	case CTurn::GameState::GAME_STATE_STAND_BY_OTHER:
+		InputUpdate();
+		break;
+
+		//アイテム
+	case CTurn::GameState::GAME_STATE_ITEM_USE:
+		ItemUpdate();
+		break;
+
+		//移動
+	case CTurn::GameState::GAME_STATE_MOVE:
+		MoveUpdate();
+		break;
+
+		//アクション
+	case CTurn::GameState::GAME_STATE_ACT:
+		ActUpdate();
+		break;
+
+		//攻撃
+	case CTurn::GameState::GAME_STATE_ATTACK:
+		AttackUpdate();
+		break;
+
+		//ターン終了
+	case CTurn::GameState::GAME_STATE_TURN_END:
+		TurnEndUpdate();
+		break;
+	}
+	
 	//アイテムウィンドウを描画していたら
-	if(CInventory::GetDrawFlg())
+	if (CInventory::GetDrawFlg())
 		//アイテムインベントリの更新
 		m_pInventory->UpDate();
 
 	//装備ウィンドウを描画していたら
-	if(CEquipmentInventory::GetDrawFlg())
+	if (CEquipmentInventory::GetDrawFlg())
 		//装備インベントリの更新
-		m_pEquipment ->UpDate();
+		m_pEquipment->UpDate();
 
 	//技ウィンドウを描画していたら
-	if(CTrickWindow::GetDrawFlg())
+	if (CTrickWindow::GetDrawFlg())
 		//技ウィンドウの更新
 		m_pTrickWindow->UpDate();
 }
-	
 //---------------------------------------------------------------------------------------
 //描画
 //---------------------------------------------------------------------------------------
@@ -356,29 +320,6 @@ void CUnit::Draw()
 		}
 
 	}
-}
-//---------------------------------------------------------------------------------------
-//ユニットの検索
-//---------------------------------------------------------------------------------------
-CUnit* CUnit::FindUnit(UINT uID,CUnit* p)
-{
-	//シーンオブジェクトが存在しなければ、ほかのオブジェクトも存在しないため
-	//ここで最初に判定をする
-	if(m_pScene)
-		return m_pScene -> FindUnit(uID,p);
-	return NULL;
-}
-
-//---------------------------------------------------------------------------------------
-//アイテム検索
-//---------------------------------------------------------------------------------------
-CFieldItem* CUnit::ItemFind(UINT uID,CFieldItem* p)
-{
-	//シーンオブジェクトが存在しなければ、ほかのオブジェクトも存在しないため
-	//ここで最初に判定をする
-	if(m_pScene)
-		return m_pScene -> FindItem(uID,p);
-	return NULL;
 }
 
 //---------------------------------------------------------------------------------------
@@ -409,58 +350,54 @@ void CUnit::ActUpdate()
 void CUnit::AttackUpdate()
 {
 	//現在誰も攻撃アニメーションを行っていない、又は自身が攻撃アニメーションを行っている場合のみ更新する
-	if(m_nUnitNumber == m_nAttackNumber || m_nAttackNumber == 0)
+
+	//現在の戦闘ステートを取得する
+	int nBattleState = CTurn::GetBattleState();
+
+	//現在の戦闘ステート状態によって、更新内容を分岐させる
+	switch(nBattleState)
 	{
-		//自身が攻撃アニメーションを行っているよう、設定する
-		m_nAttackNumber = m_nUnitNumber;
+		//相手の方向に突撃する
+	case CTurn::BattleState::BATTLE_STATE_GO:
+		BattleGo();
+		break;
+		
+		//今の位置から本来の位置へと戻る
+	case CTurn::BattleState::BATTLE_STATE_RETURN:
+		BattleReturn();
+		break;
 
-		//現在の戦闘ステートを取得する
-		int nBattleState = CTurn::GetBattleState();
+		//相手の検索、ダメージの計算
+	case CTurn::BattleState::BATTLE_STATE_SEARCH:
+		AttackSwitch();
+		break;
 
-		//現在の戦闘ステート状態によって、更新内容を分岐させる
-		switch(nBattleState)
-		{
-			//相手の方向に突撃する
-		case BATTLE_STATE_GO:
-			BattleGo();
-			break;
-			
-			//今の位置から本来の位置へと戻る
-		case BATTLE_STATE_RETURN:
-			BattleReturn();
-			break;
+		//相手に攻撃が当たった
+	case CTurn::BattleState::BATTLE_STATE_HIT:
+		BattleHit();
+		break;
+		
+		//ダメージ受けた表現を行う
+	case CTurn::BattleState::BATTLE_STATE_FLASHING:
+		BattleFlasing();
+		break;
+		
+		//メッセージウインドウにダメージ結果を送る
+	case CTurn::BattleState::BATTLE_STATE_WINDOW:
+		BattleWindow();
+		break;
 
-			//相手の検索、ダメージの計算
-		case BATTLE_STATE_SEARCH:
-			AttackSwitch();
-			break;
+		//算出されたダメージを実際に相手から減らす
+	case CTurn::BattleState::BATTLE_STATE_DAMAGE:
+		BattleDamage();
+		break;
 
-			//相手に攻撃が当たった
-		case BATTLE_STATE_HIT:
-				BattleHit();
-			break;
-			
-			//ダメージ受けた表現を行う
-		case BATTLE_STATE_FLASHING:
-				BattleFlasing();
-			break;
-			
-			//メッセージウインドウにダメージ結果を送る
-		case BATTLE_STATE_WINDOW:
-				BattleWindow();
-			break;
-
-			//算出されたダメージを実際に相手から減らす
-		case BATTLE_STATE_DAMAGE:
-				BattleDamage();
-			break;
-
-			//戦闘終了、ステート関連の設定
-		case BATTLE_STATE_END:
-				BattleEnd();
-			break;
-		}
+		//戦闘終了、ステート関連の設定
+	case CTurn::BattleState::BATTLE_STATE_END:
+		BattleEnd();
+		break;
 	}
+	
 }
 
 //---------------------------------------------------------------------------------------
@@ -475,7 +412,7 @@ void CUnit::ItemUpdate()
 //---------------------------------------------------------------------------------------
 void CUnit::TurnEndUpdate()
 {
-
+	m_bTurnEndFlg = true;
 }
 
 //---------------------------------------------------------------------------------------
@@ -560,10 +497,10 @@ void CUnit::Delete()
 	}
 
 	//プレイヤー以外の場合消滅
-	if(m_uID != ID_PLAYER)
+	if(m_nUnitNumber != OBJ_NUM_PLAYER)
 	{
-		//自身の削除
-		delete this;
+		//リスト上からオブジェクトの削除
+		CUnitManager::Del(m_nUnitNumber);
 	}
 }
 //---------------------------------------------------------------------------------------
@@ -640,7 +577,7 @@ void CUnit::BattleGo()
 	if(CTurn::GetStateTime() >= STATE_TIME)
 	{
 		//戦闘ステートを進める
-		CTurn::BattleState_Advance(BATTLE_STATE_RETURN);
+		CTurn::BattleState_Advance(CTurn::BattleState::BATTLE_STATE_RETURN);
 
 		//ステートリセット
 		CTurn::TimeStateReset();
@@ -714,7 +651,7 @@ void CUnit::BattleReturn()
 			m_nTrickNumber = m_pTrickWindow->GetRange(CTrickWindowCursor::GetTrickNum());
 		}
 		//戦闘ステートを進める
-		CTurn::BattleState_Advance(BATTLE_STATE_SEARCH);
+		CTurn::BattleState_Advance(CTurn::BattleState::BATTLE_STATE_SEARCH);
 
 		//ステートリセット
 		CTurn::TimeStateReset();
@@ -763,7 +700,7 @@ void CUnit::AttackSwitch()
 			break;
 		}
 		//ステートを進める
-		CTurn::BattleState_Advance(BATTLE_STATE_END);
+		CTurn::BattleState_Advance(CTurn::BattleState::BATTLE_STATE_END);
 		break;
 		//デバッグ
 	case TRICK_RANGE_MAX:
@@ -809,7 +746,7 @@ bool CUnit::FindEnemy(int PosX,int PosZ)
 		CUnit *BattleUnit = NULL;
 
 		//戦闘するユニットの検索
-		BattleUnit = (CUnit*)FindUnit(MapSituation);
+		BattleUnit = CUnitManager::Find(MapSituation);
 
 		//戦闘ダメージの計算を行う
 		BattleCalculation(BattleUnit);
@@ -1178,7 +1115,7 @@ void CUnit::AttackFront()
 	if(FrontFind())
 	{
 		//戦闘ステートを進める
-		CTurn::BattleState_Advance(BATTLE_STATE_HIT);
+		CTurn::BattleState_Advance(CTurn::BattleState::BATTLE_STATE_HIT);
 	}
 
 	//攻撃先にユニットが存在しなかった
@@ -1192,7 +1129,7 @@ void CUnit::AttackFront()
 		MessageWindow::SetMassege(str);
 
 		//ステートを進める
-		CTurn::BattleState_Advance(BATTLE_STATE_END);
+		CTurn::BattleState_Advance(CTurn::BattleState::BATTLE_STATE_END);
 	}
 
 	//ステートリセット
@@ -1212,7 +1149,7 @@ void CUnit::AttackWide()
 	if(bFront || bRight || bLeft)
 	{
 		//戦闘ステートを進める
-		CTurn::BattleState_Advance(BATTLE_STATE_HIT);
+		CTurn::BattleState_Advance(CTurn::BattleState::BATTLE_STATE_HIT);
 	}
 
 	//攻撃先にユニットが存在しなかった
@@ -1226,7 +1163,7 @@ void CUnit::AttackWide()
 		MessageWindow::SetMassege(str);
 
 		//ステートを進める
-		CTurn::BattleState_Advance(BATTLE_STATE_END);
+		CTurn::BattleState_Advance(CTurn::BattleState::BATTLE_STATE_END);
 	}
 
 	//ステートリセット
@@ -1266,7 +1203,7 @@ void CUnit::AttackAll()
 		if(bHitFlg)
 		{
 			//戦闘ステートを進める
-			CTurn::BattleState_Advance(BATTLE_STATE_HIT);
+			CTurn::BattleState_Advance(CTurn::BattleState::BATTLE_STATE_HIT);
 		}
 
 		//攻撃先にユニットが存在しなかった
@@ -1280,7 +1217,7 @@ void CUnit::AttackAll()
 			MessageWindow::SetMassege(str);
 
 			//ステートを進める
-			CTurn::BattleState_Advance(BATTLE_STATE_END);
+			CTurn::BattleState_Advance(CTurn::BattleState::BATTLE_STATE_END);
 		}
 
 		//ステートリセット
@@ -1317,7 +1254,7 @@ void CUnit::AttackAll()
 		if(bHitFlg)
 		{
 			//戦闘ステートを進める
-			CTurn::BattleState_Advance(BATTLE_STATE_HIT);
+			CTurn::BattleState_Advance(CTurn::BattleState::BATTLE_STATE_HIT);
 		}
 
 		//攻撃先にユニットが存在しなかった
@@ -1331,7 +1268,7 @@ void CUnit::AttackAll()
 			MessageWindow::SetMassege(str);
 	
 			//ステートを進める
-			CTurn::BattleState_Advance(BATTLE_STATE_END);
+			CTurn::BattleState_Advance(CTurn::BattleState::BATTLE_STATE_END);
 		}
 
 		//ステートリセット
@@ -1351,7 +1288,7 @@ void CUnit::BattleHit()
 	if(CTurn::GetStateTime() >= STATE_TIME / 2)
 	{
 		//戦闘ステートを進める
-		CTurn::BattleState_Advance(BATTLE_STATE_FLASHING);
+		CTurn::BattleState_Advance(CTurn::BattleState::BATTLE_STATE_FLASHING);
 
 		//ステートリセット
 		CTurn::TimeStateReset();
@@ -1424,7 +1361,7 @@ void CUnit::BattleFlasing()
 			pNowUnit = pNowUnit->m_pBattleNext;
 		}
 		//戦闘ステートを進める
-		CTurn::BattleState_Advance(BATTLE_STATE_WINDOW);
+		CTurn::BattleState_Advance(CTurn::BattleState::BATTLE_STATE_WINDOW);
 		//ステートリセット
 		CTurn::TimeStateReset();
 	}
@@ -1448,17 +1385,13 @@ void CUnit::BattleWindow()
 		pszName = pNowUnit->GetName(pszName);
 
 		//メッセージ表記
-		//TCHAR	str[256];
-		//_stprintf_s(str, _T("%sに%dのダメージ!"),pszName,g_Damage);
-
-		//メッセージテスト
 		MessageWindow::SetMassege(_T("%sに%dのダメージ!"),pszName,g_Damage);
 
 		//次のユニットへうつる
 		pNowUnit = pNowUnit->m_pBattleNext;
 	}
 	//戦闘ステートを進める
-	CTurn::BattleState_Advance(BATTLE_STATE_DAMAGE);
+	CTurn::BattleState_Advance(CTurn::BattleState::BATTLE_STATE_DAMAGE);
 	//ステートリセット
 	CTurn::TimeStateReset();
 }
@@ -1594,7 +1527,7 @@ void CUnit::BattleDamage()
 	}
 	
 	//ステートを進める
-	CTurn::BattleState_Advance(BATTLE_STATE_END);
+	CTurn::BattleState_Advance(CTurn::BattleState::BATTLE_STATE_END);
 	//ステートリセット
 	CTurn::TimeStateReset();
 }
@@ -1607,10 +1540,7 @@ void CUnit::BattleEnd()
 	CTurn::SumCount(m_nStateNumber);
 
 	//ステートの遷移(ターンの終了)
-	if(m_uID == ID_PLAYER)
-		m_nStateNumber = GAME_STATE_STAND_BY_PLAYER;
-	else
-		m_nStateNumber = GAME_STATE_STAND_BY_OTHER;
+	m_nStateNumber = CTurn::GameState::GAME_STATE_TURN_END;
 
 
 	//入力待ちステートに存在するユニットの数+1
@@ -1620,7 +1550,7 @@ void CUnit::BattleEnd()
 	CTurn::TimeStateReset();
 
 	//ステートを計算へ
-	CTurn::BattleState_Advance(BATTLE_STATE_GO);
+	CTurn::BattleState_Advance(CTurn::BattleState::BATTLE_STATE_GO);
 	
 	//戦闘を行った敵の初期化
 	//現在みているユニット
@@ -1659,11 +1589,11 @@ void CUnit::BattleEnd()
 	//攻撃したユニットのポインタを初期化
 	m_pBattleUnit = NULL;
 
-	//攻撃しているユニット番号初期化
-	m_nAttackNumber = 0;
-
 	//技番号の初期化
 	m_nTrickNumber = TRICK_NAME_MAX + 1;
+
+	//自身のターン処理情報の初期化
+	m_bTurn = false;
 }
 
 //---------------------------------------------------------------------------------------
@@ -1765,7 +1695,7 @@ void CUnit::TurnStartStateProcessing()
 			CTurn::SumCount(m_nStateNumber);
 
 			//自身のステートの設定
-			m_nStateNumber = GAME_STATE_TURN_END;
+			m_nStateNumber = CTurn::GameState::GAME_STATE_TURN_END;
 
 			//ターン終了に存在するユニットの数+1
 			CTurn::AddCount(m_nStateNumber);
@@ -1784,7 +1714,7 @@ void CUnit::TurnStartStateProcessing()
 		CTurn::SumCount(m_nStateNumber);
 
 		//自身のステートの設定
-		m_nStateNumber = GAME_STATE_TURN_END;
+		m_nStateNumber = CTurn::GameState::GAME_STATE_TURN_END;
 
 		//ターン終了に存在するユニットの数+1
 		CTurn::AddCount(m_nStateNumber);
@@ -1802,7 +1732,7 @@ void CUnit::TurnStartStateProcessing()
 		CTurn::SumCount(m_nStateNumber);
 
 		//自身のステートの設定
-		m_nStateNumber = GAME_STATE_TURN_END;
+		m_nStateNumber = CTurn::GameState::GAME_STATE_TURN_END;
 
 		//ターン終了に存在するユニットの数+1
 		CTurn::AddCount(m_nStateNumber);
@@ -1847,7 +1777,8 @@ void CUnit::ChackFeetItem()
 	//足元のアイテムの検索
 	if(ItemSearch != 0)
 	{
-		m_pFootItem =  (CFieldItem*)ItemFind(ItemSearch);
+		//m_pFootItem =  (CFieldItem*)ItemFind(ItemSearch);
+		m_pFootItem = CItemManager::Find(ItemSearch);
 	
 		//インベントリに拾ったアイテムを追加
 		if(m_pInventory->SetItem(m_pFootItem->GetItemData()))
@@ -1874,9 +1805,17 @@ void CUnit::ChackFeetItem()
 }
 
 //---------------------------------------------------------------------------------------
-//ユニット全ての行動可能フラグを変更する
+//ユニットのターンステート情報の取得
 //---------------------------------------------------------------------------------------
-void CUnit::ChangeMoveCanFlg(bool ChangeFlg)
+int CUnit::GetUnitTurnState()
 {
-	m_bMoveCanFlg = ChangeFlg;
+	return m_nStateNumber;
+}
+
+//---------------------------------------------------------------------------------------
+//ユニットの処理状況の取得
+//---------------------------------------------------------------------------------------
+bool CUnit::GetUnitProc()
+{
+	return m_bTurn;
 }

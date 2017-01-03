@@ -7,11 +7,9 @@
 
 #include "Graphics.h"
 #include "C3DObj.h"
-#include "Mesh.h"				// CMeshクラス定義
+#include "Mesh.h"
 
 //-----プレイヤー、エネミー(ユニット)-----
-#include "Unit.h"				//ユニット
-#include "Player.h"				//プレイヤー
 #include "EnemyGenerator.h"		//エネミー生成クラス
 #include "ItemGenerator.h"		//アイテム生成クラス
 
@@ -26,7 +24,6 @@
 #include "Sky.h"				//スカイドーム
 
 //-----アイテムウインドウ-----
-//#include "ItemWindow.h"			//インベントリ(アイテムウインドウ)
 #include "ItemWindowCursor.h"		//アイテムカーソル
 #include "ItemCommandWindow.h"		//コマンドウインドウ
 #include "ItemCommandCursor.h"		//コマンド選択カーソル
@@ -46,7 +43,6 @@
 #include "StatesValue.h"			//キャラクターのステータス
 
 //-----装備ウィンドウ-----
-//#include "EquipmentWindow.h"		//装備のウィンドウ
 #include "EquipmentWindowCursor.h"	//装備選択カーソル
 #include "EquipmentCommandWindow.h"	//装備コマンドウィンドウ
 #include "EquipmentCommandCursor.h"	//装備コマンドカーソル
@@ -68,9 +64,6 @@ class CGameScene
 {
 private:
 	CGraphics*					m_pGraph;					//グラフィックデバイス
-	C3DObj *					m_pObj;						//オブジェクトデバイス
-	CUnit*						m_pUnit;					//ユニットデバイス
-	CFieldItem*					m_pItemDevice;				//アイテムデバイス
 
 	CFade*						m_pFade;					//フェードアウト
 		
@@ -144,37 +137,19 @@ public:
 		lstrcat(m_szDebug, psz);
 	}
 
-	//-----オブジェクト関連の操作-----
-	//シーン上にオブジェクトを追加
-	void Add(C3DObj* pObj);
-	//シーン上のオブジェクトを削除
-	void Del(C3DObj* pObj);
-	//シーン上のオブジェクトを探索する
-	C3DObj* Find(UINT uID,C3DObj *p);
-
-	
-	//-----ユニット関連の操作-----
-	//シーン上にユニットを追加する
-	void AddUnit(CUnit* pUnit);
-	//シーン上のユニットを削除する
-	void DelUnit(CUnit* pUnit);
-	//シーン上のユニットを探索する
-	CUnit*  FindUnit(UINT uID,CUnit *p);
-
-
-	//-----アイテム関連の操作-----
-	//シーン上にアイテムを追加する
-	void AddItem(CFieldItem* pItem);
-	//シーン上のアイテムを削除する
-	void DelItem(CFieldItem* pItem);
-	//シーン上のアイテムを探索
-	CFieldItem* FindItem(UINT uID,CFieldItem *p);
+	////-----オブジェクト関連の操作-----
+	////シーン上にオブジェクトを追加
+	//void Add(C3DObj* pObj);
+	////シーン上のオブジェクトを削除
+	//void Del(C3DObj* pObj);
+	////シーン上のオブジェクトを探索する
+	//C3DObj* Find(UINT uID,C3DObj *p);
 
 	//マップの再生成フラグを立てる
 	static void MapReMake ()	{m_MapMake = true;}	
 
 	//プレイヤーのレベルを取得
-	static int GetPlayerLevel()	{return m_nPlayerLevel;}
+	//static int GetPlayerLevel()	{return m_nPlayerLevel;}
 
 	//ゲームのクリア状況を変更する
 	static void GameClearStateChange(int Change);

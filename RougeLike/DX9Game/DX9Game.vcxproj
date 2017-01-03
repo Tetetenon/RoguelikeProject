@@ -114,13 +114,17 @@
     <ClCompile Include="GameClear.cpp" />
     <ClCompile Include="GameClearScene.cpp" />
     <ClCompile Include="HierarchieNum.cpp" />
+    <ClCompile Include="EffectObjManager.cpp" />
     <ClCompile Include="ItemCommandCursor.cpp" />
     <ClCompile Include="ItemCommandWindow.cpp" />
     <ClCompile Include="ItemDescriptionFrame.cpp" />
+    <ClCompile Include="ItemManager.cpp" />
     <ClCompile Include="LevelUp.cpp" />
+    <ClCompile Include="MapObjManager.cpp" />
     <ClCompile Include="MiniMap.cpp" />
     <ClCompile Include="Operation.cpp" />
     <ClCompile Include="Particle.cpp" />
+    <ClCompile Include="ParticleManager.cpp" />
     <ClCompile Include="ResultScene.cpp" />
     <ClCompile Include="DeleteObj.cpp" />
     <ClCompile Include="Enemy.cpp" />
@@ -165,6 +169,7 @@
     <ClCompile Include="Turn.cpp" />
     <ClCompile Include="Unit.cpp" />
     <ClCompile Include="Circle.cpp" />
+    <ClCompile Include="UnitManager.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WinMain.cpp" />
   </ItemGroup>
@@ -184,13 +189,17 @@
     <ClInclude Include="GameClear.h" />
     <ClInclude Include="GameClearScene.h" />
     <ClInclude Include="HierarchieNum.h" />
+    <ClInclude Include="EffectObjManager.h" />
     <ClInclude Include="ItemCommandCursor.h" />
     <ClInclude Include="ItemCommandWindow.h" />
     <ClInclude Include="ItemDescriptionFrame.h" />
+    <ClInclude Include="ItemManager.h" />
     <ClInclude Include="LevelUp.h" />
+    <ClInclude Include="MapObjManager.h" />
     <ClInclude Include="MiniMap.h" />
     <ClInclude Include="Operation.h" />
     <ClInclude Include="Particle.h" />
+    <ClInclude Include="ParticleManager.h" />
     <ClInclude Include="ResultScene.h" />
     <ClInclude Include="define.h" />
     <ClInclude Include="DeleteObj.h" />
@@ -237,10 +246,11 @@
     <ClInclude Include="Turn.h" />
     <ClInclude Include="Unit.h" />
     <ClInclude Include="Circle.h" />
+    <ClInclude Include="UnitManager.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram11.cd" />
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

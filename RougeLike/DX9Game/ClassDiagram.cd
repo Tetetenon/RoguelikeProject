@@ -1,0 +1,837 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="C2DTexture" Collapsed="true">
+    <Position X="21.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAEAEAQAAhAAAAAAABAAAAAAAAAAAAQBAAAAABA=</HashCode>
+      <FileName>C2DTexture.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="C2DWindow" Collapsed="true">
+    <Position X="12.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIQAAAAAEAAAghCAAAAAAAAAAAAAAEAAAAACAAAAAAA=</HashCode>
+      <FileName>2DWindow.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MessageWindow" Collapsed="true">
+    <Position X="47" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACQAAAABECAAQhCAAAAAAABAAAAAABAAAIACAAQAAIA=</HashCode>
+      <FileName>MessageWindow.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CStatesFont" Collapsed="true">
+    <Position X="19" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAlEAAAAAAAAAAAAAAAAAgAAAAAAAAAA=</HashCode>
+      <FileName>StatesFont.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CStatesCharacter" Collapsed="true">
+    <Position X="21.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAIAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>StatesCharacter.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CStatesWindow" Collapsed="true">
+    <Position X="25.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQABAAAAAAEAAAAAACAAABAAAAAAAhAAAAAAAAAAAA=</HashCode>
+      <FileName>StatesWindow.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CStatesValue" Collapsed="true">
+    <Position X="30.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAFAAAAhAAAAAAAAQAgAAAAAAkAAAAAAAAAAA=</HashCode>
+      <FileName>StatesValue.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CHPDraw" Collapsed="true">
+    <Position X="45.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAwAABAAHCACAxCAAAAAAABAAAAAQgAAAAACAAAAAQA=</HashCode>
+      <FileName>HPDraw.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CMenuSelect" Collapsed="true">
+    <Position X="39.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AASAAAAAAAAAAAQAAAQAAABAAAAAAAQAAAAAAgAAAEA=</HashCode>
+      <FileName>MenuSelect.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CMenuWindow" Collapsed="true">
+    <Position X="3.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAQABAIAAAAEIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MenuWindow.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CMenuWindow_Back" Collapsed="true">
+    <Position X="5.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAIQAAAEAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MenuWindow_Back.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CItemDescriptionFrame" Collapsed="true">
+    <Position X="12.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAMAAAAgAAABAAAABIAAAAAAAAAAACAABAQAA=</HashCode>
+      <FileName>ItemDescriptionFrame.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CInventory" Collapsed="true">
+    <Position X="12.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAjAAAMAQEBlCAEAABAABQAAAgAAAAQCICAABAgAg=</HashCode>
+      <FileName>ItemWindow.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CInventoryCursor" Collapsed="true">
+    <Position X="10.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIQAAAAgEAAAAgCAAAAAAACAAAAQACAAAAACAAAAAAA=</HashCode>
+      <FileName>ItemWindowCursor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CCommandCursor" Collapsed="true">
+    <Position X="12.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIQAACAAEAABAgCAAAAAAAAAQAAAAAAAAAACAABAACA=</HashCode>
+      <FileName>ItemCommandCursor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CCommandWindow" Collapsed="true">
+    <Position X="14.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAhCAAMAAEAhCAAAAAAAxQAAAAAAAAAAgCCACAAAg=</HashCode>
+      <FileName>ItemCommandWindow.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="COperation" Collapsed="true">
+    <Position X="32.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Operation.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CEquipmentCommandWindow" Collapsed="true">
+    <Position X="21.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAhCAAMAAEAhCAAAAAAAxQAAAAAAAAAAACCAAAQAg=</HashCode>
+      <FileName>EquipmentCommandWindow.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CEquipmentInventory" Collapsed="true">
+    <Position X="15.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAjAAAMAAEBlCAEAABAABQIAAwAAAAYCICAAAAiAA=</HashCode>
+      <FileName>EquipmentWindow.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CEquipmentInventoryCursor" Collapsed="true">
+    <Position X="26" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIQAAAAgEAAAAgCAAAAAAACAAgAAAAAAAAACAAAQAAA=</HashCode>
+      <FileName>EquipmentWindowCursor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CEquipmentCommandCursor" Collapsed="true">
+    <Position X="5.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIQAACAAkAAAAgCAAAAAAAAAAAAAAAAAAIACAABAACA=</HashCode>
+      <FileName>EquipmentCommandCursor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CLevelUp" Collapsed="true">
+    <Position X="7.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQiAIAAEAAAAgAACAAAAIAQAAYAAAAIAAAAAAAAAAA=</HashCode>
+      <FileName>LevelUp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CTrick" Collapsed="true">
+    <Position X="3.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAMAAAAIIAAAgAAAAAAgAAAAAAQIIEAACoUQAAABAA=</HashCode>
+      <FileName>Trick.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CTrickWindowCursor" Collapsed="true">
+    <Position X="17" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AISAAAAAEAAAAgCAAAAAAACAAAAAAAAAAAACEAAABAA=</HashCode>
+      <FileName>TrickWindowCursor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CTrickWindow" Collapsed="true">
+    <Position X="9.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQQAjAAAMAAFQhGAgAAAAABQAAAAAAAAQCkCAAAAAAA=</HashCode>
+      <FileName>TrickWindow.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CMiniMap" Collapsed="true">
+    <Position X="34.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAQAAAAABAAgAAAAAQAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MiniMap.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CItem" Collapsed="true">
+    <Position X="0.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAMAAAAIIAAAgAAAAAAgAAAAAAAAIEABCAUQQAABAA=</HashCode>
+      <FileName>Item.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CItemGenerator" Collapsed="true">
+    <Position X="3.75" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQUEAAAAAAAAAACBAAAIAIAAAAAAAAAAAAACAAAAAQA=</HashCode>
+      <FileName>ItemGenerator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CTurn" Collapsed="true">
+    <Position X="43.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAEABASBBAACAAAAAgAAAAAAABCQAAAACgBAABBE=</HashCode>
+      <FileName>Turn.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CInput" Collapsed="true">
+    <Position X="47" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQiAAEAAoAAEAiBEAAEEAAAEEIAAAgAQKACAQCAoEI=</HashCode>
+      <FileName>Input.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CBattle" Collapsed="true">
+    <Position X="41.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>Battle.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CGameState" Collapsed="true">
+    <Position X="50.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAEAAAAAIAEAAAAAACAAAAAAAAAAAQAAAAAIAAgA=</HashCode>
+      <FileName>GameState.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CGameWindow" Collapsed="true">
+    <Position X="1.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAACAEgAAAgAAAACAABAAIAgAWAAAEAAIAEAAA=</HashCode>
+      <FileName>GameWnd.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CGraphics" Collapsed="true">
+    <Position X="41.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQIAAgAAAKAAAQAAAAAEAAAAAAAAkEoAQACAABEAAIA=</HashCode>
+      <FileName>Graphics.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CMesh" Collapsed="true">
+    <Position X="43.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>oAAgAAkAAACAMwAgQAOAAABAIEICmAgBAAAJkggAQCA=</HashCode>
+      <FileName>Mesh.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CMeshObj" Collapsed="true">
+    <Position X="12.75" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQgAAAAAAGBEgCAEAIAAAAAAAAAAAAAAAACEAAAAAA=</HashCode>
+      <FileName>MeshObj.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CCamera" Collapsed="true">
+    <Position X="26.25" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgQAFCEAAIIBAgCABAhAAAAQAwFEAEBgAAgCEBAAAAA=</HashCode>
+      <FileName>Camera.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CWindow" Collapsed="true">
+    <Position X="1.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AASBEKAYACEAAgqIEABAAAARALIEgUUIIIIASACAAYc=</HashCode>
+      <FileName>Window.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CHitObjManager" Collapsed="true">
+    <Position X="43.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>EffectObjManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CFade" Collapsed="true">
+    <Position X="14.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAEAAAAAABBgACAAAAAAAEAAAAAAAABAAAAAAAAAE=</HashCode>
+      <FileName>Fade.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CParticle" Collapsed="true">
+    <Position X="24" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAQkAAjCAAQAAAAAAQAFIQAAAAAJANgACCBA=</HashCode>
+      <FileName>Particle.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CGameScene" Collapsed="true">
+    <Position X="48.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAZFACQA4CABC4CACDAAQQAAiQAAlECoAFAoIlAABiw=</HashCode>
+      <FileName>GameScene.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CHierarchieNum" Collapsed="true">
+    <Position X="37" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAhAAAAAAAAAAAAAAgAAAAABAAAAAAAA=</HashCode>
+      <FileName>HierarchieNum.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CEditTexture" Collapsed="true">
+    <Position X="45.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAAAIAAAAEAAAAAAAAAACAQAggAAgIAAA=</HashCode>
+      <FileName>EditTexture.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CModelManager" Collapsed="true">
+    <Position X="45.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BCAAAAAAAAABAAAAAAABAAABAAAAAgAAAAAAgAAAAAA=</HashCode>
+      <FileName>ModelManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CParticleManager" Collapsed="true">
+    <Position X="47" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQYAAAAAAAABAxCAAEAAAAAAAAEIAEAAAABCAAAAAAA=</HashCode>
+      <FileName>ParticleManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CTextureManager" Collapsed="true">
+    <Position X="50.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAIACAgAACAAAAAAAAAAAAAAAAACAAAAEAAAAAAA=</HashCode>
+      <FileName>TextureManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CMapObjManager" Collapsed="true">
+    <Position X="41.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAYAAAAAEAABAgCAAIAAAAEQAAEI0EAAAAgCAAAACAA=</HashCode>
+      <FileName>MapObjManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CItemManager" Collapsed="true">
+    <Position X="48.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIaAAAAAgAAAAgSABAIAAAAAAAEIBEAAAAgCAAAAAAA=</HashCode>
+      <FileName>ItemManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CUnitManager" Collapsed="true">
+    <Position X="45.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYIgAIAAAABAgCAABAAAwQiAABIAEAAAAgCAAAAAAA=</HashCode>
+      <FileName>UnitManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CFieldItem" Collapsed="true">
+    <Position X="5.5" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACQAAAIAAAIgAgCAAUAAgAAQAAEABAQAgCIQAwAAADA=</HashCode>
+      <FileName>FieldItem.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CFieldObj" Collapsed="true">
+    <Position X="21.75" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAgCAAiAAAAABAAAAAAAAAACAGAAAAAA=</HashCode>
+      <FileName>FieldObj.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CFieldObjMaker" Collapsed="true">
+    <Position X="6" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYAAA=</HashCode>
+      <FileName>FieldObjMaker.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CMapData" Collapsed="true">
+    <Position X="50.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>A0xgAKRAwKCJBgCCkAhBQIBAEIQAhQQAAAAbQQDAgAg=</HashCode>
+      <FileName>MapData.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CEnemy" Collapsed="true">
+    <Position X="15" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAgQQAiBAAIAAABAAACAAAABgAAAAGAAAAAAAAABA=</HashCode>
+      <FileName>Enemy.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CEnemyGenerator" Collapsed="true">
+    <Position X="17.25" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQACAAAAAAAAACAAAAAAAAAAABAAAAQAABSAIQAAAE=</HashCode>
+      <FileName>EnemyGenerator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CUnit" Collapsed="true">
+    <Position X="13.75" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>YSAwwH3gxkj1MoGAHsIGMCxRoIMSwFCO4QpWKAwIlMg=</HashCode>
+      <FileName>Unit.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CPlayer" Collapsed="true">
+    <Position X="12.75" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIwAhEQAACAQIgAAAABAFCBAAQAgAEAGAAAAAAAAAIA=</HashCode>
+      <FileName>Player.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="C3DObj" Collapsed="true">
+    <Position X="15" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIRAAAAAAAAACoiAACAAoAgBUAAAAAAACAIDUIAAKAA=</HashCode>
+      <FileName>C3DObj.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CDeleteObj" Collapsed="true">
+    <Position X="8.25" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAgAAAAAAABAAAAAAAAAAAAAAABA=</HashCode>
+      <FileName>DeleteObj.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CHitObj" Collapsed="true">
+    <Position X="10.5" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAEAAAAAAAAAAAQAAAAAAABAAAAAAAAABA=</HashCode>
+      <FileName>HitObj.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CCircle" Collapsed="true">
+    <Position X="43.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIRAAIAAAACAAgCAAAAAAIAAAAQAIQQAAAACAAAAAAA=</HashCode>
+      <FileName>Circle.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CSky" Collapsed="true">
+    <Position X="24" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAACAAAIAACgCAAABAAEAAAQEAAEAAAAgCEAAgAAA=</HashCode>
+      <FileName>Sky.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CEffectObj" Collapsed="true">
+    <Position X="9.25" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAQAAAASAAAAAAAAAAAAAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>EffectObj.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CTitle" Collapsed="true">
+    <Position X="10" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAiAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Title.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CTitleScene" Collapsed="true">
+    <Position X="41.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQEAAAABAAAAwAACAAAAAAAAAAggEAAABQAQBAAAAA=</HashCode>
+      <FileName>TitleScene.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CResult" Collapsed="true">
+    <Position X="16.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAA=</HashCode>
+      <FileName>Result.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CResultScene" Collapsed="true">
+    <Position X="48.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAABAAAAwAAAAAAAAAABIEggEAAABAAABAAAAA=</HashCode>
+      <FileName>ResultScene.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CPressSpace" Collapsed="true">
+    <Position X="23.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAQAAAAAAAAAAAAAAAAAAAAAACAAAAAEAAAAAAAABAA=</HashCode>
+      <FileName>PressSpace.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CGameClear" Collapsed="true">
+    <Position X="28" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameClear.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CGameClearScene" Collapsed="true">
+    <Position X="47" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEUAAAAABAAAAwAAAAAAAAAAAAAggGAAABAAABAAAAA=</HashCode>
+      <FileName>GameClearScene.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="__unnamed_struct_000d_1" Collapsed="true">
+    <Position X="1.75" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAIAIAAAAAAAABAAAAAAAAAAA=</HashCode>
+      <FileName>define.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="MVERTEX" Collapsed="true">
+    <Position X="47" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAIgAAAAAAAAAABIAAAAAAAA=</HashCode>
+      <FileName>Mesh.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="PIECE" Collapsed="true">
+    <Position X="48.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAgAAAAAEAAAAgAAAAAQCAABAAAAAAAAA=</HashCode>
+      <FileName>Mesh.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="__unnamed_struct_007a_1" Collapsed="true">
+    <Position X="5.75" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAYAAAAAAAAABAAAAAAAAAAA=</HashCode>
+      <FileName>Structure.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="TParticleParam" Collapsed="true">
+    <Position X="50.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAABAAAAAAQAQQAABAAgAACgBgCWAQAQICQAAAAAA=</HashCode>
+      <FileName>Particle.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Map" Collapsed="true">
+    <Position X="45.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAQEIIAAAAAAAA=</HashCode>
+      <FileName>MapData.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="AStar" Collapsed="true">
+    <Position X="41.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAQAAAAAigAAAAAAAAAAKAAAAAAAQAAAAA=</HashCode>
+      <FileName>MapData.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="AStarList" Collapsed="true">
+    <Position X="43.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapData.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Typedef Name="VERTEX_3D" Collapsed="true">
+    <Position X="1.75" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>define.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="VERTEX_2D" Collapsed="true">
+    <Position X="5.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Structure.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="PARTICLE_LIST" Collapsed="true">
+    <Position X="41.75" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ParticleManager.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="PARTICLE_MAP" Collapsed="true">
+    <Position X="43.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ParticleManager.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="PARTICLE_PAIR" Collapsed="true">
+    <Position X="45.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ParticleManager.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="FIELDOBJ_LIST" Collapsed="true">
+    <Position X="41.75" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapObjManager.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="FIELDOBJ_MAP" Collapsed="true">
+    <Position X="43.5" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapObjManager.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="FIELDOBJ_PAIR" Collapsed="true">
+    <Position X="45.25" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapObjManager.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="ITEM_LIST" Collapsed="true">
+    <Position X="47" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ItemManager.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="ITEM_MAP" Collapsed="true">
+    <Position X="48.75" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ItemManager.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="ITEM_PAIR" Collapsed="true">
+    <Position X="50.5" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ItemManager.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="UNIT_LIST" Collapsed="true">
+    <Position X="47" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>UnitManager.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="UNIT_MAP" Collapsed="true">
+    <Position X="48.75" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>UnitManager.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="UNIT_PAIR" Collapsed="true">
+    <Position X="50.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>UnitManager.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Enum Name="STATES" Collapsed="true">
+    <Position X="50.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAIAAAAAAAAAAAAAAAAAAAQAAABAAAAAAAAA=</HashCode>
+      <FileName>StatesDefine.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="MENUTAG" Collapsed="true">
+    <Position X="50.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAgAAAACAAAAAAAgAAAAAAABAIAA=</HashCode>
+      <FileName>MenuSelect.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="TRICKNAME" Collapsed="true">
+    <Position X="45.25" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Trick.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="TRICKEFFECT" Collapsed="true">
+    <Position X="43.5" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAAAAAAAgAAAgCAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Trick.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="TRICKRANGE" Collapsed="true">
+    <Position X="47" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAABAAAAAQAIAAAAAIAAAAAAAAAg=</HashCode>
+      <FileName>Trick.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ITEMNAME" Collapsed="true">
+    <Position X="48.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEAAAAAAAAUAAAAAAAAAAIAAABAAAA=</HashCode>
+      <FileName>Item.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="__unnamed_enum_000d_2" Collapsed="true">
+    <Position X="41.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAAACAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>define.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ObjectNumber" Collapsed="true">
+    <Position X="43.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAgAAAAAAAABAAAAEAAAAAAAAAAEAAAAAAAAAAAAAA=</HashCode>
+      <FileName>define.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ITEMEFFECT" Collapsed="true">
+    <Position X="47" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAFAAAAAI=</HashCode>
+      <FileName>define.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="__unnamed_enum_000d_3" Collapsed="true">
+    <Position X="43.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAACAAABAAAABAIAAAAAAAAAAAA=</HashCode>
+      <FileName>define.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="__unnamed_enum_002f_1" Collapsed="true">
+    <Position X="45.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAEAAAAAAAAIAAAAAAAAAAAAAAAEAAAAgAE=</HashCode>
+      <FileName>GameState.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ECamPos" Collapsed="true">
+    <Position X="48.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAAAAIAAAAAAACgAAAA=</HashCode>
+      <FileName>Camera.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="FADEMODE" Collapsed="true">
+    <Position X="43.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAABACAAAAAAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>Fade.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ParticlePattern" Collapsed="true">
+    <Position X="47" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAAAAAAAAAAAAAAAAAAAAAACAAAABAAAAA=</HashCode>
+      <FileName>Particle.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="EParticleCoord" Collapsed="true">
+    <Position X="50.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAEAAAAAAAAAAAAAAAAAAAAIAAAAAAgA=</HashCode>
+      <FileName>Particle.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="MODELNUM" Collapsed="true">
+    <Position X="41.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAQAAAEQABAAAgAAAAAAACAACAAAACAAACAAAAAIA=</HashCode>
+      <FileName>ModelManager.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="TEXTURENUM" Collapsed="true">
+    <Position X="41.75" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IQQABIEAAACAADIgYEhAiAAEAABAAAAIQkYQQEgEBDA=</HashCode>
+      <FileName>TextureManager.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Situation" Collapsed="true">
+    <Position X="48.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAAAAAEAAAAAAAAAAECAAAAgAAAggCAA=</HashCode>
+      <FileName>MapData.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="UNIT_STATE" Collapsed="true">
+    <Position X="48.75" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAIAAAACBIIAAQAAAAAAQAAAAAAAAAAAA=</HashCode>
+      <FileName>Unit.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Direction" Collapsed="true">
+    <Position X="47" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAIAAAAAAAAAAAAgAAAAACACAAAAAAAA=</HashCode>
+      <FileName>Unit.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Vector8Define" Collapsed="true">
+    <Position X="43.5" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIQgAAAAAAgAACAAgAAIAAAAAAAAAAAAAAAICAA=</HashCode>
+      <FileName>Unit.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="UNITSTATES" Collapsed="true">
+    <Position X="41.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAADAIABAAAAAAAQgAAAAAAAAAAgAAAAAgAA=</HashCode>
+      <FileName>Unit.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="UNIT_UP_STATES" Collapsed="true">
+    <Position X="50.5" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAIABAAAAAAAAAAAAAACAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Unit.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="OBJID" Collapsed="true">
+    <Position X="45.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABAAAAAEAAAQCBABAAAAAAAAAIAACCAQA=</HashCode>
+      <FileName>C3DObj.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ESynthetic" Collapsed="true">
+    <Position X="41.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEAAAAACBAAAAAAAAAAAAAAAQAAAAACA=</HashCode>
+      <FileName>C3DObj.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="`anonymous-namespace'::GRID_TYPE" Collapsed="true">
+    <Position X="45.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAIAAACAAAAAAAwACEAAAAAEAQAAAAAAAAA=</HashCode>
+      <FileName>MiniMap.cpp</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Yu Gothic UI" Size="9" />
+</ClassDiagram>
