@@ -96,7 +96,7 @@ void CCommandWindow::UpDate()
 			CTurn::SumCount(CPlayer::GetState());
 
 			//アイテムを使用
-			CPlayer::SetState(CTurn::GameState::GAME_STATE_ITEM_USE);
+			CPlayer::SetState(CTurn::GAME_STATE_ITEM_USE);
 
 			//アイテム使用ステートに存在するユニットの数+1
 			CTurn::AddCount(CPlayer::GetState());

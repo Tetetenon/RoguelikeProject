@@ -29,6 +29,7 @@ CMapObjManager::~CMapObjManager()
 {
 	//変数の初期化
 	m_bDeleteFlg = false;
+
 	//プレイヤーポインタの開放
 	m_pPlayer = NULL;
 	m_nNextObjNumber = 0;

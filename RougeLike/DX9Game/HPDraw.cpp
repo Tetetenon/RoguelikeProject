@@ -156,7 +156,7 @@ void CHPDraw::SetHP (int nHP)
 	//’l‚ð•¶Žš—ñ‚Æ‚µ‚ÄŠi”[
 	//_itot_s(nHP,m_States,sizeof(_TCHAR) * mAX_STATES_DIGIT - 1,10);
 	
-	_stprintf(m_States, _T("HP:%d"), nHP);
+	sprintf_s(m_States, _T("HP:%d"), nHP);
 
 	m_nHP = nHP;
 

@@ -939,7 +939,7 @@ RECT CMapData::GetRoomFloorPlan(int nRoomNumber)
 void CMapData::DrawHierarchyNum()
 {
 	char Hierarchy[256];
-	_stprintf(Hierarchy, _T("%dŠK"), m_nHierarchyNum);
+	sprintf_s(Hierarchy, _T("%dŠK"), m_nHierarchyNum);
 	//”’l(•¶Žš)•`‰æ
 	m_pFont ->DrawText(NULL,Hierarchy,-1,&m_FontDrawPos,DT_LEFT,D3DCOLOR_ARGB(0xff, 0x00, 0x00, 0x00));
 }

@@ -67,18 +67,3 @@ void CMeshObj::DrawAlpha()
 	}
 
 }
-
-DWORD CMeshObj::GetPieceCount()
-{
-	if (m_pMesh) {
-		return m_pMesh->GetPieceCount();
-	}
-	return 0;
-}
-
-void CMeshObj::GetInitPiece(PIECE* pPiece)
-{
-	if (m_pMesh) {
-		m_pMesh->GetInitPiece(pPiece);
-	}
-}

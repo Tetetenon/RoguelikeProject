@@ -48,7 +48,7 @@ void CEnemyGenerator::Fin()
 void CEnemyGenerator::Update()
 {
 	//ターンステートが一定のステートの際、エネミーを確率で生成する
-	if(CTurn::GetState() == CTurn::GameState::GAME_STATE_STAND_BY_PLAYER)
+	if(CTurn::GetState() == CTurn::GAME_STATE_STAND_BY_PLAYER)
 	{
 		int nRand = rand()%100;
 		//生成確立5%かつフィールドに配置できる最大エネミー数に到達していない

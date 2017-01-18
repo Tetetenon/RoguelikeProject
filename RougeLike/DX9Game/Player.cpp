@@ -24,7 +24,7 @@ LPD3DXFONT			CPlayer::m_pFont;			//描画フォントの設定
 RECT				CPlayer::m_FontDrawPos;		//フォントの描画位置を設定する
 int					CPlayer::m_nDividPattern;	//生成するマップパターン
 
-int		CPlayer::m_State_Cpy;					//外部からステートの変更を掛ける
+CTurn::GameState	CPlayer::m_State_Cpy;					//外部からステートの変更を掛ける
 bool	CPlayer::m_bState_Change_Flg = false;;	//外部からのステート変更がかかったか
 
 #define PATH_DATA_PLAYER		("../data/txt/Player.txt")
@@ -46,7 +46,7 @@ m_nEquipmentInterval(0)
 	m_uID = ID_PLAYER;
 
 	//ユニットのステートを設定
-	m_nStateNumber = CTurn::GameState::GAME_STATE_STAND_BY_PLAYER;
+	m_nStateNumber = CTurn::GAME_STATE_STAND_BY_PLAYER;
 
 	//使用するモデル番号を設定
 	m_nMeshNumber = MODEL_PLAYER;
@@ -135,7 +135,7 @@ m_nEquipmentInterval(0)
 
 	//-----ステータスの設定-----
 	//名前の設定
-	_stprintf(m_szName, _T("赤ずきん"));
+	sprintf_s(m_szName, _T("赤ずきん"));
 
 	//HPを設定
 	m_nMaxHP = PlayerData[STATES_MAX_HP];
@@ -176,7 +176,7 @@ m_nEquipmentInterval(0)
 	CHPDraw::SetHP(m_nHP);
 
 	//ステートの設定
-	m_nStateNumber = m_State_Cpy = CTurn::GameState::GAME_STATE_STAND_BY_PLAYER;
+	m_nStateNumber = m_State_Cpy = CTurn::GAME_STATE_STAND_BY_PLAYER;
 
 	//外部からのステート変更なし
 	m_bState_Change_Flg = false;
@@ -249,7 +249,7 @@ void CPlayer::Update()
 			{
 				//メッセージ表記
 				TCHAR	str[256];
-				_stprintf(str, _T("%sを戻した"),m_pEquipment->GetInventoryItemName(CEquipmentInventoryCursor::GetItemNum()));
+				sprintf_s(str, _T("%sを戻した"),m_pEquipment->GetInventoryItemName(CEquipmentInventoryCursor::GetItemNum()));
 	
 				//メッセージテスト
 				MessageWindow::SetMassege(str);
@@ -262,7 +262,6 @@ void CPlayer::Update()
 			}
 			else
 			{
-	
 				//メッセージテスト
 				MessageWindow::SetMassege(_T("アイテムがいっぱいだった!"));
 
@@ -292,7 +291,7 @@ void CPlayer::Draw()
 //---------------------------------------------------------------------------------------
 //外部からステートの変更をかける
 //---------------------------------------------------------------------------------------
-void CPlayer::SetState(int nState)
+void CPlayer::SetState(CTurn::GameState nState)
 {
 	m_State_Cpy = nState;
 	m_bState_Change_Flg = true;
@@ -318,6 +317,20 @@ void CPlayer::InputUpdate()
 
 		//移動フラグ
 		bool bMoveSuccess = false;
+		if (CInput::GetKeyTrigger(DIK_G))
+		{
+			//ゲームメインを終了
+			CFade::ChangeState(FADEMODE_OUT);
+
+			//ゲームクリア状態をゲームオーバーに
+			CGameScene::GameClearStateChange(GAME_OVER);
+
+			//エネミーの生成数のリセット
+			CEnemyGenerator::ResetMakeEnemyNum();
+
+			//フィールドアイテム生成数のリセット
+			CItemGenerator::ResetMakeItemNum();
+		}
 
 		//-----方向キー入力をした-----
 		if(CInput::GetKeyPress(DIK_W) || CInput::GetKeyPress(DIK_S) || CInput::GetKeyPress(DIK_A) || CInput::GetKeyPress(DIK_D))
@@ -481,7 +494,7 @@ void CPlayer::InputUpdate()
 						CTurn::SumCount(m_nStateNumber);
 
 						//ステートの遷移
-						m_nStateNumber =  m_State_Cpy = CTurn::GameState::GAME_STATE_MOVE;
+						m_nStateNumber =  m_State_Cpy = CTurn::GAME_STATE_MOVE;
 
 						//移動ステートに存在するユニット数+1
 						CTurn::AddCount(m_nStateNumber);
@@ -542,7 +555,7 @@ void CPlayer::InputUpdate()
 				CTurn::SumCount(m_nStateNumber);
 
 				//ステートの遷移
-				m_nStateNumber =  m_State_Cpy = CTurn::GameState::GAME_STATE_ATTACK;
+				m_nStateNumber =  m_State_Cpy = CTurn::GAME_STATE_ATTACK;
 
 				//攻撃ステートに存在するユニット数+1
 				CTurn::AddCount(m_nStateNumber);
@@ -561,7 +574,7 @@ void CPlayer::InputUpdate()
 			CTurn::SumCount(m_nStateNumber);
 
 			//自身のステートの設定
-			m_nStateNumber = CTurn::GameState::GAME_STATE_TURN_END;
+			m_nStateNumber = CTurn::GAME_STATE_TURN_END;
 
 			//ターン終了に存在するユニットの数+1
 			CTurn::AddCount(m_nStateNumber);
@@ -657,7 +670,7 @@ void CPlayer::MoveUpdate()
 			CTurn::SumCount(m_nStateNumber);
 			
 			//ステートの遷移(ターンの終了)
-			m_nStateNumber =  m_State_Cpy = CTurn::GameState::GAME_STATE_TURN_END;
+			m_nStateNumber =  m_State_Cpy = CTurn::GAME_STATE_TURN_END;
 			
 			//入力待ちステートに存在するユニット数+1
 			CTurn::AddCount(m_nStateNumber);
@@ -706,7 +719,6 @@ void CPlayer::MoveUpdate()
 
 	//ワールドマトリックスを設定
 	SetWorld(world);
-
 }
 //---------------------------------------------------------------------------------------
 //アクション更新
@@ -717,7 +729,7 @@ void CPlayer::ActUpdate()
 	CTurn::SumCount(m_nStateNumber);
 
 	//ステートの遷移(ターンの終了)
-	m_nStateNumber =  m_State_Cpy = CTurn::GameState::GAME_STATE_TURN_END;
+	m_nStateNumber =  m_State_Cpy = CTurn::GAME_STATE_TURN_END;
 
 	//入力待ちに存在するユニットの数+1
 	CTurn::AddCount(m_nStateNumber);
@@ -735,7 +747,7 @@ void CPlayer::TurnEndUpdate()
 	CTurn::SumCount(m_nStateNumber);
 
 	//ステートの遷移(ターンの終了)
-	m_nStateNumber =  m_State_Cpy = CTurn::GameState::GAME_STATE_STAND_BY_PLAYER;
+	m_nStateNumber =  m_State_Cpy = CTurn::GAME_STATE_STAND_BY_PLAYER;
 
 	//入力待ちステートに存在するユニットの数+1
 	CTurn::AddCount(m_nStateNumber);
@@ -799,7 +811,7 @@ void CPlayer::ItemUpdate()
 		{
 			//メッセージ表記
 			TCHAR	str[256];
-			_stprintf(str, _T("%sは%sを装備した"),m_szName,m_pInventory->GetInventoryItemName(m_InventoryCursor.GetItemNum()));
+			sprintf_s(str, _T("%sは%sを装備した"),m_szName,m_pInventory->GetInventoryItemName(m_InventoryCursor.GetItemNum()));
 	
 			//メッセージテスト
 			MessageWindow::SetMassege(str);
@@ -810,10 +822,6 @@ void CPlayer::ItemUpdate()
 		else
 		{
 			//メッセージ表記
-			TCHAR	str[256];
-			_stprintf(str, _T("装備がいっぱいだった!"));
-	
-			//メッセージテスト
 			MessageWindow::SetMassege(_T("装備がいっぱいだった"));
 		}
 		break;
@@ -833,7 +841,7 @@ void CPlayer::ItemUpdate()
 	CTurn::SumCount(m_nStateNumber);
 
 	//ステートの遷移(ターンの終了)
-	m_nStateNumber =  m_State_Cpy = CTurn::GameState::GAME_STATE_TURN_END;
+	m_nStateNumber =  m_State_Cpy = CTurn::GAME_STATE_TURN_END;
 
 	//入力待ちステートに存在するユニット数+1
 	CTurn::AddCount(m_nStateNumber);
@@ -876,7 +884,7 @@ void CPlayer::SetPos()
 	CTurn::SumCount(m_nStateNumber);
 	
 	//ステートの遷移(ターンの終了)
-	m_nStateNumber =  m_State_Cpy = CTurn::GameState::GAME_STATE_STAND_BY_PLAYER;
+	m_nStateNumber =  m_State_Cpy = CTurn::GAME_STATE_STAND_BY_PLAYER;
 	
 	//入力待ちステートに存在するユニット数+1
 	CTurn::AddCount(m_nStateNumber);
@@ -923,7 +931,7 @@ void CPlayer::DrawTrick()
 void CPlayer::DrawLevel()
 {
 	char Level[256];
-	_stprintf(Level, _T("Level:%d"), m_nLevel);
+	sprintf_s(Level, _T("Level:%d"), m_nLevel);
 	//数値(文字)描画
 	m_pFont ->DrawText(NULL,Level,-1,&m_FontDrawPos,DT_LEFT,D3DCOLOR_ARGB(0xff, 0x00, 0x00, 0x00));
 }

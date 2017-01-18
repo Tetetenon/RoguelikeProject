@@ -84,10 +84,10 @@ void CItemDescriptionFrame::SetFontPos()
 	//ÉtÉHÉìÉgÇÃê›íË
 	D3DXCreateFont(pDevice, 18, 18, 1, 0, FALSE, SHIFTJIS_CHARSET,OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, NULL,&m_Font);
 	
-	m_FontPosition.top		= WINDOW_HEIGHT * (ITEM_NUM_MAX + 1) + 6.0f;
-	m_FontPosition.bottom	= WINDOW_HEIGHT * (ITEM_NUM_MAX + 1) + WINDOW_HEIGHT;
-	m_FontPosition.left		= WINDOW_WIDHT + 30.0f;
-	m_FontPosition.right	= SCREEN_WIDTH;
+	m_FontPosition.top		= (LONG)(WINDOW_HEIGHT * (ITEM_NUM_MAX + 1) + 6.0f);
+	m_FontPosition.bottom	= (LONG)(WINDOW_HEIGHT * (ITEM_NUM_MAX + 1) + WINDOW_HEIGHT);
+	m_FontPosition.left		= (LONG)(WINDOW_WIDHT + 30.0f);
+	m_FontPosition.right	= (LONG)SCREEN_WIDTH;
 }
 
 //---------------------------------------------------------------------------------------

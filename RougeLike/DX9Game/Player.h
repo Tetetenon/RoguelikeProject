@@ -14,7 +14,7 @@ private:
 	static CInventoryCursor m_InventoryCursor;		//アイテムウインドウのカーソルの位置を特定する
 	static CCommandCursor	m_CommandCursor;		//コマンドカーソルの位置を特定する
 
-	static int				m_State_Cpy;			//ステートを外部から変更をかける際に使用する
+	static CTurn::GameState	m_State_Cpy;			//ステートを外部から変更をかける際に使用する
 	static bool				m_bState_Change_Flg;	//ステートに変更がかかったか
 
 	int						m_nEquipmentInterval;	//装備コマンドを描画してから、何秒立ったか
@@ -25,7 +25,6 @@ private:
 public:
 	CPlayer(CGameScene* pScene);					//コンストラクタ
 	~CPlayer(void);								//デストラクタ
-
 
 	void Update();						//更新処理
 	void Draw();						//描画
@@ -42,7 +41,7 @@ public:
 	void ItemUpdate();					//アイテム使用更新
 	void TurnEndUpdate();				//ターン終了更新
 
-	static void SetState(int nState);//外部からステートの状態を変更させる
+	static void SetState(CTurn::GameState nState);//外部からステートの状態を変更させる
 
 	//現在のステート情報を渡す
 	static int GetState();

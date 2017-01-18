@@ -39,30 +39,30 @@ static void WriteGridForTexture(int x, int y, DWORD col, CEditTexture* pTex)
 
 static GRID_TYPE GetUnitType(const Map& map_data)
 {
-	if (map_data.m_isVisible == FALSE) return GRID_TYPE::TYPE_WALL;
+	if (map_data.m_isVisible == FALSE) return TYPE_WALL;
 	if (map_data.m_unit == OBJ_NUM_PLAYER)
-		return GRID_TYPE::TYPE_PLAYER;
-	return GRID_TYPE::TYPE_ENEMY;
+		return TYPE_PLAYER;
+	return TYPE_ENEMY;
 }
 
 static GRID_TYPE GetTerrainType(const Map& map_data)
 {
 	switch (map_data.m_terrain)
 	{
-	case Situation::FLOOR:
-		if (map_data.m_isVisible == FALSE) return GRID_TYPE::TYPE_WALL;
-		return GRID_TYPE::TYPE_FLOOR;
-	case Situation::STAIRS:
-		return GRID_TYPE::TYPE_STAIRS;
+	case FLOOR:
+		if (map_data.m_isVisible == FALSE) return TYPE_WALL;
+		return TYPE_FLOOR;
+	case STAIRS:
+		return TYPE_STAIRS;
 	default:
-		return GRID_TYPE::TYPE_WALL;
+		return TYPE_WALL;
 	}
 }
 
 static GRID_TYPE GetItemType(const Map& map_data)
 {
-	if (map_data.m_isVisible == FALSE) return GRID_TYPE::TYPE_WALL;
-	return  GRID_TYPE::TYPE_ITEM;
+	if (map_data.m_isVisible == FALSE) return TYPE_WALL;
+	return  TYPE_ITEM;
 }
 
 static bool IsUnitExist(const Map& map_data)
@@ -123,7 +123,7 @@ CMiniMap::~CMiniMap(void)
 void CMiniMap::Update()
 {
 	// ミニマップのクリア
-	m_pEditTexture->FillColor(GRID_COLOR[GRID_TYPE::TYPE_LINE]);
+	m_pEditTexture->FillColor(GRID_COLOR[TYPE_LINE]);
 	// 各グリッドの更新
 	for (int y = 0; y < MAP_SIZE; ++y)
 		for (int x = 0; x < MAP_SIZE; ++x)

@@ -33,7 +33,7 @@ CUnit(pScene)
 	m_uID = ID_ENEMY;
 
 	//ユニットのステート状態を設定
-	m_nStateNumber = CTurn::GameState::GAME_STATE_STAND_BY_OTHER;
+	m_nStateNumber = CTurn::GAME_STATE_STAND_BY_OTHER;
 }
 
 //---------------------------------------------------------------------------------------
@@ -83,21 +83,21 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 	{
 	case 0:
 		//名前の設定
-		_stprintf(pEnemy -> m_szName, ("はち"));
+		sprintf_s(pEnemy -> m_szName, ("はち"));
 
 		//モデルデータの読み込み
 		pEnemy -> m_nMeshNumber = MODEL_BEE;
 		break;
 	case 1:
 		//名前の設定
-		_stprintf(pEnemy -> m_szName, ("おおかみ"));
+		sprintf_s(pEnemy -> m_szName, ("おおかみ"));
 
 		//モデルデータ読み込み
 		pEnemy -> m_nMeshNumber = MODEL_WOLF;
 		break;
 	case 2:
 		//名前の設定
-		_stprintf(pEnemy -> m_szName, ("くま"));
+		sprintf_s(pEnemy -> m_szName, ("くま"));
 
 		//モデルデータ読み込み
 		pEnemy -> m_nMeshNumber = MODEL_BEAR;
@@ -106,7 +106,7 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 		//デバッグ用処理
 	default:
 		//名前の設定
-		_stprintf(pEnemy -> m_szName, ("かべ"));
+		sprintf_s(pEnemy -> m_szName, ("かべ"));
 
 		//モデルデータ読み込み
 		pEnemy ->m_nMeshNumber = MODEL_WALL;
@@ -117,7 +117,7 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 	pEnemy -> m_uID = ID_ENEMY;
 
 	//ユニットのステート状態を設定
-	pEnemy -> m_nStateNumber = CTurn::GameState::GAME_STATE_STAND_BY_OTHER;
+	pEnemy -> m_nStateNumber = CTurn::GAME_STATE_STAND_BY_OTHER;
 
 	//メッシュの設定
 	pEnemy ->SetMesh(CModelManager::GetMesh(pEnemy ->m_nMeshNumber));
@@ -292,7 +292,7 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 	pEnemy -> m_bDestination = true;
 
 	//ステートの設定
-	pEnemy ->m_nStateNumber = CTurn::GameState::GAME_STATE_STAND_BY_OTHER;
+	pEnemy ->m_nStateNumber = CTurn::GAME_STATE_STAND_BY_OTHER;
 
 	//入力待ちに存在するユニット数+1
 	CTurn::AddCount(pEnemy ->m_nStateNumber);
@@ -319,18 +319,6 @@ void CEnemy::Update()
 //---------------------------------------------------------------------------------------
 void CEnemy::InputUpdate()
 {
-	if (1)
-	{
-		//入力待ちに存在するユニットの数-1
-		CTurn::SumCount(m_nStateNumber);
-
-		//自身のステートの設定
-		m_nStateNumber = CTurn::GameState::GAME_STATE_TURN_END;
-
-		//攻撃に存在するユニットの数+1
-		CTurn::AddCount(m_nStateNumber);
-		return;
-	}
 	//移動できたか
 	bool MoveCompletion = false;
 
@@ -468,7 +456,7 @@ void CEnemy::InputUpdate()
 			CTurn::SumCount(m_nStateNumber);
 
 			//自身のステートの設定
-			m_nStateNumber = CTurn::GameState::GAME_STATE_ATTACK;
+			m_nStateNumber = CTurn::GAME_STATE_ATTACK;
 
 			//攻撃に存在するユニットの数+1
 			CTurn::AddCount(m_nStateNumber);
@@ -503,7 +491,7 @@ void CEnemy::MoveUpdate()
 			CTurn::SumCount(m_nStateNumber);
 
 			//自身のステート状態をターンの終了に設定
-			m_nStateNumber = CTurn::GameState::GAME_STATE_TURN_END;
+			m_nStateNumber = CTurn::GAME_STATE_TURN_END;
 
 			//入力待ちに存在するユニットの数+1
 			CTurn::AddCount(m_nStateNumber);
@@ -565,7 +553,7 @@ void CEnemy::ActUpdate()
 	CTurn::SumCount(m_nStateNumber);
 
 	//ステートの遷移(ターンの終了)
-	m_nStateNumber = CTurn::GameState::GAME_STATE_TURN_END;
+	m_nStateNumber = CTurn::GAME_STATE_TURN_END;
 
 	//入力待ちに存在するユニットの数+1
 	CTurn::AddCount(m_nStateNumber);
@@ -586,7 +574,7 @@ void CEnemy::ItemUpdate()
 	CTurn::AddCount(m_nStateNumber);
 
 	//ステートの遷移(ターンの終了)
-	m_nStateNumber = CTurn::GameState::GAME_STATE_TURN_END;
+	m_nStateNumber = CTurn::GAME_STATE_TURN_END;
 		
 }
 //---------------------------------------------------------------------------------------
@@ -599,7 +587,7 @@ void CEnemy::TurnEndUpdate()
 	CTurn::SumCount(m_nStateNumber);
 
 	//ステートの遷移(ターンの終了)
-	m_nStateNumber = CTurn::GameState::GAME_STATE_STAND_BY_OTHER;
+	m_nStateNumber = CTurn::GAME_STATE_STAND_BY_OTHER;
 
 	//入力待ちに存在するユニットの数+1
 	CTurn::AddCount(m_nStateNumber);
@@ -648,7 +636,7 @@ bool CEnemy::A_StarMove()
 		CTurn::SumCount(m_nStateNumber);
 
 		//自身のステートの設定
-		m_nStateNumber = CTurn::GameState::GAME_STATE_TURN_END;
+		m_nStateNumber = CTurn::GAME_STATE_TURN_END;
 		
 		//移動ステートに存在するユニット+1
 		CTurn::AddCount(m_nStateNumber);
@@ -680,7 +668,7 @@ bool CEnemy::A_StarMove()
 		CTurn::SumCount(m_nStateNumber);
 
 		//自身のステートの設定
-		m_nStateNumber = CTurn::GameState::GAME_STATE_TURN_END;
+		m_nStateNumber = CTurn::GAME_STATE_TURN_END;
 		
 		//移動ステートに存在するユニット+1
 		CTurn::AddCount(m_nStateNumber);
@@ -826,7 +814,7 @@ bool CEnemy::A_StarMove()
 	CTurn::SumCount(m_nStateNumber);
 
 	//自身のステートの設定
-	m_nStateNumber = CTurn::GameState::GAME_STATE_MOVE;
+	m_nStateNumber = CTurn::GAME_STATE_MOVE;
 	
 	//移動ステートに存在するユニット+1
 	CTurn::AddCount(m_nStateNumber);

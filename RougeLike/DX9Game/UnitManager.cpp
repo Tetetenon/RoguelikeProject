@@ -7,7 +7,7 @@
 int				CUnitManager::m_NowProcUnitID = 0;
 UNIT_MAP*		CUnitManager::m_pUnitManager = NULL;
 
-CUnit*	CUnitManager::m_pPlayer;			//プレイヤーポインター
+CUnit*	CUnitManager::m_pPlayer = NULL;			//プレイヤーポインター
 bool	CUnitManager::m_bMoveCanFlg;					//移動可能フラグ
 
 
@@ -33,6 +33,8 @@ CUnitManager::~CUnitManager()
 
 	//リストの掃除
 	m_pUnitManager->clear();
+
+	m_pPlayer = NULL;
 }
 
 //---------------------------------------------------------------------------------------
@@ -101,7 +103,6 @@ void CUnitManager::Del(int UnitID)
 		(*ListIterator)->Fin();
 		delete (*ListIterator);
 		UnitIterator->second.erase(ListIterator);
-		//m_pUnitManager->erase(UnitIterator);
 	}
 }
 //---------------------------------------------------------------------------------------
@@ -152,34 +153,34 @@ void CUnitManager::Update()
 		{
 			//待機状態の更新を行う
 			(*ListIterator)->WaitUpdate();
+			(*ListIterator)->Update();
 
 			//現在のユニットの番号を取得し、そのユニットの番号ならば、ターンの処理を行う
 			if (m_NowProcUnitID == (*ListIterator)->GetNumber() || m_NowProcUnitID == 0)
 			{
-
 				//ターンが終了しているか確認する
 				if ((*ListIterator)->GetTurnEndFlg())
 				{
 					//ターン処理が完了している場合
-
+			
 					//現在の処理中ユニット番号を初期化
 					//次のユニットの処理ができるようにする
 					m_NowProcUnitID = 0;
-
+			
 					//ユニットのターンの処理状態を初期化
 					(*ListIterator)->setTurnEndFlg(false);
 				}
 				else
 				{
 					//ターン処理が完了していない場合
-
+			
 					//現在の処理ユニットを自身に設定する
 					m_NowProcUnitID = (*ListIterator)->GetNumber();
-
+			
 					//もし、行動可能フラグが立っていなければ、処理をスキップ
 					if (!m_bMoveCanFlg)
 						return;
-
+			
 					//ターン処理の更新
 					(*ListIterator)->TurnUpdate();
 				}

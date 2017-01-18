@@ -22,8 +22,5 @@ public:
 
 	void SetMesh (CMesh *pMesh){m_pMesh = pMesh;}
 	CMesh* GetMesh(){return m_pMesh;}
-	
-	DWORD GetPieceCount();
-	void GetInitPiece(PIECE* pPiece);
 };
 

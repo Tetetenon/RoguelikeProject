@@ -155,7 +155,7 @@ void CCamera::PostUpdate()
 		else
 		{
 			//戦闘時以外カメラ位置を更新
-			if (m_pPlayer->GetUnitTurnState() != CTurn::GameState::GAME_STATE_ATTACK)
+			if (m_pPlayer->GetUnitTurnState() != CTurn::GAME_STATE_ATTACK)
 			{
 					m_pos = D3DXVECTOR3(Pos.x + CAMERA_POS_X,CAMERA_POS_Y,Pos.z  + CAMERA_POS_Z);
 

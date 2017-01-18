@@ -70,5 +70,11 @@ public:
 	static int GetPlayerPosX();
 	static int GetPlayerPosZ();
 
+
+	//UŒ‚’†‚Ìƒ†ƒjƒbƒg”Ô†‚ğ‰Šú‰»‚·‚é
+	static void ResetUnitID()
+	{
+		m_NowProcUnitID = 0;
+	}
 };
 

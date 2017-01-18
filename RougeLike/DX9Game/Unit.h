@@ -14,6 +14,8 @@
 #include<string>
 #include<sstream>
 
+#include"Turn.h"
+
 //行動にかかる時間
 #define ACTION_TIME	0.6f
 
@@ -65,7 +67,8 @@ enum Vector8Define
 };
 
 //八方向
-const int Vector_8[8][2] = {
+const int Vector_8[8][2] = 
+{
 	{-1,-1},							//左上
 	{ 0,-1},							//上
 	{ 1,-1},							//右上
@@ -113,9 +116,8 @@ class CUnit :
 	public CMeshObj
 {
 protected:
-	static int m_Debug;
 	//-----ユニットステータス-----
-	char					m_szName[5];					//名前
+	char					m_szName[10];					//名前
 	int						m_nID;							//ユニットの種類識別ID
 	int						m_nUnitNumber;					//ユニットを一意に定める番号
 	static int				m_nMakeNumber;					//ユニットを何体生成したか。
@@ -153,7 +155,7 @@ protected:
 
 	CFieldItem*				m_pFootItem;					//足元のアイテムの情報を格納する
 
-	int						m_nStateNumber;					//ステート番号
+	CTurn::GameState		m_nStateNumber;					//ステート番号
 	int						m_nOldStateNumber;				//1フレーム前のステート番号
 	CCircle					m_Circle;						//ユニットサークル
 
@@ -280,13 +282,18 @@ public:
 	void ChackFeetItem();
 
 	//ユニットのターンステート情報の取得
-	int GetUnitTurnState();
+	CTurn::GameState GetUnitTurnState();
 	//ユニットの処理状況の取得
 	bool GetUnitProc();
 
 	//自身のターンが終了したか確認する
-	bool GetTurnEndFlg() { return m_bTurnEndFlg; }
+	bool GetTurnEndFlg() 
+	{
+		return m_bTurnEndFlg; 
+	}
 	//ターン終了状態を変更する
-	void setTurnEndFlg(bool ChangeFlg) { m_bTurnEndFlg = ChangeFlg; }
-
+	void setTurnEndFlg(bool ChangeFlg) 
+	{
+		m_bTurnEndFlg = ChangeFlg; 
+	}
 };

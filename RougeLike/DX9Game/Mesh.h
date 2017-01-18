@@ -47,12 +47,6 @@ private:
 	LPD3DXMESH				m_pBBox;		// 境界ボックス メッシュ
 	LPD3DXMESH				m_pBSphere;		// 境界球メッシュ
 	D3DCOLORVALUE			m_cvBColor;		// 境界球/ボックス色
-
-	PIECE*					m_pInitPiece;	// 破片初期値
-	PIECE*					m_pPiece;		// 破片
-	DWORD					m_dwPiece;		// 破片の数
-	DWORD					m_dwTime;		// 経過フレーム数
-
 public:
 	CMesh();								// コンストラクタ
 	virtual ~CMesh();						// デストラクタ
@@ -70,13 +64,6 @@ public:
 	void SetBColor(D3DCOLORVALUE& cvBColor) {m_cvBColor = cvBColor;}
 	void SetBColor(float r, float g, float b, float a) {m_cvBColor.r = r; m_cvBColor.g = g; m_cvBColor.b = b; m_cvBColor.a = a;}
 	D3DCOLORVALUE& GetBColor() {return m_cvBColor;}
-
-	void DrawPiece();					// 破片描画
-	void InitPiece(D3DXMATRIX& world);	// 破片初期化
-	void UpdatePiece();					// 破片更新
-	void FinPiece();					// 破片後片付け
-	DWORD GetPieceCount() {return m_dwPiece;}
-	void GetInitPiece(PIECE* pPiece);
 	
 	void MaterialAlpha() {m_pMaterial->Diffuse.a = 0.3f;}
 	void MaterialNoAlpha() {m_pMaterial->Diffuse.a = 1.0f;}
