@@ -1,14 +1,15 @@
 #include "UnitManager.h"
-#include "Turn.h"
 #include "Unit.h"				//ユニット
+
+#include "EnemyManager.h"
 
 
 //静的変数の初期化
-int				CUnitManager::m_NowProcUnitID = 0;
 UNIT_MAP*		CUnitManager::m_pUnitManager = NULL;
 
 CUnit*	CUnitManager::m_pPlayer = NULL;			//プレイヤーポインター
-bool	CUnitManager::m_bMoveCanFlg;					//移動可能フラグ
+int		CUnitManager::m_nMakeNumber = OBJ_NUM_PLAYER;	//生成したユニットの数
+bool	CUnitManager::m_bMoveCanFlg;			//移動可能フラグ
 
 
 //---------------------------------------------------------------------------------------
@@ -16,11 +17,11 @@ bool	CUnitManager::m_bMoveCanFlg;					//移動可能フラグ
 //---------------------------------------------------------------------------------------
 CUnitManager::CUnitManager()
 {
-	//現在処理中のユニットの番号の初期化
-	m_NowProcUnitID = 0;
-
 	//リストの初期化
 	m_pUnitManager->clear();
+
+	//生成したユニットの数初期化
+	m_nMakeNumber = OBJ_NUM_PLAYER;
 }
 
 //---------------------------------------------------------------------------------------
@@ -28,8 +29,8 @@ CUnitManager::CUnitManager()
 //---------------------------------------------------------------------------------------
 CUnitManager::~CUnitManager()
 {
-	//現在処理中のユニットの番号を初期化
-	m_NowProcUnitID = 0;
+	//生成したユニットの数初期化
+	m_nMakeNumber = OBJ_NUM_PLAYER;
 
 	//リストの掃除
 	m_pUnitManager->clear();
@@ -45,7 +46,10 @@ void CUnitManager::Create()
 	//まだ作成をしていなかったらさくせいする
 	if (!m_pUnitManager)
 	{
-		m_pUnitManager = new UNIT_MAP;
+		m_pUnitManager = new UNIT_MAP();
+
+		//エネミーマネージャーの作成
+		CEnemyManager::Create();
 	}
 }
 //---------------------------------------------------------------------------------------
@@ -58,6 +62,8 @@ void CUnitManager::Destroy()
 	{
 		//終了処理
 		Fin();
+		//エネミーマネージャーの削除
+		CEnemyManager::Destroy();
 		//削除
 		delete m_pUnitManager;
 		//中身をきれいに
@@ -69,23 +75,40 @@ void CUnitManager::Destroy()
 //---------------------------------------------------------------------------------------
 void CUnitManager::Add(int UnitID, CUnit* pAddUnit)
 {
-	//既にIDが登録されているか確認を行う
-	auto UnitIterator = m_pUnitManager->find(UnitID);
-
-	//そのIDが既に登録されているか確認する
-	if (UnitIterator != m_pUnitManager->end())
+	//IDによって登録する先を決定する
+	if (UnitID >= OBJ_NUM_ENEMY)
 	{
-		//IDが既に登録されているため、オブジェクトデータのみ挿入
-		UnitIterator->second.push_back(pAddUnit);
+		//エネミーの場合、エネミーマネージャー側に登録させる
+		CEnemyManager::Add(UnitID,pAddUnit);
 	}
-	else
-	{
-		//IDも、オブジェデータも登録されていないため、両方登録する
-		UNIT_LIST NewUnitList;
-		NewUnitList.push_back(pAddUnit);
 
-		UNIT_PAIR NewUnitPair(UnitID, NewUnitList);
-		m_pUnitManager->insert(NewUnitPair);
+	else if (UnitID >= OBJ_NUM_PARTY)
+	{
+		//パーティーメンバーの場合、パーティーマネージャーへ
+	}
+	
+	if (UnitID == OBJ_NUM_PLAYER)
+	{
+		//プレイヤーの場合、自身のリストへ登録する
+
+		//既にIDが登録されているか確認を行う
+		auto UnitIterator = m_pUnitManager->find(UnitID);
+
+		//そのIDが既に登録されているか確認する
+		if (UnitIterator != m_pUnitManager->end())
+		{
+			//IDが既に登録されているため、オブジェクトデータのみ挿入
+			UnitIterator->second.push_back(pAddUnit);
+		}
+		else
+		{
+			//IDも、オブジェデータも登録されていないため、両方登録する
+			UNIT_LIST NewUnitList;
+			NewUnitList.push_back(pAddUnit);
+
+			UNIT_PAIR NewUnitPair(UnitID, NewUnitList);
+			m_pUnitManager->insert(NewUnitPair);
+		}
 	}
 }
 //---------------------------------------------------------------------------------------
@@ -93,16 +116,31 @@ void CUnitManager::Add(int UnitID, CUnit* pAddUnit)
 //---------------------------------------------------------------------------------------
 void CUnitManager::Del(int UnitID)
 {
-	//IDでオブジェクトの検索
-	auto UnitIterator = m_pUnitManager->find(UnitID);
-
-	//そのオブジェクトが存在している場合、削除を行う
-	if (UnitIterator != m_pUnitManager->end())
+	//IDによって削除するデータの先を変更する
+	if (UnitID >= OBJ_NUM_ENEMY)
 	{
-		auto ListIterator = UnitIterator->second.begin();
-		(*ListIterator)->Fin();
-		delete (*ListIterator);
-		UnitIterator->second.erase(ListIterator);
+		//エネミーの場合、エネミーマネージャー側のデータを削除
+		CEnemyManager::Del(UnitID);
+	}
+
+	else if (UnitID >= OBJ_NUM_PARTY)
+	{
+		//パーティーメンバーの場合、パーティーマネージャーへ
+	}
+
+	if (UnitID == OBJ_NUM_PLAYER)
+	{
+		//IDでオブジェクトの検索
+		auto UnitIterator = m_pUnitManager->find(UnitID);
+
+		//そのオブジェクトが存在している場合、削除を行う
+		if (UnitIterator != m_pUnitManager->end())
+		{
+			auto ListIterator = UnitIterator->second.begin();
+			(*ListIterator)->Fin();
+			delete (*ListIterator);
+			UnitIterator->second.erase(ListIterator);
+		}
 	}
 }
 //---------------------------------------------------------------------------------------
@@ -110,18 +148,34 @@ void CUnitManager::Del(int UnitID)
 //---------------------------------------------------------------------------------------
 CUnit* CUnitManager::Find(int UnitID)
 {
-	//IDでオブジェクトの検索を行う
-	auto UnitIterator = m_pUnitManager->find(UnitID);
+	//IDによって探索する先を決定する
+	if (UnitID >= OBJ_NUM_ENEMY)
+	{
+		//エネミーの場合、エネミーマネージャーから探索させる
+		return CEnemyManager::Find(UnitID);
+	}
 
-	//その指定されたIDのデータが存在する場合、データを返す
-	if (UnitIterator != m_pUnitManager->end())
+	else if (UnitID >= OBJ_NUM_PARTY)
 	{
-		return UnitIterator->second[0];
+		//パーティーメンバーの場合、パーティーマネージャーへ
 	}
-	else
+
+	if (UnitID == OBJ_NUM_PLAYER)
 	{
-		return NULL;
+		//IDでオブジェクトの検索を行う
+		auto UnitIterator = m_pUnitManager->find(UnitID);
+
+		//その指定されたIDのデータが存在する場合、データを返す
+		if (UnitIterator != m_pUnitManager->end())
+		{
+			return UnitIterator->second[0];
+		}
+		else
+		{
+			return NULL;
+		}
 	}
+	return NULL;
 }
 //---------------------------------------------------------------------------------------
 //管理するオブジェクトの初期化
@@ -138,55 +192,55 @@ void CUnitManager::Init()
 			(*ListIterator)->Init();
 		}
 	}
+
+	//エネミーの初期化
+	CEnemyManager::Init();
 }
 //---------------------------------------------------------------------------------------
 //管理するオブジェクトの更新
 //---------------------------------------------------------------------------------------
 void CUnitManager::Update()
 {
-	//リストの先頭を取得
-	auto UnitIterator = m_pUnitManager->begin();
+	//現在のターンユニットを取得
+	CTurn::UnitTurnState NowTurnUnit = CTurn::GetUnitTurn();
 
-	for (; UnitIterator != m_pUnitManager->end(); ++UnitIterator)
+	//全ユニットの待機更新を行う
+	for (auto UnitIterator = m_pUnitManager->begin(); UnitIterator != m_pUnitManager->end(); ++UnitIterator)
 	{
 		for (auto ListIterator = UnitIterator->second.begin(); ListIterator != UnitIterator->second.end(); ++ListIterator)
 		{
 			//待機状態の更新を行う
 			(*ListIterator)->WaitUpdate();
 			(*ListIterator)->Update();
-
-			//現在のユニットの番号を取得し、そのユニットの番号ならば、ターンの処理を行う
-			if (m_NowProcUnitID == (*ListIterator)->GetNumber() || m_NowProcUnitID == 0)
-			{
-				//ターンが終了しているか確認する
-				if ((*ListIterator)->GetTurnEndFlg())
-				{
-					//ターン処理が完了している場合
-			
-					//現在の処理中ユニット番号を初期化
-					//次のユニットの処理ができるようにする
-					m_NowProcUnitID = 0;
-			
-					//ユニットのターンの処理状態を初期化
-					(*ListIterator)->setTurnEndFlg(false);
-				}
-				else
-				{
-					//ターン処理が完了していない場合
-			
-					//現在の処理ユニットを自身に設定する
-					m_NowProcUnitID = (*ListIterator)->GetNumber();
-			
-					//もし、行動可能フラグが立っていなければ、処理をスキップ
-					if (!m_bMoveCanFlg)
-						return;
-			
-					//ターン処理の更新
-					(*ListIterator)->TurnUpdate();
-				}
-			}
 		}
 	}
+
+	//エネミーの待機更新を行う
+	CEnemyManager::WaitUpdate();
+
+	//現在のターンユニットのオブジェクトのみターンの更新を行う
+	switch (NowTurnUnit)
+	{
+		//プレイヤーのターン更新
+	case CTurn::UNIT_TURN_PLAYER:
+		for (auto UnitIterator = m_pUnitManager->begin(); UnitIterator != m_pUnitManager->end(); ++UnitIterator)
+		{
+			for (auto ListIterator = UnitIterator->second.begin(); ListIterator != UnitIterator->second.end(); ++ListIterator)
+			{
+				//ターンの更新を行う
+				(*ListIterator)->TurnUpdate();
+			}
+		}
+		break;
+		//パーティーメンバーのターン
+	case CTurn::UNIT_TURN_PARTY:
+		break;
+		//エネミーのターン更新
+	case CTurn::UNIT_TURN_ENEMY:
+		CEnemyManager::TurnUpdate();
+		break;
+	}
+
 }
 //---------------------------------------------------------------------------------------
 //管理するオブジェクトの描画
@@ -203,6 +257,9 @@ void CUnitManager::Draw()
 			(*ListIterator)->Draw();
 		}
 	}
+
+	//エネミーの描画
+	CEnemyManager::Draw();
 }
 //---------------------------------------------------------------------------------------
 //管理するオブジェクトの終了処理
@@ -224,32 +281,9 @@ void CUnitManager::Fin()
 	}
 	//リストの掃除
 	m_pUnitManager->clear();
-}
-//---------------------------------------------------------------------------------------
-//エネミーの削除
-//---------------------------------------------------------------------------------------
-void CUnitManager::EnemyDelete()
-{
-	//リストの先頭を取得
-	auto UnitIterator = m_pUnitManager->begin();
 
-	for (; UnitIterator != m_pUnitManager->end(); ++UnitIterator)
-	{
-		for (auto ListIterator = UnitIterator->second.begin(); ListIterator != UnitIterator->second.end();)
-		{
-			//エネミーの場合削除
-			if((*ListIterator)->GetNumber() >= OBJ_NUM_ENEMY)
-			{
-				(*ListIterator)->Fin();
-				delete (*ListIterator);
-				ListIterator = UnitIterator->second.erase(ListIterator);
-			}
-			else
-			{
-				ListIterator++;
-			}
-		}
-	}
+	//エネミーマネージャーの終了処理
+	CEnemyManager::Fin();
 }
 //---------------------------------------------------------------------------------------
 //マネージャーのデバイスを渡す

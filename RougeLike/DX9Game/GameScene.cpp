@@ -28,6 +28,7 @@
 #include"MapObjManager.h"
 #include"ParticleManager.h"
 #include"EffectObjManager.h"
+#include"EnemyManager.h"
 
 bool	CGameScene::m_MapMake = false;
 bool	CGameScene::m_OldMapMake = false;
@@ -420,7 +421,7 @@ void CGameScene::UpdateObj()
 		//フィールドオブジェクト削除
 		CMapObjManager::Fin();
 		//エネミーオブジェクト削除
-		CUnitManager::EnemyDelete();
+		CEnemyManager::Fin();
 		//アイテムオブジェクトの削除
 		CItemManager::Fin();
 		//パーティクルオブジェクトの削除

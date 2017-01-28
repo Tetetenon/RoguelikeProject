@@ -7,7 +7,7 @@
 #define MAKEPERCENTAGE 15
 
 //静的メンバ実体定義
-int CEnemyGenerator::m_FieldEnemyCounter;			//フィールド上のエネミーの数をカウントする
+int CEnemyGenerator::m_FieldEnemyCounter = 0;			//フィールド上のエネミーの数をカウントする
 int CEnemyGenerator::m_MaxFieldEnemy;				//フィールドのエネミーの最大生成数を設定
 bool CEnemyGenerator::m_bMakeFlg = false;			//エネミー生成完了フラグ
 
@@ -17,6 +17,7 @@ bool CEnemyGenerator::m_bMakeFlg = false;			//エネミー生成完了フラグ
 CEnemyGenerator::CEnemyGenerator(CGameScene *pScene):
 CMeshObj(pScene)
 {
+	m_FieldEnemyCounter = 0;
 }
 
 //---------------------------------------------------------------------------------------
@@ -24,6 +25,7 @@ CMeshObj(pScene)
 //---------------------------------------------------------------------------------------
 CEnemyGenerator::~CEnemyGenerator(void)
 {
+	m_FieldEnemyCounter = 0;
 }
 //---------------------------------------------------------------------------------------
 //初期化
@@ -48,7 +50,7 @@ void CEnemyGenerator::Fin()
 void CEnemyGenerator::Update()
 {
 	//ターンステートが一定のステートの際、エネミーを確率で生成する
-	if(CTurn::GetState() == CTurn::GAME_STATE_STAND_BY_PLAYER)
+	if(CTurn::GetState() == CTurn::GAME_STATE_STAND_BY)
 	{
 		int nRand = rand()%100;
 		//生成確立5%かつフィールドに配置できる最大エネミー数に到達していない

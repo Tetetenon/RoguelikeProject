@@ -92,14 +92,9 @@ void CCommandWindow::UpDate()
 		//Lで決定
 		if(CInput::GetKeyTrigger(DIK_L) && m_EnterInterval > 30)
 		{
-			//入力待ちステートのユニット数-1
-			CTurn::SumCount(CPlayer::GetState());
 
 			//アイテムを使用
 			CPlayer::SetState(CTurn::GAME_STATE_ITEM_USE);
-
-			//アイテム使用ステートに存在するユニットの数+1
-			CTurn::AddCount(CPlayer::GetState());
 			
 			//自身のフラグを倒す
 			DrawFlgChange();

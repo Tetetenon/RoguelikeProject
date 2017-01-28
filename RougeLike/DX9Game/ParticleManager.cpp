@@ -37,7 +37,7 @@ void CParticleManager::Create()
 	//マネージャーポインタの中身がまだなければ作成する
 	if (!m_pParticleManager)
 	{
-		m_pParticleManager = new PARTICLE_MAP;
+		m_pParticleManager = new PARTICLE_MAP();
 	}
 }
 //---------------------------------------------------------------------------------------

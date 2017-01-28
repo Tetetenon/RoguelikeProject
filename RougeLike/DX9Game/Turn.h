@@ -9,6 +9,15 @@ public:
 	//1ステートの時間
 	#define STATE_TIME	7.0f
 
+	//ターンの回り方
+	enum UnitTurnState
+	{
+		UNIT_TURN_PLAYER = 0,	//プレイヤーのターン
+		UNIT_TURN_PARTY,		//パーティ
+		UNIT_TURN_ENEMY,		//エネミーのターン
+		UNIT_TURN_MAX,
+	};
+
 	//戦闘ステート
 	enum BattleState
 	{
@@ -27,8 +36,7 @@ public:
 	enum GameState
 	{
 
-		GAME_STATE_STAND_BY_PLAYER = 0,	//入力待ち(プレイヤー)
-		GAME_STATE_STAND_BY_OTHER,		//入力待ち
+		GAME_STATE_STAND_BY = 0,			//入力待ち
 		GAME_STATE_ITEM_USE,			//アイテム使用
 		GAME_STATE_MOVE,				//移動中
 		GAME_STATE_ACT,					//行動中
@@ -57,19 +65,6 @@ public:
 	//戦闘ステートの初期化
 	static void BattleState_Init(){m_BattleState = BATTLE_STATE_GO;}
 
-	//-----ターンステートカウント関連-----
-	//指定ステートの選択しているユニット数を加算
-	static void AddCount (int nState)	{m_nSelectState_Num[nState] ++;}
-
-	//指定ステートの選択しているユニット数を減算
-	static void SumCount (int nState)	{m_nSelectState_Num[nState] --;}
-
-	//指定ステートの選択しているユニットの数を返す
-	static int GetStateSelectNum (int nState) {return m_nSelectState_Num[nState];}
-
-	//指定しているステートの選択しているユニット数を消去
-	static void StateCountReset (int nState) {m_nSelectState_Num[nState] = 0;}
-
 	//ステートの経過時間を加算
 	static void TimeStateAdd(){m_StateTime ++;}
 
@@ -79,6 +74,17 @@ public:
 	//ステートの現在の経過時間を返却
 	static int GetStateTime()	{return m_StateTime;}
 
+	//現在のターンユニットを返す
+	static UnitTurnState GetUnitTurn()
+	{
+		return m_UnitTurnState;
+	}
+	//ターンの情報を変更する
+	static void ChangeUnitState(UnitTurnState ChangeData)
+	{
+		m_UnitTurnState = ChangeData;
+	}
+
 private:
 	static int m_State;									//ターンの状態を格納
 
@@ -87,5 +93,7 @@ private:
 	static int m_nSelectState_Num[GAME_STATE_MAX];		//ステートごとのユニットの選択数
 
 	static int m_StateTime;								//1ステートの時間
+
+	static UnitTurnState m_UnitTurnState;				//現在は誰のターンか
 };
 

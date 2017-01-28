@@ -33,7 +33,7 @@ CUnit(pScene)
 	m_uID = ID_ENEMY;
 
 	//ユニットのステート状態を設定
-	m_nStateNumber = CTurn::GAME_STATE_STAND_BY_OTHER;
+	m_nStateNumber = CTurn::GAME_STATE_STAND_BY;
 }
 
 //---------------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 	pEnemy -> m_uID = ID_ENEMY;
 
 	//ユニットのステート状態を設定
-	pEnemy -> m_nStateNumber = CTurn::GAME_STATE_STAND_BY_OTHER;
+	pEnemy -> m_nStateNumber = CTurn::GAME_STATE_STAND_BY;
 
 	//メッシュの設定
 	pEnemy ->SetMesh(CModelManager::GetMesh(pEnemy ->m_nMeshNumber));
@@ -292,10 +292,7 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 	pEnemy -> m_bDestination = true;
 
 	//ステートの設定
-	pEnemy ->m_nStateNumber = CTurn::GAME_STATE_STAND_BY_OTHER;
-
-	//入力待ちに存在するユニット数+1
-	CTurn::AddCount(pEnemy ->m_nStateNumber);
+	pEnemy ->m_nStateNumber = CTurn::GAME_STATE_STAND_BY;
 
 	//生成完了
 	pEnemy ->m_bMakeSuccess = true;
@@ -319,6 +316,20 @@ void CEnemy::Update()
 //---------------------------------------------------------------------------------------
 void CEnemy::InputUpdate()
 {
+	//状態異常の経過時間を減らす
+	//自身のターン処理が一度でも行われたか?
+	if (!m_bTurn)
+	{
+		//自身が状態異常になっているか確認する
+		if (m_nState_Turn != 0)
+			//状態異常の処理
+			TurnStartStateProcessing();
+		m_bTurn = true;
+	}
+
+	//旧ステート情報の確保
+	m_nOldStateNumber = m_nStateNumber;
+
 	//移動できたか
 	bool MoveCompletion = false;
 
@@ -452,14 +463,8 @@ void CEnemy::InputUpdate()
 			//ワールドマトリックスを設定
 			SetWorld(world);
 
-			//入力待ちに存在するユニットの数-1
-			CTurn::SumCount(m_nStateNumber);
-
 			//自身のステートの設定
 			m_nStateNumber = CTurn::GAME_STATE_ATTACK;
-
-			//攻撃に存在するユニットの数+1
-			CTurn::AddCount(m_nStateNumber);
 			
 			//繰り出す技の番号を指定
 			m_nTrickNumber = TRICK_RANGE_FRONT;
@@ -487,14 +492,8 @@ void CEnemy::MoveUpdate()
 			//足元のアイテムのチェック
 			ChackFeetItem();
 
-			//移動ステートに存在するユニットの数-1
-			CTurn::SumCount(m_nStateNumber);
-
 			//自身のステート状態をターンの終了に設定
 			m_nStateNumber = CTurn::GAME_STATE_TURN_END;
-
-			//入力待ちに存在するユニットの数+1
-			CTurn::AddCount(m_nStateNumber);
 		}
 	}
 
@@ -549,14 +548,8 @@ void CEnemy::ActUpdate()
 	//メッセージテスト
 	MessageWindow::SetMassege(("行動した"));
 
-	//行動更新に存在するユニットの数-1
-	CTurn::SumCount(m_nStateNumber);
-
 	//ステートの遷移(ターンの終了)
 	m_nStateNumber = CTurn::GAME_STATE_TURN_END;
-
-	//入力待ちに存在するユニットの数+1
-	CTurn::AddCount(m_nStateNumber);
 }
 
 //---------------------------------------------------------------------------------------
@@ -564,14 +557,9 @@ void CEnemy::ActUpdate()
 //---------------------------------------------------------------------------------------
 void CEnemy::ItemUpdate()
 {
-	//アイテム使用ステートに存在するユニット数-1
-	CTurn::SumCount(m_nStateNumber);
 
 	//メッセージテスト
 	MessageWindow::SetMassege(("アイテム使った"));
-
-	//入力待ちステートに存在するユニット数+1
-	CTurn::AddCount(m_nStateNumber);
 
 	//ステートの遷移(ターンの終了)
 	m_nStateNumber = CTurn::GAME_STATE_TURN_END;
@@ -583,14 +571,9 @@ void CEnemy::ItemUpdate()
 void CEnemy::TurnEndUpdate()
 {
 	CUnit::TurnEndUpdate();
-	//ターンエンドステートに存在するユニット数-1
-	CTurn::SumCount(m_nStateNumber);
 
 	//ステートの遷移(ターンの終了)
-	m_nStateNumber = CTurn::GAME_STATE_STAND_BY_OTHER;
-
-	//入力待ちに存在するユニットの数+1
-	CTurn::AddCount(m_nStateNumber);
+	m_nStateNumber = CTurn::GAME_STATE_STAND_BY;
 
 	//自身のターンが終了した
 	m_bTurnEndFlg = true;
@@ -632,14 +615,8 @@ bool CEnemy::A_StarMove()
 	//もし異常値が返ってきて処理が終了した場合、移動処理を終了(その場で待機)
 	if((SearchPositionX == -99) || (SearchPositionZ == -99))
 	{
-		//操作決定待ちに存在するユニットの数-1
-		CTurn::SumCount(m_nStateNumber);
-
 		//自身のステートの設定
 		m_nStateNumber = CTurn::GAME_STATE_TURN_END;
-		
-		//移動ステートに存在するユニット+1
-		CTurn::AddCount(m_nStateNumber);
 
 		//A*で用いるデータ群の初期化
 		CMapData::InitAStarData();
@@ -664,14 +641,8 @@ bool CEnemy::A_StarMove()
 	int UnitMapSituation = CMapData::Get_UnitMapSituation(SearchPositionX,SearchPositionZ);
 	if(UnitMapSituation != 0)
 	{
-		//操作決定待ちに存在するユニットの数-1
-		CTurn::SumCount(m_nStateNumber);
-
 		//自身のステートの設定
 		m_nStateNumber = CTurn::GAME_STATE_TURN_END;
-		
-		//移動ステートに存在するユニット+1
-		CTurn::AddCount(m_nStateNumber);
 
 		//A*で用いるデータ群の初期化
 		CMapData::InitAStarData();
@@ -810,14 +781,8 @@ bool CEnemy::A_StarMove()
 	//マーキング
 	CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
 
-	//操作決定待ちに存在するユニットの数-1
-	CTurn::SumCount(m_nStateNumber);
-
 	//自身のステートの設定
 	m_nStateNumber = CTurn::GAME_STATE_MOVE;
-	
-	//移動ステートに存在するユニット+1
-	CTurn::AddCount(m_nStateNumber);
 
 	//A*で用いるデータ群の初期化
 	CMapData::InitAStarData();

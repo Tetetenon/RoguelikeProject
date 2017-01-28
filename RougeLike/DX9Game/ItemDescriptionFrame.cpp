@@ -112,13 +112,16 @@ void CItemDescriptionFrame::Draw(int ItemNumber)
 //---------------------------------------------------------------------------------------
 void CItemDescriptionFrame::FontDataSet(void)
 {
+	//入れ物の初期化
+	::SecureZeroMemory(m_Description, sizeof(_TCHAR) * DESCRIPTION_FONT_MAX * ITEM_MAX);
+
 	//全てのアイテム説明文フォントの設定
-	for(int i = 0;i < ITEM_NUM_MAX;i++)
+	for (int i = ITEM_APPLE; i < ITEM_MAX;i++)
 	{
 		#if RIKU_TAKAHASHI
 		#error 高橋が変えた場所
 		#endif //  RIK_T
-		::SecureZeroMemory(m_Description, sizeof(_TCHAR) * DESCRIPTION_FONT_MAX * ITEM_MAX);
+
 		switch(i)
 		{
 		case ITEM_APPLE:

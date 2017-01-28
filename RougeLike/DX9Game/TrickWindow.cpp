@@ -96,14 +96,9 @@ void CTrickWindow::UpDate()
 		if(CInput::GetKeyTrigger(DIK_L))
 		{
 			//ここで戦闘ステートへ移動
-			//入力待ちステートのユニット数-1
-			CTurn::SumCount(CPlayer::GetState());
 
 			//技を使用
 			CPlayer::SetState(CTurn::GAME_STATE_ATTACK);
-
-			//戦闘ステートに存在するユニットの数+1
-			CTurn::AddCount(CTurn::GAME_STATE_ATTACK);
 			
 			//自身のフラグを倒す
 			m_bDrawFlg = false;

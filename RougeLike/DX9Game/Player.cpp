@@ -45,9 +45,6 @@ m_nEquipmentInterval(0)
 	//オブジェクトのIDを設定
 	m_uID = ID_PLAYER;
 
-	//ユニットのステートを設定
-	m_nStateNumber = CTurn::GAME_STATE_STAND_BY_PLAYER;
-
 	//使用するモデル番号を設定
 	m_nMeshNumber = MODEL_PLAYER;
 	
@@ -176,13 +173,10 @@ m_nEquipmentInterval(0)
 	CHPDraw::SetHP(m_nHP);
 
 	//ステートの設定
-	m_nStateNumber = m_State_Cpy = CTurn::GAME_STATE_STAND_BY_PLAYER;
+	m_nStateNumber = m_State_Cpy = CTurn::GAME_STATE_STAND_BY;
 
 	//外部からのステート変更なし
 	m_bState_Change_Flg = false;
-
-	//入力待ちに存在するユニット数+1
-	CTurn::AddCount(m_nStateNumber);
 
 	//装備コマンドウィンドウ描画時間を初期化
 	m_nEquipmentInterval = 0;
@@ -309,6 +303,20 @@ int CPlayer::GetState()
 //---------------------------------------------------------------------------------------
 void CPlayer::InputUpdate()
 {
+	//状態異常の経過時間を減らす
+	//自身のターン処理が一度でも行われたか?
+	if (!m_bTurn)
+	{
+		//自身が状態異常になっているか確認する
+		if (m_nState_Turn != 0)
+			//状態異常の処理
+			TurnStartStateProcessing();
+		m_bTurn = true;
+	}
+
+	//旧ステート情報の確保
+	m_nOldStateNumber = m_nStateNumber;
+
 	//アイテムウインドウを描画していなければ更新
 	if(!m_pInventory->GetDrawFlg() && m_nStateNumber == CTurn::GetState())
 	{
@@ -490,14 +498,8 @@ void CPlayer::InputUpdate()
 						//マーキング
 						CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
 
-						//入力待ちに存在するユニットの数-1
-						CTurn::SumCount(m_nStateNumber);
-
 						//ステートの遷移
 						m_nStateNumber =  m_State_Cpy = CTurn::GAME_STATE_MOVE;
-
-						//移動ステートに存在するユニット数+1
-						CTurn::AddCount(m_nStateNumber);
 
 
 						//足元が階段であれば上る
@@ -551,14 +553,9 @@ void CPlayer::InputUpdate()
 			//メニューウィンドウが出ていなければ攻撃
 			if(!CMenuWindow::GetDrawFlg())
 			{
-				//入力待ちに存在するユニットの数-1
-				CTurn::SumCount(m_nStateNumber);
 
 				//ステートの遷移
 				m_nStateNumber =  m_State_Cpy = CTurn::GAME_STATE_ATTACK;
-
-				//攻撃ステートに存在するユニット数+1
-				CTurn::AddCount(m_nStateNumber);
 
 				//繰り出す技の番号を指定
 				m_nTrickNumber = TRICK_RANGE_FRONT;
@@ -569,15 +566,9 @@ void CPlayer::InputUpdate()
 		if(CInput::GetKeyTrigger(DIK_E) || CInput::GetKeyPress(DIK_E) )
 		{
 			//ターンスキップ
-			
-			//入力待ちに存在するユニットの数-1
-			CTurn::SumCount(m_nStateNumber);
 
 			//自身のステートの設定
 			m_nStateNumber = CTurn::GAME_STATE_TURN_END;
-
-			//ターン終了に存在するユニットの数+1
-			CTurn::AddCount(m_nStateNumber);
 		}
 		
 		//テスト(毒)
@@ -666,14 +657,8 @@ void CPlayer::MoveUpdate()
 			//足元のアイテムのチェック
 			ChackFeetItem();
 
-			//移動ステートに存在するユニットの数-1
-			CTurn::SumCount(m_nStateNumber);
-			
 			//ステートの遷移(ターンの終了)
 			m_nStateNumber =  m_State_Cpy = CTurn::GAME_STATE_TURN_END;
-			
-			//入力待ちステートに存在するユニット数+1
-			CTurn::AddCount(m_nStateNumber);
 		}
 	}
 
@@ -725,14 +710,9 @@ void CPlayer::MoveUpdate()
 //---------------------------------------------------------------------------------------
 void CPlayer::ActUpdate()
 {
-	//アクションステートに存在するユニットの数-1
-	CTurn::SumCount(m_nStateNumber);
 
 	//ステートの遷移(ターンの終了)
 	m_nStateNumber =  m_State_Cpy = CTurn::GAME_STATE_TURN_END;
-
-	//入力待ちに存在するユニットの数+1
-	CTurn::AddCount(m_nStateNumber);
 
 	//メッセージテスト
 	MessageWindow::SetMassege(_T("行動した"));
@@ -742,18 +722,14 @@ void CPlayer::ActUpdate()
 //---------------------------------------------------------------------------------------
 void CPlayer::TurnEndUpdate()
 {
-	CUnit::TurnEndUpdate();
-	//ターン終了ステートに存在するユニットの数-1
-	CTurn::SumCount(m_nStateNumber);
-
 	//ステートの遷移(ターンの終了)
-	m_nStateNumber =  m_State_Cpy = CTurn::GAME_STATE_STAND_BY_PLAYER;
-
-	//入力待ちステートに存在するユニットの数+1
-	CTurn::AddCount(m_nStateNumber);
+	m_nStateNumber =  m_State_Cpy = CTurn::GAME_STATE_STAND_BY;
 
 	//自身のターンが終了した。
 	m_bTurnEndFlg = true;
+
+	//次のユニットの更新に移る
+	CTurn::ChangeUnitState(CTurn::UNIT_TURN_ENEMY);
 }
 //---------------------------------------------------------------------------------------
 //アイテム更新
@@ -837,14 +813,8 @@ void CPlayer::ItemUpdate()
 		break;
 	}
 
-	//アイテム使用ステートに存在するユニット-1
-	CTurn::SumCount(m_nStateNumber);
-
 	//ステートの遷移(ターンの終了)
 	m_nStateNumber =  m_State_Cpy = CTurn::GAME_STATE_TURN_END;
-
-	//入力待ちステートに存在するユニット数+1
-	CTurn::AddCount(m_nStateNumber);
 }
 
 //---------------------------------------------------------------------------------------
@@ -879,15 +849,9 @@ void CPlayer::SetPos()
 
 	//マーキング
 	CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
-
-	//移動ステートに存在するユニットの数-1
-	CTurn::SumCount(m_nStateNumber);
 	
 	//ステートの遷移(ターンの終了)
-	m_nStateNumber =  m_State_Cpy = CTurn::GAME_STATE_STAND_BY_PLAYER;
-	
-	//入力待ちステートに存在するユニット数+1
-	CTurn::AddCount(m_nStateNumber);
+	m_nStateNumber =  m_State_Cpy = CTurn::GAME_STATE_STAND_BY;
 
 	//目的地初期化
 	m_Pos = D3DXVECTOR3(world._41,world._42,world._43);

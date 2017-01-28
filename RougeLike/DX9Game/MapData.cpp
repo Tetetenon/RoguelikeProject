@@ -68,7 +68,7 @@ CMapData::CMapData(void)
 	CEnemyGenerator::SetMaxGenerator((int)nFloorCounter / 5);
 
 	//アイテムの最大生成数を設定
-	CItemGenerator::SetMaxItem(10 + rand()%10);
+	CItemGenerator::SetMaxItem(20 + rand()%10);
 
 	//アイテムマップ初期化
 	for(int i = 0;i < MAP_SIZE;i++)

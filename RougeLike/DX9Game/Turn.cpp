@@ -1,10 +1,11 @@
 #include "Turn.h"
 
 //静的メンバの実体定義
-int CTurn::m_State;								//ターンの状態を格納
-int CTurn::m_BattleState;						//戦闘ステートの状況を保存
-int CTurn::m_nSelectState_Num[GAME_STATE_MAX];	//ステートごとのユニットの選択数
-int CTurn::m_StateTime;							//1ステートの時間
+int						CTurn::m_State;										//ターンの状態を格納
+int						CTurn::m_BattleState;								//戦闘ステートの状況を保存
+int						CTurn::m_nSelectState_Num[GAME_STATE_MAX];			//ステートごとのユニットの選択数
+int						CTurn::m_StateTime;									//1ステートの時間
+CTurn::UnitTurnState	CTurn::m_UnitTurnState = CTurn::UNIT_TURN_PLAYER;	//現在は誰のターンか
 
 //---------------------------------------------------------------------------------------
 //コンストラクタ
@@ -12,7 +13,7 @@ int CTurn::m_StateTime;							//1ステートの時間
 CTurn::CTurn(void)
 {
 	//メンバの初期化
-	m_State = GAME_STATE_STAND_BY_PLAYER;
+	m_State = GAME_STATE_STAND_BY;
 	
 	//ターンごとのユニット選択数を初期化
 	for(int i = 0;i < GAME_STATE_MAX;i++)
@@ -35,7 +36,7 @@ CTurn::~CTurn(void)
 void CTurn::Init ()
 {
 	//メンバの初期化
-	m_State = GAME_STATE_STAND_BY_PLAYER;			//プレイヤーの入力待ち
+	m_State = GAME_STATE_STAND_BY;			//プレイヤーの入力待ち
 	m_BattleState = BATTLE_STATE_GO;				//攻撃方向への突撃
 }
 

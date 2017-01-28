@@ -282,6 +282,9 @@
     <Filter Include="システム\マネージャー\HitObjManager">
       <UniqueIdentifier>{1fc9d427-e18e-4cc1-a074-2648e17293ce}</UniqueIdentifier>
     </Filter>
+    <Filter Include="システム\マネージャー\EnemyManager">
+      <UniqueIdentifier>{b4adbfc3-baf1-4dbb-abe4-55e416069042}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameWnd.cpp">
@@ -502,6 +505,9 @@
     </ClCompile>
     <ClCompile Include="EffectObjManager.cpp">
       <Filter>システム\マネージャー\HitObjManager</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyManager.cpp">
+      <Filter>システム\マネージャー\EnemyManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -726,6 +732,9 @@
     </ClInclude>
     <ClInclude Include="EffectObjManager.h">
       <Filter>システム\マネージャー\HitObjManager</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyManager.h">
+      <Filter>システム\マネージャー\EnemyManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

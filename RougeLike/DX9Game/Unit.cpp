@@ -144,9 +144,6 @@ void CUnit::Fin()
 {
 	//マーキング消去
 	CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-	
-	//現在自分が選択しているステートのユニットの数-1
-	CTurn::SumCount(m_nStateNumber);
 }
 
 //---------------------------------------------------------------------------------------
@@ -218,30 +215,11 @@ void CUnit::WaitUpdate()
 //---------------------------------------------------------------------------------------
 void CUnit::TurnUpdate()
 {
-	//状態異常の経過時間を減らす
-	//自身のターン処理が一度でも行われたか?
-	if (!m_bTurn)
-	{
-		//自身が状態異常になっているか確認する
-		if (m_nState_Turn != 0)
-			//状態異常の処理
-			TurnStartStateProcessing();
-		m_bTurn = true;
-	}
-
-	//旧ステート情報の確保
-	m_nOldStateNumber = m_nStateNumber;
-
 	//ステート状態によって処理を分岐させる
 	switch (m_nStateNumber)
 	{
 		//入力待ち(プレイヤー)
-	case CTurn::GAME_STATE_STAND_BY_PLAYER:
-		InputUpdate();
-		break;
-	
-		//入力待ち(エネミー)
-	case CTurn::GAME_STATE_STAND_BY_OTHER:
+	case CTurn::GAME_STATE_STAND_BY:
 		InputUpdate();
 		break;
 	
@@ -336,7 +314,7 @@ void CUnit::ActUpdate()
 //---------------------------------------------------------------------------------------
 //攻撃更新
 //---------------------------------------------------------------------------------------
-void CUnit::AttackUpdate()
+bool CUnit::AttackUpdate()
 {
 	//現在の戦闘ステートを取得する
 	int nBattleState = CTurn::GetBattleState();
@@ -382,9 +360,9 @@ void CUnit::AttackUpdate()
 		//戦闘終了、ステート関連の設定
 	case CTurn::BATTLE_STATE_END:
 		BattleEnd();
-		break;
+		return true;
 	}
-	
+	return false;
 }
 
 //---------------------------------------------------------------------------------------
@@ -461,9 +439,6 @@ void CUnit::Delete()
 {
 	//マーキング消去
 	CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-	
-	//現在自分が選択しているステートのユニットの数-1
-	CTurn::SumCount(m_nStateNumber);
 
 	m_bSurvival = false;
 
@@ -1522,15 +1497,9 @@ void CUnit::BattleDamage()
 //---------------------------------------------------------------------------------------
 void CUnit::BattleEnd()
 {
-	//アタックステートに存在するユニットの数-1
-	CTurn::SumCount(m_nStateNumber);
 
 	//ステートの遷移(ターンの終了)
 	m_nStateNumber = CTurn::GAME_STATE_TURN_END;
-
-
-	//入力待ちステートに存在するユニットの数+1
-	CTurn::AddCount(m_nStateNumber);
 
 	//ステートリセット
 	CTurn::TimeStateReset();
@@ -1677,14 +1646,8 @@ void CUnit::TurnStartStateProcessing()
 			//メッセージ出力
 			MessageWindow::SetMassege(str);
 
-			//入力待ちに存在するユニットの数-1
-			CTurn::SumCount(m_nStateNumber);
-
 			//自身のステートの設定
 			m_nStateNumber = CTurn::GAME_STATE_TURN_END;
-
-			//ターン終了に存在するユニットの数+1
-			CTurn::AddCount(m_nStateNumber);
 		}
 		break;
 
@@ -1696,14 +1659,8 @@ void CUnit::TurnStartStateProcessing()
 		//メッセージ出力
 		MessageWindow::SetMassege(str);
 
-		//入力待ちに存在するユニットの数-1
-		CTurn::SumCount(m_nStateNumber);
-
 		//自身のステートの設定
 		m_nStateNumber = CTurn::GAME_STATE_TURN_END;
-
-		//ターン終了に存在するユニットの数+1
-		CTurn::AddCount(m_nStateNumber);
 		break;
 
 		//怯み状態の場合
@@ -1714,14 +1671,8 @@ void CUnit::TurnStartStateProcessing()
 		//メッセージ出力
 		MessageWindow::SetMassege(str);
 
-		//入力待ちに存在するユニットの数-1
-		CTurn::SumCount(m_nStateNumber);
-
 		//自身のステートの設定
 		m_nStateNumber = CTurn::GAME_STATE_TURN_END;
-
-		//ターン終了に存在するユニットの数+1
-		CTurn::AddCount(m_nStateNumber);
 		break;
 	}
 	

@@ -40,7 +40,7 @@ void CItemManager::Create()
 	//アイテムマネージャが作成されていなければ、作成を行う
 	if (!m_pItemManager)
 	{
-		m_pItemManager = new ITEM_MAP;
+		m_pItemManager = new ITEM_MAP();
 	}
 }
 

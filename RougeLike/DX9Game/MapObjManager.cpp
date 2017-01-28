@@ -46,7 +46,7 @@ void CMapObjManager::Create()
 	//マネージャーが作成されてなければ作成
 	if (!m_pMapObjManager)
 	{
-		m_pMapObjManager = new FIELDOBJ_MAP;
+		m_pMapObjManager = new FIELDOBJ_MAP();
 	}
 }
 

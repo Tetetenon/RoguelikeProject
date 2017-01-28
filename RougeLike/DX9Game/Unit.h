@@ -211,7 +211,7 @@ public:
 	int GetFlashNum()	{return m_nFlashNum;}
 
 	//-----戦闘更新関連-----
-	void AttackUpdate();			//攻撃更新分岐
+	bool AttackUpdate();			//攻撃更新分岐
 
 	void BattleGo();				//相手の方向へ突撃させる
 	void BattleReturn();			//突撃した相手の位置から自身の本来の位置へ戻る

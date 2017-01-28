@@ -22,11 +22,11 @@ private:
 
 	//シングルトン
 	static UNIT_MAP* m_pUnitManager;
-	static int		m_NowProcUnitID;	//現在ターンステート処理中のユニット番号
 
 	static CUnit*	m_pPlayer;			//プレイヤーポインター
 
-	static bool				m_bMoveCanFlg;					//移動可能フラグ
+	static bool		m_bMoveCanFlg;		//移動可能フラグ
+	static int		m_nMakeNumber;		//ユニットを何体生成したか。
 
 
 	CUnitManager();		//コンストラクタ
@@ -38,9 +38,6 @@ public:
 	static void Fin();			//終了処理
 	static void Update();		//更新
 	static void Draw();			//描画
-
-	//エネミーの削除
-	static void EnemyDelete();
 
 	//ユニットマネージャーの作成
 	static void Create();
@@ -70,11 +67,19 @@ public:
 	static int GetPlayerPosX();
 	static int GetPlayerPosZ();
 
-
-	//攻撃中のユニット番号を初期化する
-	static void ResetUnitID()
+	static bool GetMoveFlg()
 	{
-		m_NowProcUnitID = 0;
+		return m_bMoveCanFlg;
+	}
+
+	static int GetMakeNum()
+	{
+		return m_nMakeNumber;
+	}
+
+	static void AddMakeNum(int nAddNum)
+	{
+		m_nMakeNumber += nAddNum;
 	}
 };
 

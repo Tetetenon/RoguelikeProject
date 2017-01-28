@@ -37,7 +37,7 @@ void CEffectObjManager::Create()
 	//‚Ü‚¾ì¬‚ª‚³‚ê‚Ä‚¢‚È‚¢ê‡Aì¬‚·‚é
 	if (!m_pEffectManager)
 	{
-		m_pEffectManager = new EFFECTOBJ_MAP;
+		m_pEffectManager = new EFFECTOBJ_MAP();
 	}
 }
 
