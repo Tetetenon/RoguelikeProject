@@ -93,7 +93,7 @@ void CTrickWindow::UpDate()
 	if(m_bDrawFlg)
 	{
 		//Lで決定
-		if(CInput::GetKeyTrigger(DIK_L))
+		if(CInput::GetKeyTrigger(DIK_L) || CInput::GetJoyTrigger(0,3))
 		{
 			//ここで戦闘ステートへ移動
 
@@ -108,7 +108,7 @@ void CTrickWindow::UpDate()
 		}
 
 		//KとIキーで戻る
-		if(CInput::GetKeyTrigger(DIK_K))
+		if(CInput::GetKeyTrigger(DIK_K) || CInput::GetJoyTrigger(0,2))
 		{
 			//自身のフラグを倒す
 			m_bDrawFlg = false;

@@ -9,6 +9,7 @@ class CEquipmentInventoryCursor:
 {
 private:
 	static int			m_Number;				//現在選択しているアイテムが何番目の物かを管理する
+	static int			m_nInterval;			//ボタン入力を行ってからのインターバルタイム
 public:
 	CEquipmentInventoryCursor(void);		//コンストラクタ
 	~CEquipmentInventoryCursor(void);	//デストラクタ

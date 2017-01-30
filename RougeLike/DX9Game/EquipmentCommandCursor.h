@@ -12,6 +12,7 @@ class CEquipmentCommandCursor:
 private:
 	static int					m_Command;				//何番目のコマンドを選択しているかを格納する
 
+	static int					m_nInterval;			//ボタン入力のインターバル
 	CTurn						m_Turn;					//ターンステート変更用
 public:
 	CEquipmentCommandCursor(void);								//コンストラクタ

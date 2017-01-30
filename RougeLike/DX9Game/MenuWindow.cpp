@@ -37,7 +37,7 @@ CMenuWindow::~CMenuWindow(void)
 void CMenuWindow::Update(void)
 {
 	//K“ü—Í‚Å–ß‚é
-	if(CInput::GetKeyTrigger(DIK_K))
+	if(CInput::GetKeyTrigger(DIK_K) || CInput::GetJoyTrigger(0,2))
 	{
 		//•`‰æƒtƒ‰ƒO‚ð“|‚·
 		m_bDrawFlg = false;

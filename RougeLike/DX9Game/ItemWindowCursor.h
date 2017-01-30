@@ -9,7 +9,7 @@ class CInventoryCursor:
 {
 private:
 	static int			m_Number;				//現在選択しているアイテムが何番目の物かを管理する
-
+	static int			m_nInterval;			//ボタン入力してからの経過時間を保存する
 public:
 	CInventoryCursor(void);		//コンストラクタ
 	~CInventoryCursor(void);	//デストラクタ

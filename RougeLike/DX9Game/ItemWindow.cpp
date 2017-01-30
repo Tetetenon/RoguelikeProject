@@ -79,14 +79,14 @@ void CInventory::UpDate()
 	{
 		//Lで決定
 		//選択したアイテムウインドウにアイテムが存在しているか確認する
-		if(CInput::GetKeyTrigger(DIK_L) && m_Item[m_InventoryCursor.GetItemNum()].GetID())
+		if((CInput::GetKeyTrigger(DIK_L) || CInput::GetJoyTrigger(0, 3)) && m_Item[m_InventoryCursor.GetItemNum()].GetID())
 		{
 			//コマンドウインドウ描画フラグを立てる
 			m_CommandWindow.DrawFlgChange();
 		}
 
 		//KとIキーで戻る
-		if(CInput::GetKeyTrigger(DIK_K))
+		if(CInput::GetKeyTrigger(DIK_K) || CInput::GetJoyTrigger(0, 2))
 		{
 			//自身のフラグを倒す
 			DrawFlgChange();

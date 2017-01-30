@@ -8,6 +8,7 @@
 //---------------------------------------------------------------------------------------
 
 
+
 //ウインドウサイズ
 #define WINDOW_WIDHT  300
 #define WINDOW_HEIGHT  30
@@ -28,6 +29,9 @@ CTrickWindowCursor::CTrickWindowCursor(void)
 
 	//ポリゴン位置情報の設定
 	SetPos();
+
+	//ボタン入力経過時間を0にする
+	m_nInterval = 0;
 }
 
 
@@ -36,6 +40,8 @@ CTrickWindowCursor::CTrickWindowCursor(void)
 //---------------------------------------------------------------------------------------
 CTrickWindowCursor::~CTrickWindowCursor(void)
 {
+	//ボタン入力経過時間を0にする
+	m_nInterval = 0;
 }
 
 //---------------------------------------------------------------------------------------
@@ -87,10 +93,13 @@ void CTrickWindowCursor::Draw()
 //---------------------------------------------------------------------------------------
 void CTrickWindowCursor::Update()
 {
+	//ボタン入力経過時間を加算
+	m_nInterval ++;
+
 	//アイテム選択中のみ操作可能
 	if(CTrickWindow::GetDrawFlg())
 	{
-		if(CInput::GetKeyTrigger(DIK_W))
+		if((CInput::GetKeyTrigger(DIK_W) || (CInput::GetJoyAxis(0,JOY_Y) <= -JoyMoveCap)) && m_nInterval >= ButtonIntervalTime)
 		{
 			//カーソルが上に移動できるか確認
 			if(m_Number > 0)
@@ -99,10 +108,13 @@ void CTrickWindowCursor::Update()
 				m_Number --;
 				//位置情報再設定
 				SetPos();
+
+				//ボタン入力からの経過時間を0にする
+				m_nInterval = 0;
 			}
 		}
 
-		if(CInput::GetKeyTrigger(DIK_S))
+		if((CInput::GetKeyTrigger(DIK_S) || (CInput::GetJoyAxis(0,JOY_Y) >= JoyMoveCap)) && m_nInterval >= ButtonIntervalTime)
 		{
 			//カーソルが下に移動できるか確認
 			if(m_Number < TRICK_NUM_MAX - 1)
@@ -111,6 +123,9 @@ void CTrickWindowCursor::Update()
 				m_Number ++;
 				//位置情報を再設定
 				SetPos();
+
+				//ボタン入力からの経過時間を0にする
+				m_nInterval = 0;
 			}
 		}
 	}

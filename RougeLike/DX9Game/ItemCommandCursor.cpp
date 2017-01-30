@@ -13,7 +13,6 @@
 #define WINDOW_WIDHT  200
 #define WINDOW_HEIGHT  30
 
-
 //---------------------------------------------------------------------------------------
 //静的メンバ定義
 //---------------------------------------------------------------------------------------
@@ -34,6 +33,9 @@ CCommandCursor::CCommandCursor(void)
 
 	//ポリゴン位置情報の設定
 	SetPos();
+
+	//ボタン入力経過時間を初期化
+	m_nInterval = 0;
 }
 
 //---------------------------------------------------------------------------------------
@@ -41,6 +43,8 @@ CCommandCursor::CCommandCursor(void)
 //---------------------------------------------------------------------------------------
 CCommandCursor::~CCommandCursor(void)
 {
+	//ボタン入力経過時間を初期化
+	m_nInterval = 0;
 }
 
 //---------------------------------------------------------------------------------------
@@ -92,10 +96,13 @@ void CCommandCursor::Draw()
 //---------------------------------------------------------------------------------------
 void CCommandCursor::Update()
 {
+	//ボタン入力経過時間を加算
+	m_nInterval = 0;
+
 	//使用法を選択している場合のみ更新
 	if(CCommandWindow::GetDrawFlg())
 	{
-		if(CInput::GetKeyTrigger(DIK_W))
+		if((CInput::GetKeyTrigger(DIK_W) || (CInput::GetJoyAxis(0,JOY_Y) <= -JoyMoveCap)) && m_nInterval >= ButtonIntervalTime)
 		{
 			//カーソルが上に移動できるか確認
 			if(m_Command > 0)
@@ -104,10 +111,11 @@ void CCommandCursor::Update()
 				m_Command --;
 				//位置情報再設定
 				SetPos();
+				//ボタン入力経過時間を0にする
 			}
 		}
 
-		if(CInput::GetKeyTrigger(DIK_S))
+		if((CInput::GetKeyTrigger(DIK_S) ||(CInput::GetJoyAxis(0,JOY_Y) >= JoyMoveCap)) && m_nInterval >= ButtonIntervalTime)
 		{
 			//カーソルが下に移動できるか確認
 			if(m_Command < COMMAND_MAX - 1)
@@ -116,6 +124,8 @@ void CCommandCursor::Update()
 				m_Command ++;
 				//位置情報を再設定
 				SetPos();
+				//ボタン入力経過時間を0にする
+				m_nInterval = 0;
 			}
 		}
 	}

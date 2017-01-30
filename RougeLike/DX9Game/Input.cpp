@@ -323,7 +323,6 @@ bool CInput::GetJoyRelease(int nJoy, int nButton)
 	return (m_diPrevJoyState[nJoy].rgbButtons[nButton] & 0x80) != 0 &&
 		(m_diJoyState[nJoy].rgbButtons[nButton] & 0x80) == 0;
 }
-
 // ジョイスティックの軸状態取得
 float CInput::GetJoyAxis(int nJoy, int nAxis)
 {

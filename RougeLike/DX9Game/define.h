@@ -101,6 +101,11 @@ enum
 //
 #define RIKU_TAKAHASHI	(0)
 
+//ジョイスティックの左スティックが入力されたとはんだんする値
+const float JoyMoveCap = 1.0f;
+//ボタンの入力のインターバールタイム
+const float ButtonIntervalTime = 30.0f;
+
 #endif
 
 //=======================================================================================

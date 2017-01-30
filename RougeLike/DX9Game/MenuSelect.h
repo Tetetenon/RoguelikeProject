@@ -17,7 +17,7 @@ class CMenuSelect :
 private:
 	static int	m_nSelectNumber;		//現在選択しているメニュー番号格納用変数
 	static bool m_bOperationFlg;		//操作可能フラグ
-	static int	m_nInterval;			//ボタン入力のインターバル		
+	static int	m_nInterval;			//ボタン入力のインターバル
 public:
 	CMenuSelect(void);					//コンストラクタ
 	~CMenuSelect(void);					//デストラクタ

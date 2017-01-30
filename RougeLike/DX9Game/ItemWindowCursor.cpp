@@ -12,8 +12,8 @@
 #define WINDOW_WIDHT  300
 #define WINDOW_HEIGHT  30
 
-int					CInventoryCursor::m_Number = 0;				//現在選択しているアイテムが何番目の物かを管理する
-
+int CInventoryCursor::m_Number = 0;				//現在選択しているアイテムが何番目の物かを管理する
+int CInventoryCursor::m_nInterval = 0;			//ボタン入力を行ってからの経過時間
 
 //---------------------------------------------------------------------------------------
 //コンストラクタ
@@ -28,6 +28,9 @@ CInventoryCursor::CInventoryCursor(void)
 
 	//ポリゴン位置情報の設定
 	SetPos();
+
+	//ボタン入力経過時間を初期化する
+	m_nInterval = 0;
 }
 
 
@@ -36,6 +39,8 @@ CInventoryCursor::CInventoryCursor(void)
 //---------------------------------------------------------------------------------------
 CInventoryCursor::~CInventoryCursor(void)
 {
+	//ボタン入力経過時間を初期化する
+	m_nInterval =  0;
 }
 
 //---------------------------------------------------------------------------------------
@@ -87,10 +92,13 @@ void CInventoryCursor::Draw()
 //---------------------------------------------------------------------------------------
 void CInventoryCursor::Update()
 {
+	//ボタン入力からの経過時間を加算
+	m_nInterval++;
+
 	//アイテム選択中のみ操作可能
 	if(CInventory::GetDrawFlg() && !CCommandWindow::GetDrawFlg())
 	{
-		if(CInput::GetKeyTrigger(DIK_W))
+		if((CInput::GetKeyTrigger(DIK_W) || (CInput::GetJoyAxis(0, JOY_Y) <= -JoyMoveCap)) && m_nInterval >= ButtonIntervalTime)
 		{
 			//上に移動
 			m_Number --;
@@ -102,7 +110,7 @@ void CInventoryCursor::Update()
 			SetPos();
 		}
 
-		if(CInput::GetKeyTrigger(DIK_S))
+		if((CInput::GetKeyTrigger(DIK_S) || (CInput::GetJoyAxis(0,JOY_Y) >= JoyMoveCap)) && m_nInterval >= ButtonIntervalTime)
 		{
 			//下に移動
 			m_Number ++;

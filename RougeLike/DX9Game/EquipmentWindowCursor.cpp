@@ -13,7 +13,7 @@
 #define WINDOW_HEIGHT  30
 
 int	CEquipmentInventoryCursor::m_Number = 0;				//現在選択しているアイテムが何番目の物かを管理する
-
+int CEquipmentInventoryCursor::m_nInterval = 0;				//ボタンを入力してからの間隔
 
 //---------------------------------------------------------------------------------------
 //コンストラクタ
@@ -28,6 +28,9 @@ CEquipmentInventoryCursor::CEquipmentInventoryCursor(void)
 
 	//ポリゴン位置情報の設定
 	SetPos();
+
+	//ボタン入力時間を初期化
+	m_nInterval = 0;
 }
 
 
@@ -36,6 +39,8 @@ CEquipmentInventoryCursor::CEquipmentInventoryCursor(void)
 //---------------------------------------------------------------------------------------
 CEquipmentInventoryCursor::~CEquipmentInventoryCursor(void)
 {
+	//ボタン入力の時間を初期化
+	m_nInterval = 0;
 }
 
 //---------------------------------------------------------------------------------------
@@ -87,10 +92,14 @@ void CEquipmentInventoryCursor::Draw()
 //---------------------------------------------------------------------------------------
 void CEquipmentInventoryCursor::Update()
 {
+	//ボタン入力からの経過時間を加算する
+	m_nInterval++;
+
 	//アイテム選択中のみ操作可能
 	if(CEquipmentInventory::GetDrawFlg() && !CEquipmentCommandWindow::GetDrawFlg())
 	{
-		if(CInput::GetKeyTrigger(DIK_W))
+		//Wもしくは上を入力した、かつ、連続入力を防止する
+		if((CInput::GetKeyTrigger(DIK_W) || (CInput::GetJoyAxis(0,JOY_Y) <= -JoyMoveCap)) && m_nInterval >= ButtonIntervalTime)
 		{
 			//カーソルが上に移動できるか確認
 			if(m_Number > 0)
@@ -99,10 +108,12 @@ void CEquipmentInventoryCursor::Update()
 				m_Number --;
 				//位置情報再設定
 				SetPos();
+				//ボタン入力からのインターバルタイムを0にする
+				m_nInterval = 0;
 			}
 		}
 
-		if(CInput::GetKeyTrigger(DIK_S))
+		if((CInput::GetKeyTrigger(DIK_S) || (CInput::GetJoyAxis(0,JOY_Y) >= JoyMoveCap)) && m_nInterval >= ButtonIntervalTime)
 		{
 			//カーソルが下に移動できるか確認
 			if(m_Number < EQUIPMENT_NUM_MAX - 1)
@@ -111,6 +122,8 @@ void CEquipmentInventoryCursor::Update()
 				m_Number ++;
 				//位置情報を再設定
 				SetPos();
+				//ボタン入力からのインターバルタイムを0にする
+				m_nInterval = 0;
 			}
 		}
 	}

@@ -84,7 +84,7 @@ void CGameClearScene::UpDate()
 	m_pPress ->Update();
 
 	//もしSPACEが押されていればタイトルシーンへ移行
-	if(CInput::GetKeyTrigger(DIK_SPACE))
+	if(CInput::GetKeyTrigger(DIK_SPACE) || CInput::GetJoyTrigger(0,3))
 	{
 		CGameState::StateUpdate(STATE_TITLE);
 	}

@@ -107,7 +107,7 @@ void CTitleScene::Update()
 	m_pPress ->Update();
 
 	//SPACEを押されていたら、ゲームシーンへ移行
-	if(CInput::GetKeyTrigger(DIK_SPACE))
+	if(CInput::GetKeyTrigger(DIK_SPACE) || CInput::GetJoyTrigger(0,3))
 	{
 		//フェードイン開始フラグを立てる
 		CFade::ChangeState(FADEMODE_OUT);

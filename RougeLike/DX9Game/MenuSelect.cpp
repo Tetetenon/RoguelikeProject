@@ -11,6 +11,7 @@ bool CMenuSelect::m_bOperationFlg = false;	//メニューウィンドウ操作フラグ
 int	 CMenuSelect::m_nInterval = 0;			//ボタン入力のインターバル	
 
 
+
 //---------------------------------------------------------------------------------------
 //コンストラクタ
 //---------------------------------------------------------------------------------------
@@ -52,20 +53,26 @@ void CMenuSelect::Update(void)
 	if(!CInventory::GetDrawFlg() && !CEquipmentInventory::GetDrawFlg()&&!CTrickWindow::GetDrawFlg())
 	{
 		//上キーを押している
-		if(CInput::GetKeyTrigger(DIK_W))
+		if((CInput::GetKeyTrigger(DIK_W) || CInput::GetJoyAxis(0,JOY_Y) <= -JoyMoveCap) && m_nInterval >= ButtonIntervalTime)
 		{
 			//選択中コマンドを上に
 			m_nSelectNumber --;
+
+			//ボタン入力インターバルを0にする
+			m_nInterval = 0;
 		}
 		//下キーを押している
-		if(CInput::GetKeyTrigger(DIK_S))
+		if((CInput::GetKeyTrigger(DIK_S) || CInput::GetJoyAxis(0, JOY_Y) >= JoyMoveCap) && m_nInterval >= ButtonIntervalTime)
 		{
 			//選択中コマンドを下に
 			m_nSelectNumber ++;
+
+			//ボタン入力インターバルを0にする
+			m_nInterval = 0;
 		}
 
 		//L(決定)ボタンを押した
-		if(CInput::GetKeyTrigger(DIK_L) && m_nInterval >= 10)
+		if((CInput::GetKeyTrigger(DIK_L) || CInput::GetJoyTrigger(0,3)) && m_nInterval >= ButtonIntervalTime)
 		{
 			//現在選択しているメニューに応じ、出力するウィンドウを設定する
 			switch(m_nSelectNumber)
@@ -90,6 +97,9 @@ void CMenuSelect::Update(void)
 				CTrickWindow::DrawFlgChange();
 				break;
 			}
+
+			//ボタン入力インターバルを0にする
+			m_nInterval = 0;
 		}
 	}
 	//-----許容領域範囲内に居るか確認-----

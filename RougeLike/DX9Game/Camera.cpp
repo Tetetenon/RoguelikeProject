@@ -126,7 +126,7 @@ void CCamera::Init ()
 void CCamera::Update()
 {
 	//カメラ位置をデバッグと通常を切り替える
-	if(CInput::GetKeyTrigger(DIK_C))
+	if(CInput::GetKeyTrigger(DIK_C) || CInput::GetJoyTrigger(0,6))
 	{
 		m_bSwitch = !m_bSwitch;
 	}

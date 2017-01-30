@@ -7,8 +7,8 @@ class CTrickWindowCursor:
 	public C2DWindow
 {
 private:
-	static int			m_Number;				//現在選択しているが何番目の物かを管理する
-
+	static int	m_Number;			//現在選択しているが何番目の物かを管理する
+	int			m_nInterval;		//ボタン入力経過時間
 public:
 	CTrickWindowCursor(void);		//コンストラクタ
 	~CTrickWindowCursor(void);	//デストラクタ

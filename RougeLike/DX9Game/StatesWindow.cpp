@@ -39,7 +39,7 @@ CStatesWindow::~CStatesWindow(void)
 void CStatesWindow::Update(void)
 {
 	//決定(L)又は戻る(K)でウィンドウを閉じる
-	if(CInput::GetKeyTrigger(DIK_L) || CInput::GetKeyTrigger(DIK_K))
+	if(CInput::GetKeyTrigger(DIK_L) || CInput::GetKeyTrigger(DIK_K) || CInput::GetJoyTrigger(0,2) || CInput::GetJoyTrigger(0,3))
 	{
 		m_bDrawFlg = false;
 	}

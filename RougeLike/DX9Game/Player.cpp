@@ -237,7 +237,7 @@ void CPlayer::Update()
 		//装備コマンドウィンドウの描画時間を加算
 		m_nEquipmentInterval++;
 
-		if(CInput::GetKeyTrigger(DIK_L) && m_nEquipmentInterval > 30)
+		if((CInput::GetKeyTrigger(DIK_L) || CInput::GetJoyTrigger(0, 3)) && m_nEquipmentInterval > 30)
 		{
 			if(m_pInventory->SetItem(m_pEquipment->GetItem(CEquipmentInventoryCursor::GetItemNum())))
 			{
@@ -325,7 +325,7 @@ void CPlayer::InputUpdate()
 
 		//移動フラグ
 		bool bMoveSuccess = false;
-		if (CInput::GetKeyTrigger(DIK_G))
+		if (CInput::GetKeyTrigger(DIK_G) || CInput::GetJoyTrigger(0, 9))
 		{
 			//ゲームメインを終了
 			CFade::ChangeState(FADEMODE_OUT);
@@ -341,7 +341,8 @@ void CPlayer::InputUpdate()
 		}
 
 		//-----方向キー入力をした-----
-		if(CInput::GetKeyPress(DIK_W) || CInput::GetKeyPress(DIK_S) || CInput::GetKeyPress(DIK_A) || CInput::GetKeyPress(DIK_D))
+		if(CInput::GetKeyPress(DIK_W) || CInput::GetKeyPress(DIK_S) || CInput::GetKeyPress(DIK_A) || CInput::GetKeyPress(DIK_D) ||
+			CInput::GetJoyAxis(0, JOY_X) || CInput::GetJoyAxis(0, JOY_Y))
 		{
 			//メニューウィンドウが出ていなければ攻撃
 			if(!CMenuWindow::GetDrawFlg())
@@ -354,13 +355,15 @@ void CPlayer::InputUpdate()
 				int PosX = m_nUnit_Pos_X;
 				int PosZ = m_nUnit_Pos_Z;
 				//-----上移動-----
-				if(CInput::GetKeyPress(DIK_W))
+				if(CInput::GetKeyPress(DIK_W) || CInput::GetJoyAxis(0, JOY_Y) < 0)
 				{	
 					//向きフラグ上
 					m_bDirectionFlg[Forword] = true;
 
+					bool a = CInput::GetJoyPress(0, 5);
+
 					//スペースキーを押していなかった場合、移動する
-					if(!CInput::GetKeyPress(DIK_Q))
+					if(!CInput::GetKeyPress(DIK_Q) && !CInput::GetJoyPress(0,5))
 					{
 						//行き先設定
 						PosZ --;
@@ -370,13 +373,13 @@ void CPlayer::InputUpdate()
 					}
 				}
 				//-----下移動-----
-				if(CInput::GetKeyPress(DIK_S))
+				if(CInput::GetKeyPress(DIK_S) || CInput::GetJoyAxis(0, JOY_Y) > 0)
 				{
 					//向きフラグ下
 					m_bDirectionFlg[Back] = true;
 
 					//スペースキーを押していなかった場合、移動する
-					if(!CInput::GetKeyPress(DIK_Q))
+					if(!CInput::GetKeyPress(DIK_Q) && !CInput::GetJoyPress(0, 5))
 					{
 						//行き先設定
 						PosZ ++;
@@ -386,13 +389,13 @@ void CPlayer::InputUpdate()
 					}
 				}
 				//-----右移動-----
-				if(CInput::GetKeyPress(DIK_D))
+				if(CInput::GetKeyPress(DIK_D) || CInput::GetJoyAxis(0, JOY_X) > 0)
 				{
 					//向きフラグ右
 					m_bDirectionFlg[Right] = true;
 
 					//スペースキーを押していなかった場合、移動
-					if(!CInput::GetKeyPress(DIK_Q))
+					if(!CInput::GetKeyPress(DIK_Q) && !CInput::GetJoyPress(0, 5))
 					{
 						//行き先設定
 						PosX ++;
@@ -402,13 +405,13 @@ void CPlayer::InputUpdate()
 					}
 				}
 				//-----左移動-----
-				if(CInput::GetKeyPress(DIK_A))
+				if(CInput::GetKeyPress(DIK_A) || CInput::GetJoyAxis(0, JOY_X) < 0)
 				{
 					//向きフラグ左
 					m_bDirectionFlg[Left] = true;
 
 					//スペースを押していなかった場合、移動する
-					if(!CInput::GetKeyPress(DIK_Q))
+					if(!CInput::GetKeyPress(DIK_Q) && !CInput::GetJoyPress(0, 5))
 					{
 						//行き先設定
 						PosX --;
@@ -548,7 +551,7 @@ void CPlayer::InputUpdate()
 			}
 		}
 		//-----攻撃-----
-		if(CInput::GetKeyTrigger(DIK_L))
+		if(CInput::GetKeyTrigger(DIK_L) || CInput::GetJoyTrigger(0, 3))
 		{
 			//メニューウィンドウが出ていなければ攻撃
 			if(!CMenuWindow::GetDrawFlg())
@@ -563,7 +566,7 @@ void CPlayer::InputUpdate()
 		}
 
 		//-----足踏み-----
-		if(CInput::GetKeyTrigger(DIK_E) || CInput::GetKeyPress(DIK_E) )
+		if(CInput::GetKeyPress(DIK_E) || CInput::GetJoyPress(0,4))
 		{
 			//ターンスキップ
 
@@ -592,14 +595,14 @@ void CPlayer::InputUpdate()
 			SetStateAbnormal(UNIT_STATE_SLEEP);
 		}
 		//テスト
-		if(CInput::GetKeyPress(DIK_V))
+		if(CInput::GetKeyTrigger(DIK_V) || CInput::GetJoyTrigger(0, 8))
 		{
 			//シーンのマップ再生成フラグを立てる
 			CGameScene::MapReMake();
 		}
 
 		//-----メニューウィンドウ-----
-		if(CInput::GetKeyTrigger(DIK_I))
+		if(CInput::GetKeyTrigger(DIK_I) || CInput::GetJoyTrigger(0, 1))
 		{
 			//メニューウインドウ描画フラグを立てる
 			CMenuWindow::ChangDrawFlg();

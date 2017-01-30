@@ -13,19 +13,17 @@
 #define WINDOW_WIDHT  200
 #define WINDOW_HEIGHT  30
 
-
 //---------------------------------------------------------------------------------------
 //静的メンバ定義
 //---------------------------------------------------------------------------------------
 int			CEquipmentCommandCursor::m_Command = 0;			//選択中のコマンド
+int			CEquipmentCommandCursor::m_nInterval = 0;			//ボタン入力のインターバル
 
 //---------------------------------------------------------------------------------------
 //コンストラクタ
 //---------------------------------------------------------------------------------------
 CEquipmentCommandCursor::CEquipmentCommandCursor(void)
 {
-	//
-	int i = 10;
 	//デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CGraphics::GetDevice();
 
@@ -34,6 +32,8 @@ CEquipmentCommandCursor::CEquipmentCommandCursor(void)
 
 	//ポリゴン位置情報の設定
 	SetPos();
+	//ボタン入力インターバルタイムの初期化
+	m_nInterval = 0;
 }
 
 //---------------------------------------------------------------------------------------
@@ -41,6 +41,8 @@ CEquipmentCommandCursor::CEquipmentCommandCursor(void)
 //---------------------------------------------------------------------------------------
 CEquipmentCommandCursor::~CEquipmentCommandCursor(void)
 {
+	//ボタン入力インターバルタイムの初期化
+	m_nInterval = 0;
 }
 
 //---------------------------------------------------------------------------------------
@@ -92,10 +94,13 @@ void CEquipmentCommandCursor::Draw()
 //---------------------------------------------------------------------------------------
 void CEquipmentCommandCursor::Update()
 {
+	//ボタン入力のインターバルタイムを加算
+	m_nInterval++;
+
 	//使用法を選択している場合のみ更新
 	if(CEquipmentCommandWindow::GetDrawFlg())
 	{
-		if(CInput::GetKeyTrigger(DIK_W))
+		if ((CInput::GetKeyTrigger(DIK_W) || CInput::GetJoyAxis(0, JOY_Y) <= -JoyMoveCap) && m_nInterval >= ButtonIntervalTime)
 		{
 			//カーソルが上に移動できるか確認
 			if(m_Command > 0)
@@ -104,10 +109,13 @@ void CEquipmentCommandCursor::Update()
 				m_Command --;
 				//位置情報再設定
 				SetPos();
+
+				//入力をおこなったとしてインターバルタイムを0に戻す
+				m_nInterval = 0;
 			}
 		}
 
-		if(CInput::GetKeyTrigger(DIK_S))
+		if ((CInput::GetKeyTrigger(DIK_S) || CInput::GetJoyAxis(0, JOY_Y) >= JoyMoveCap) && m_nInterval >= ButtonIntervalTime)
 		{
 			//カーソルが下に移動できるか確認
 			if(m_Command < COMMAND_MAX - 1)
@@ -116,6 +124,9 @@ void CEquipmentCommandCursor::Update()
 				m_Command ++;
 				//位置情報を再設定
 				SetPos();
+
+				//入力をおこなったとしてインターバルタイムを0に戻す
+				m_nInterval = 0;
 			}
 		}
 	}

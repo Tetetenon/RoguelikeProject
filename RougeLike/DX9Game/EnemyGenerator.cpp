@@ -72,7 +72,7 @@ void CEnemyGenerator::Update()
 	}
 
 	//デバッグコマンド(エネミー生成)
-	if(CInput::GetKeyPress(DIK_Z) && m_FieldEnemyCounter < m_MaxFieldEnemy)
+	if((CInput::GetKeyPress(DIK_Z) || CInput::GetJoyTrigger(0,10)) && m_FieldEnemyCounter < m_MaxFieldEnemy)
 	{
 		CEnemy::Generation(this);
 		

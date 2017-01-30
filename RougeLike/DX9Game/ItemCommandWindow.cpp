@@ -90,7 +90,7 @@ void CCommandWindow::UpDate()
 		m_EnterInterval ++;
 
 		//Lで決定
-		if(CInput::GetKeyTrigger(DIK_L) && m_EnterInterval > 30)
+		if((CInput::GetKeyTrigger(DIK_L) || CInput::GetJoyTrigger(0,3)) && m_EnterInterval > 30)
 		{
 
 			//アイテムを使用
@@ -107,7 +107,7 @@ void CCommandWindow::UpDate()
 		}
 
 		//Kで戻る
-		if(CInput::GetKeyTrigger(DIK_K) && m_EnterInterval > 30)
+		if((CInput::GetKeyTrigger(DIK_K) || CInput::GetJoyTrigger(0,2)) && m_EnterInterval > 30)
 		{
 			//自身のフラグを倒す
 			DrawFlgChange();
