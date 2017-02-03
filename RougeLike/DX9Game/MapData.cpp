@@ -537,7 +537,10 @@ void CMapData::DivideMap()
 
 	//３パターンの中から、ランダムに選択し、区画を分ける
 	m_nDividPattern = rand()%4;
-	m_nDividPattern = 2;
+
+	//デバッグモードのみ処理
+	if(DebugMode)
+		m_nDividPattern = 3;
 
 	switch(m_nDividPattern)
 	{
@@ -601,8 +604,8 @@ void CMapData::DivideMap()
 		//全区画均等に当分
 	case 1:
 		{
-			int RoomNumX = (RemainingZone_X / SECTION_MIN_SIZE);
-			int RoomNumZ = (RemainingZone_Z / SECTION_MIN_SIZE);
+			int RoomNumX = (RemainingZone_X / SECTION_MAX_SIZE);
+			int RoomNumZ = (RemainingZone_Z / SECTION_MAX_SIZE);
 
 			//マップ上に作れる数を計算
 			OneRoomX = RemainingZone_X / RoomNumX;
@@ -670,7 +673,10 @@ void CMapData::MakeRoom()
 	int nMakeRoomPos_Y;
 
 	//作った部屋のかずだけ設定処理を行う
-	for(int i = 0;i < m_CountMakeRoom;i++)
+	//for(int i = 0;i < m_CountMakeRoom;i++)
+
+	int i = 0;
+	do
 	{
 		//区画のサイズを計算する
 		nSectionSize_X = m_Section[i].right - m_Section[i].left;	//区画の横幅
@@ -726,7 +732,8 @@ void CMapData::MakeRoom()
 				m_MapData[j][k].m_roomnumber = i + 1;
 			}
 		}
-	}
+		i++;
+	} while (i < m_CountMakeRoom);
 
 }
 //---------------------------------------------------------------------------------------

@@ -108,6 +108,9 @@ void CInventoryCursor::Update()
 				m_Number = ITEM_NUM_MAX - 1;
 			//位置情報再設定
 			SetPos();
+
+			//ボタン入力経過時間を0に
+			m_nInterval = 0;
 		}
 
 		if((CInput::GetKeyTrigger(DIK_S) || (CInput::GetJoyAxis(0,JOY_Y) >= JoyMoveCap)) && m_nInterval >= ButtonIntervalTime)
@@ -120,6 +123,9 @@ void CInventoryCursor::Update()
 
 			//位置情報を再設定
 			SetPos();
+
+			//ボタン入力経過時間を0に
+			m_nInterval = 0;
 		}
 	}
 }

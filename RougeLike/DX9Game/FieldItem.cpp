@@ -22,12 +22,6 @@ CMeshObj(pScene)
 
 	//ÉäÉXÉgÇÃèâä˙âª
 	m_pNextFieldItem = m_pBackFieldItem = NULL;
-
-	n_Debug++;
-	if (n_Debug == 1)
-	{
-		int a = 0;
-	}
 }
 
 
@@ -36,11 +30,6 @@ CMeshObj(pScene)
 //---------------------------------------------------------------------------------------
 CFieldItem::~CFieldItem(void)
 {
-	n_Debug--;
-	if (n_Debug == 0)
-	{
-		int a = 0;
-	}
 }
 
 //---------------------------------------------------------------------------------------
@@ -49,7 +38,7 @@ CFieldItem::~CFieldItem(void)
 void CFieldItem::Update		()
 {
 	if(!m_ItemDelete)
-		Fin();
+		Delete();
 }
 //---------------------------------------------------------------------------------------
 //ï`âÊèàóù

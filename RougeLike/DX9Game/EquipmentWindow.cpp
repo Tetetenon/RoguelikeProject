@@ -6,6 +6,8 @@
 #include "EquipmentWindowCursor.h"
 #include "Turn.h"
 #include "TextureManager.h"
+
+#include "MenuWindow.h"
 //---------------------------------------------------------------------------------------
 //マクロ定義
 //---------------------------------------------------------------------------------------
@@ -83,7 +85,7 @@ void CEquipmentInventory::UpDate()
 		}
 
 		//KとIキーで戻る
-		if(CInput::GetKeyTrigger(DIK_K) || CInput::GetJoyTrigger(0,2))
+		if(CInput::GetKeyTrigger(DIK_K) || CInput::GetJoyTrigger(0,2) || !CMenuWindow::GetDrawFlg())
 		{
 			//自身のフラグを倒す
 			DrawFlgChange();

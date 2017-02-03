@@ -285,6 +285,9 @@
     <Filter Include="システム\マネージャー\EnemyManager">
       <UniqueIdentifier>{b4adbfc3-baf1-4dbb-abe4-55e416069042}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI関連\DamageNotation">
+      <UniqueIdentifier>{08df5e79-4949-4d99-abf4-265a6ed14c1d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameWnd.cpp">
@@ -508,6 +511,9 @@
     </ClCompile>
     <ClCompile Include="EnemyManager.cpp">
       <Filter>システム\マネージャー\EnemyManager</Filter>
+    </ClCompile>
+    <ClCompile Include="DamageNotation.cpp">
+      <Filter>UI関連\DamageNotation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -735,6 +741,9 @@
     </ClInclude>
     <ClInclude Include="EnemyManager.h">
       <Filter>システム\マネージャー\EnemyManager</Filter>
+    </ClInclude>
+    <ClInclude Include="DamageNotation.h">
+      <Filter>UI関連\DamageNotation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

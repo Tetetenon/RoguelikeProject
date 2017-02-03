@@ -97,36 +97,37 @@ void CCommandCursor::Draw()
 void CCommandCursor::Update()
 {
 	//ボタン入力経過時間を加算
-	m_nInterval = 0;
+	m_nInterval++;
 
 	//使用法を選択している場合のみ更新
 	if(CCommandWindow::GetDrawFlg())
 	{
 		if((CInput::GetKeyTrigger(DIK_W) || (CInput::GetJoyAxis(0,JOY_Y) <= -JoyMoveCap)) && m_nInterval >= ButtonIntervalTime)
-		{
-			//カーソルが上に移動できるか確認
-			if(m_Command > 0)
+		{	
+			//上に移動
+			m_Command --; 
+			//ループ処理
+			if (m_Command < 0)
 			{
-				//上に移動
-				m_Command --;
-				//位置情報再設定
-				SetPos();
-				//ボタン入力経過時間を0にする
+				m_Command = COMMAND_MAX - 1;
 			}
+			//位置情報再設定
+			SetPos();
+			//ボタン入力経過時間を0にする
+			m_nInterval= 0;
 		}
 
 		if((CInput::GetKeyTrigger(DIK_S) ||(CInput::GetJoyAxis(0,JOY_Y) >= JoyMoveCap)) && m_nInterval >= ButtonIntervalTime)
 		{
-			//カーソルが下に移動できるか確認
-			if(m_Command < COMMAND_MAX - 1)
-			{
-				//下に移動
-				m_Command ++;
-				//位置情報を再設定
-				SetPos();
-				//ボタン入力経過時間を0にする
-				m_nInterval = 0;
-			}
+			//下に移動
+			m_Command ++;
+			//ループ
+			m_Command %= COMMAND_MAX;
+			//位置情報を再設定
+			SetPos();
+
+			//ボタン入力経過時間を0にする
+			m_nInterval = 0;
 		}
 	}
 }

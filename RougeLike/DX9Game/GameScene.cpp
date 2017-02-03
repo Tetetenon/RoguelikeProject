@@ -274,13 +274,16 @@ void CGameScene::Update()
 //---------------------------------------------------------------------------------------
 void CGameScene::Draw()
 {
-	m_szDebug[0] = _T('\0');	// デバッグ文字列初期化
+	//デバッグモードのみ描画
+	if (DebugMode)
+	{
+		m_szDebug[0] = _T('\0');	// デバッグ文字列初期化
 
-	// FPS を画面に描画するための文字列を作成
-	TCHAR	str[256];
-	_stprintf(str, _T("FPS = %d\n"), m_FPS);
-	lstrcat(m_szDebug, str);
-
+		// FPS を画面に描画するための文字列を作成
+		TCHAR	str[256];
+		_stprintf(str, _T("FPS = %d\n"), m_FPS);
+		lstrcat(m_szDebug, str);
+	}
 	//----- ここに描画処理
 	DrawObj();
 
@@ -490,13 +493,7 @@ void CGameScene::UpdateObj()
 	if(CMenuWindow::GetDrawFlg())
 	{
 		//ステータスウィンドウの描画が行われているか？
-		if(CStatesWindow::GetDrawFlg())
-		{
-			//ステータスウィンドウの更新(キー入力の更新)
-			m_pStatesWindow ->Update();
-		}
-
-		else
+		if(!CStatesWindow::GetDrawFlg())
 		{
 			//メニューウィンドウのセレクトを更新
 			m_pMenuSelect ->Update();
@@ -504,6 +501,8 @@ void CGameScene::UpdateObj()
 			m_pMenuWindow ->Update();
 		}
 	}
+	//ステータスウィンドウの更新(キー入力の更新)
+	m_pStatesWindow ->Update();
 
 	//-----アイテムウィンドウ-----
 	//アイテムウインドウの描画処理がされているか判別を行う

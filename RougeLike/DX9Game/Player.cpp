@@ -218,7 +218,6 @@ void CPlayer::SetFontPos()
 //---------------------------------------------------------------------------------------
 void CPlayer::Update()
 {
-
 	//外部から変更したステートを確認し、違えば本来のステートも変更をかける
 	if(m_bState_Change_Flg)
 	{
@@ -312,6 +311,11 @@ void CPlayer::InputUpdate()
 			//状態異常の処理
 			TurnStartStateProcessing();
 		m_bTurn = true;
+		//HP自動回復
+		m_nHP++;
+		//最大数値を超えない様に
+		if (m_nHP > m_nMaxHP)
+			m_nHP = m_nMaxHP;
 	}
 
 	//旧ステート情報の確保
@@ -325,7 +329,8 @@ void CPlayer::InputUpdate()
 
 		//移動フラグ
 		bool bMoveSuccess = false;
-		if (CInput::GetKeyTrigger(DIK_G) || CInput::GetJoyTrigger(0, 9))
+		//デバッグコマンド(死亡)
+		if (CInput::GetKeyTrigger(DIK_G))
 		{
 			//ゲームメインを終了
 			CFade::ChangeState(FADEMODE_OUT);
@@ -340,272 +345,275 @@ void CPlayer::InputUpdate()
 			CItemGenerator::ResetMakeItemNum();
 		}
 
-		//-----方向キー入力をした-----
-		if(CInput::GetKeyPress(DIK_W) || CInput::GetKeyPress(DIK_S) || CInput::GetKeyPress(DIK_A) || CInput::GetKeyPress(DIK_D) ||
-			CInput::GetJoyAxis(0, JOY_X) || CInput::GetJoyAxis(0, JOY_Y))
-		{
-			//メニューウィンドウが出ていなければ攻撃
-			if(!CMenuWindow::GetDrawFlg())
-			{
-				//向きフラグ初期化
-				for(int i = 0;i < MaxDirection;i++)
-					m_bDirectionFlg[i] = false;
-		
-				//移動予定の位置
-				int PosX = m_nUnit_Pos_X;
-				int PosZ = m_nUnit_Pos_Z;
-				//-----上移動-----
-				if(CInput::GetKeyPress(DIK_W) || CInput::GetJoyAxis(0, JOY_Y) < 0)
-				{	
-					//向きフラグ上
-					m_bDirectionFlg[Forword] = true;
-
-					bool a = CInput::GetJoyPress(0, 5);
-
-					//スペースキーを押していなかった場合、移動する
-					if(!CInput::GetKeyPress(DIK_Q) && !CInput::GetJoyPress(0,5))
-					{
-						//行き先設定
-						PosZ --;
-
-						//移動フラグ　真
-						bMoveSuccess = true;
-					}
-				}
-				//-----下移動-----
-				if(CInput::GetKeyPress(DIK_S) || CInput::GetJoyAxis(0, JOY_Y) > 0)
-				{
-					//向きフラグ下
-					m_bDirectionFlg[Back] = true;
-
-					//スペースキーを押していなかった場合、移動する
-					if(!CInput::GetKeyPress(DIK_Q) && !CInput::GetJoyPress(0, 5))
-					{
-						//行き先設定
-						PosZ ++;
-
-						//移動フラグ　真
-						bMoveSuccess = true;
-					}
-				}
-				//-----右移動-----
-				if(CInput::GetKeyPress(DIK_D) || CInput::GetJoyAxis(0, JOY_X) > 0)
-				{
-					//向きフラグ右
-					m_bDirectionFlg[Right] = true;
-
-					//スペースキーを押していなかった場合、移動
-					if(!CInput::GetKeyPress(DIK_Q) && !CInput::GetJoyPress(0, 5))
-					{
-						//行き先設定
-						PosX ++;
-
-						//移動フラグ　真
-						bMoveSuccess = true;
-					}
-				}
-				//-----左移動-----
-				if(CInput::GetKeyPress(DIK_A) || CInput::GetJoyAxis(0, JOY_X) < 0)
-				{
-					//向きフラグ左
-					m_bDirectionFlg[Left] = true;
-
-					//スペースを押していなかった場合、移動する
-					if(!CInput::GetKeyPress(DIK_Q) && !CInput::GetJoyPress(0, 5))
-					{
-						//行き先設定
-						PosX --;
-
-						//移動フラグ　真
-						bMoveSuccess = true;
-					}
-				}
-				
-				//混乱状態の場合、移動方向をランダムに変更する
-				if(m_nState == UNIT_STATE_CONFUSION && bMoveSuccess)
-				{
-					//向きフラグ初期化
-					for(int i = 0;i < MaxDirection;i++)
-						m_bDirectionFlg[i] = false;
-		
-					//移動予定の位置初期化
-					PosX = m_nUnit_Pos_X;
-					PosZ = m_nUnit_Pos_Z;
-
-					//移動方向を四方からランダムに設定
-					switch(rand()%2)
-					{
-					case 0:
-						//行先設定
-						PosZ--;
-						//向きフラグ上
-						m_bDirectionFlg[Forword] = true;
-						break;
-					case 1:
-						//行先設定
-						PosZ ++;
-						//向きフラグ下
-						m_bDirectionFlg[Back] = true;
-						break;
-					}
-					switch(rand()%3)
-					{
-					case 0:
-						//行先設定
-						PosX--;
-						//向きフラグ左
-						m_bDirectionFlg[Left] = true;
-						break;
-					case 1:
-						//行先設定
-						PosX ++;
-						//向きフラグ右
-						m_bDirectionFlg[Right] = true;
-						break;
-					default:
-						//移動しない
-						break;
-					}
-				}
-
-				//移動フラグが立っていた場合
-				if(bMoveSuccess)
-				{
-
-					//移動先のマップ状況を取得する
-					int Situation = CMapData::Get_TerrainMapSituation(PosX,PosZ);
-
-					//移動先にエネミーがほかのユニットがいないか確認する
-					int EnemySearch = CMapData::Get_UnitMapSituation(PosX,PosZ);
-
-					//移動先が床(又は階段)ならば移動可能
-					if((FLOOR == Situation || STAIRS == Situation) && EnemySearch == 0)
-					{
-						//マーキング消去
-						CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
-
-						//目的地に到達していない
-						m_bDestination = false;
-						m_fTimer = 0.0f;
-						
-						//移動先を本来の位置に設定
-						m_nUnit_Pos_X = PosX;
-						m_nUnit_Pos_Z = PosZ;
-
-						//可視化
-						CMapData::SetVisibleProcess(PosX,PosZ);
-
-
-						CMapData::SetDark(PosX,PosZ,TRUE);
-
-						//マーキング
-						CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
-
-						//ステートの遷移
-						m_nStateNumber =  m_State_Cpy = CTurn::GAME_STATE_MOVE;
-
-
-						//足元が階段であれば上る
-						if(Situation == STAIRS)
-						{
-							//シーンのマップ再生成フラグを立てる
-							CGameScene::MapReMake();
-						}
-					}
-				}
-
-				//回頭
-				int nAngle = 0;		//ユニットの回転させる角度
-
-				//フラグの状況から角度を設定する
-				if(m_bDirectionFlg[0])
-				{
-					if(m_bDirectionFlg[1])
-						nAngle = 45;
-					else if(m_bDirectionFlg[3])
-						nAngle = 315;
-					else
-						nAngle = 0;
-				}
-
-				else if(m_bDirectionFlg[2])
-				{
-					if(m_bDirectionFlg[1])
-						nAngle = 135;
-					else if(m_bDirectionFlg[3])
-						nAngle = 225;
-					else
-						nAngle = 180;
-				}
-				else if(m_bDirectionFlg[1])
-					nAngle = 90;
-				else if(m_bDirectionFlg[3])
-					nAngle = 270;
-
-				int OldAngle = (int)(m_fOldAngle * 180 / PI );
-				float RotateAngle = (float)(nAngle * PI / 180);
-
-				m_Angle.y = RotateAngle - m_fOldAngle;
-
-				m_fOldAngle = RotateAngle;
-			}
-		}
-		//-----攻撃-----
-		if(CInput::GetKeyTrigger(DIK_L) || CInput::GetJoyTrigger(0, 3))
-		{
-			//メニューウィンドウが出ていなければ攻撃
-			if(!CMenuWindow::GetDrawFlg())
-			{
-
-				//ステートの遷移
-				m_nStateNumber =  m_State_Cpy = CTurn::GAME_STATE_ATTACK;
-
-				//繰り出す技の番号を指定
-				m_nTrickNumber = TRICK_RANGE_FRONT;
-			}
-		}
-
 		//-----足踏み-----
-		if(CInput::GetKeyPress(DIK_E) || CInput::GetJoyPress(0,4))
+		if (CInput::GetKeyPress(DIK_E) || CInput::GetJoyPress(0, 4))
 		{
 			//ターンスキップ
 
 			//自身のステートの設定
 			m_nStateNumber = CTurn::GAME_STATE_TURN_END;
 		}
-		
-		//テスト(毒)
-		if(CInput::GetKeyTrigger(DIK_UP))
+		else
 		{
-			SetStateAbnormal(UNIT_STATE_POISON);
-		}
-		//テスト(混乱)
-		if(CInput::GetKeyTrigger(DIK_DOWN))
-		{
-			SetStateAbnormal(UNIT_STATE_CONFUSION);
-		}
-		//テスト(麻痺)
-		if(CInput::GetKeyTrigger(DIK_RIGHT))
-		{
-			SetStateAbnormal(UNIT_STATE_PARALYSIS);
-		}
-		//テスト(睡眠)
-		if(CInput::GetKeyTrigger(DIK_LEFT))
-		{
-			SetStateAbnormal(UNIT_STATE_SLEEP);
-		}
-		//テスト
-		if(CInput::GetKeyTrigger(DIK_V) || CInput::GetJoyTrigger(0, 8))
-		{
-			//シーンのマップ再生成フラグを立てる
-			CGameScene::MapReMake();
-		}
 
-		//-----メニューウィンドウ-----
-		if(CInput::GetKeyTrigger(DIK_I) || CInput::GetJoyTrigger(0, 1))
-		{
-			//メニューウインドウ描画フラグを立てる
-			CMenuWindow::ChangDrawFlg();
+			//-----方向キー入力をした-----
+			if (CInput::GetKeyPress(DIK_W) || CInput::GetKeyPress(DIK_S) || CInput::GetKeyPress(DIK_A) || CInput::GetKeyPress(DIK_D) ||
+				abs(CInput::GetJoyAxis(0, JOY_X)) > JoyMoveCap || abs(CInput::GetJoyAxis(0, JOY_Y)) > JoyMoveCap)
+			{
+				//メニューウィンドウが出ていなければ攻撃
+				if (!CMenuWindow::GetDrawFlg())
+				{
+					//向きフラグ初期化
+					for (int i = 0; i < MaxDirection; i++)
+						m_bDirectionFlg[i] = false;
+
+					//移動予定の位置
+					int PosX = m_nUnit_Pos_X;
+					int PosZ = m_nUnit_Pos_Z;
+					//-----上移動-----
+					if (CInput::GetKeyPress(DIK_W) || CInput::GetJoyAxis(0, JOY_Y) < -JoyMoveCap)
+					{
+						//向きフラグ上
+						m_bDirectionFlg[Forword] = true;
+
+						bool a = CInput::GetJoyPress(0, 5);
+
+						//スペースキーを押していなかった場合、移動する
+						if (!CInput::GetKeyPress(DIK_Q) && !CInput::GetJoyPress(0, 5))
+						{
+							//行き先設定
+							PosZ--;
+
+							//移動フラグ　真
+							bMoveSuccess = true;
+						}
+					}
+					//-----下移動-----
+					if (CInput::GetKeyPress(DIK_S) || CInput::GetJoyAxis(0, JOY_Y) > JoyMoveCap)
+					{
+						//向きフラグ下
+						m_bDirectionFlg[Back] = true;
+
+						//スペースキーを押していなかった場合、移動する
+						if (!CInput::GetKeyPress(DIK_Q) && !CInput::GetJoyPress(0, 5))
+						{
+							//行き先設定
+							PosZ++;
+
+							//移動フラグ　真
+							bMoveSuccess = true;
+						}
+					}
+					//-----右移動-----
+					if (CInput::GetKeyPress(DIK_D) || CInput::GetJoyAxis(0, JOY_X) > JoyMoveCap)
+					{
+						//向きフラグ右
+						m_bDirectionFlg[Right] = true;
+
+						//スペースキーを押していなかった場合、移動
+						if (!CInput::GetKeyPress(DIK_Q) && !CInput::GetJoyPress(0, 5))
+						{
+							//行き先設定
+							PosX++;
+
+							//移動フラグ　真
+							bMoveSuccess = true;
+						}
+					}
+					//-----左移動-----
+					if (CInput::GetKeyPress(DIK_A) || CInput::GetJoyAxis(0, JOY_X) < -JoyMoveCap)
+					{
+						//向きフラグ左
+						m_bDirectionFlg[Left] = true;
+
+						//スペースを押していなかった場合、移動する
+						if (!CInput::GetKeyPress(DIK_Q) && !CInput::GetJoyPress(0, 5))
+						{
+							//行き先設定
+							PosX--;
+
+							//移動フラグ　真
+							bMoveSuccess = true;
+						}
+					}
+
+					//混乱状態の場合、移動方向をランダムに変更する
+					if (m_nState == UNIT_STATE_CONFUSION && bMoveSuccess)
+					{
+						//向きフラグ初期化
+						for (int i = 0; i < MaxDirection; i++)
+							m_bDirectionFlg[i] = false;
+
+						//移動予定の位置初期化
+						PosX = m_nUnit_Pos_X;
+						PosZ = m_nUnit_Pos_Z;
+
+						//移動方向を四方からランダムに設定
+						switch (rand() % 2)
+						{
+						case 0:
+							//行先設定
+							PosZ--;
+							//向きフラグ上
+							m_bDirectionFlg[Forword] = true;
+							break;
+						case 1:
+							//行先設定
+							PosZ++;
+							//向きフラグ下
+							m_bDirectionFlg[Back] = true;
+							break;
+						}
+						switch (rand() % 3)
+						{
+						case 0:
+							//行先設定
+							PosX--;
+							//向きフラグ左
+							m_bDirectionFlg[Left] = true;
+							break;
+						case 1:
+							//行先設定
+							PosX++;
+							//向きフラグ右
+							m_bDirectionFlg[Right] = true;
+							break;
+						default:
+							//移動しない
+							break;
+						}
+					}
+
+					//移動フラグが立っていた場合
+					if (bMoveSuccess)
+					{
+
+						//移動先のマップ状況を取得する
+						int Situation = CMapData::Get_TerrainMapSituation(PosX, PosZ);
+
+						//移動先にエネミーがほかのユニットがいないか確認する
+						int EnemySearch = CMapData::Get_UnitMapSituation(PosX, PosZ);
+
+						//移動先が床(又は階段)ならば移動可能
+						if ((FLOOR == Situation || STAIRS == Situation) && EnemySearch == 0)
+						{
+							//マーキング消去
+							CMapData::Back_UnitMap(m_nUnit_Pos_X, m_nUnit_Pos_Z);
+
+							//目的地に到達していない
+							m_bDestination = false;
+							m_fTimer = 0.0f;
+
+							//移動先を本来の位置に設定
+							m_nUnit_Pos_X = PosX;
+							m_nUnit_Pos_Z = PosZ;
+
+							//可視化
+							CMapData::SetVisibleProcess(PosX, PosZ);
+
+
+							CMapData::SetDark(PosX, PosZ, TRUE);
+
+							//マーキング
+							CMapData::Set_UnitMap(m_nUnit_Pos_X, m_nUnit_Pos_Z, m_nUnitNumber);
+
+							//ステートの遷移
+							m_nStateNumber = m_State_Cpy = CTurn::GAME_STATE_MOVE;
+
+
+							//足元が階段であれば上る
+							if (Situation == STAIRS)
+							{
+								//シーンのマップ再生成フラグを立てる
+								CGameScene::MapReMake();
+							}
+						}
+					}
+
+					//回頭
+					int nAngle = 0;		//ユニットの回転させる角度
+
+					//フラグの状況から角度を設定する
+					if (m_bDirectionFlg[0])
+					{
+						if (m_bDirectionFlg[1])
+							nAngle = 45;
+						else if (m_bDirectionFlg[3])
+							nAngle = 315;
+						else
+							nAngle = 0;
+					}
+
+					else if (m_bDirectionFlg[2])
+					{
+						if (m_bDirectionFlg[1])
+							nAngle = 135;
+						else if (m_bDirectionFlg[3])
+							nAngle = 225;
+						else
+							nAngle = 180;
+					}
+					else if (m_bDirectionFlg[1])
+						nAngle = 90;
+					else if (m_bDirectionFlg[3])
+						nAngle = 270;
+
+					int OldAngle = (int)(m_fOldAngle * 180 / PI);
+					float RotateAngle = (float)(nAngle * PI / 180);
+
+					m_Angle.y = RotateAngle - m_fOldAngle;
+
+					m_fOldAngle = RotateAngle;
+				}
+			}
+			//-----攻撃-----
+			if (CInput::GetKeyTrigger(DIK_L) || CInput::GetJoyTrigger(0, 3))
+			{
+				//メニューウィンドウが出ていなければ攻撃
+				if (!CMenuWindow::GetDrawFlg())
+				{
+
+					//ステートの遷移
+					m_nStateNumber = m_State_Cpy = CTurn::GAME_STATE_ATTACK;
+
+					//繰り出す技の番号を指定
+					m_nTrickNumber = TRICK_RANGE_FRONT;
+				}
+			}
+
+			//テスト(毒)
+			if (CInput::GetKeyTrigger(DIK_UP))
+			{
+				SetStateAbnormal(UNIT_STATE_POISON);
+			}
+			//テスト(混乱)
+			if (CInput::GetKeyTrigger(DIK_DOWN))
+			{
+				SetStateAbnormal(UNIT_STATE_CONFUSION);
+			}
+			//テスト(麻痺)
+			if (CInput::GetKeyTrigger(DIK_RIGHT))
+			{
+				SetStateAbnormal(UNIT_STATE_PARALYSIS);
+			}
+			//テスト(睡眠)
+			if (CInput::GetKeyTrigger(DIK_LEFT))
+			{
+				SetStateAbnormal(UNIT_STATE_SLEEP);
+			}
+			//テスト
+			if (CInput::GetKeyTrigger(DIK_V))
+			{
+				//シーンのマップ再生成フラグを立てる
+				CGameScene::MapReMake();
+			}
+
+			//-----メニューウィンドウ-----
+			if (CInput::GetKeyTrigger(DIK_I) || CInput::GetJoyTrigger(0, 1))
+			{
+				//メニューウインドウ描画フラグを立てる
+				CMenuWindow::ChangDrawFlg();
+			}
 		}
 
 		//ワールドマトリックスからローカル軸抽出、座標抽出
@@ -730,6 +738,9 @@ void CPlayer::TurnEndUpdate()
 
 	//自身のターンが終了した。
 	m_bTurnEndFlg = true;
+
+	//ターン初めの処理が完了していない
+	m_bTurn = false;
 
 	//次のユニットの更新に移る
 	CTurn::ChangeUnitState(CTurn::UNIT_TURN_ENEMY);

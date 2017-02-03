@@ -104,6 +104,7 @@
     <ClCompile Include="C2DTexture.cpp" />
     <ClCompile Include="C3DObj.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="DamageNotation.cpp" />
     <ClCompile Include="EditTexture.cpp" />
     <ClCompile Include="EffectObj.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
@@ -180,6 +181,7 @@
     <ClInclude Include="C2DTexture.h" />
     <ClInclude Include="C3DObj.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="DamageNotation.h" />
     <ClInclude Include="EditTexture.h" />
     <ClInclude Include="EffectObj.h" />
     <ClInclude Include="EnemyManager.h" />

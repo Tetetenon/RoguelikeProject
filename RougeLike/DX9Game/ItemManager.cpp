@@ -4,7 +4,7 @@
 //Ã“I•Ï”‚Ì‰Šú‰»
 ITEM_MAP*	CItemManager::m_pItemManager = NULL;
 
-int			CItemManager::m_MakeItemNum = 0;
+int			CItemManager::m_MakeItemNum = 1;
 bool		CItemManager::m_Delete = false;
 
 //---------------------------------------------------------------------------------------
@@ -17,7 +17,7 @@ CItemManager::CItemManager()
 
 	//•Ï”‚Ì‰Šú‰»
 	m_Delete = false;
-	m_MakeItemNum = 0;
+	m_MakeItemNum = 1;
 }
 
 
@@ -29,7 +29,7 @@ CItemManager::~CItemManager()
 	//ƒŠƒXƒg‚Ì‰Šú‰»
 	m_pItemManager->clear();
 	m_Delete = false;
-	m_MakeItemNum = 0;
+	m_MakeItemNum = 1;
 }
 
 //---------------------------------------------------------------------------------------

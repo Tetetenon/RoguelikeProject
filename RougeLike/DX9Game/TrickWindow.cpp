@@ -108,7 +108,7 @@ void CTrickWindow::UpDate()
 		}
 
 		//KとIキーで戻る
-		if(CInput::GetKeyTrigger(DIK_K) || CInput::GetJoyTrigger(0,2))
+		if(CInput::GetKeyTrigger(DIK_K) || CInput::GetJoyTrigger(0, 2) || !CMenuWindow::GetDrawFlg())
 		{
 			//自身のフラグを倒す
 			m_bDrawFlg = false;

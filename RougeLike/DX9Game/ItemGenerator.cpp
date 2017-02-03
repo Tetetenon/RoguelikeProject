@@ -46,7 +46,7 @@ void CItemGenerator::Fin()
 void CItemGenerator::Update()
 {
 	//デバッグコマンド(宝箱の生成)
-	if((CInput::GetKeyPress(DIK_X) || CInput::GetJoyPress(0, 11)) && m_FieldItemCounter < m_MaxFieldItem)
+	if(CInput::GetKeyTrigger(DIK_X) && m_FieldItemCounter < m_MaxFieldItem)
 	{
 		//生成
 		CFieldItem::Generation(this);

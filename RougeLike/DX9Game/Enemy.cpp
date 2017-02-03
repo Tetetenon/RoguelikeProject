@@ -325,6 +325,12 @@ void CEnemy::InputUpdate()
 			//状態異常の処理
 			TurnStartStateProcessing();
 		m_bTurn = true;
+
+		//HP自動回復
+		m_nHP++;
+		//最大数値を超えない様に
+		if (m_nHP > m_nMaxHP)
+			m_nHP = m_nMaxHP;
 	}
 
 	//旧ステート情報の確保
@@ -574,6 +580,9 @@ void CEnemy::TurnEndUpdate()
 
 	//ステートの遷移(ターンの終了)
 	m_nStateNumber = CTurn::GAME_STATE_STAND_BY;
+
+	//ターン初めの処理が完了していない
+	m_bTurn = false;
 
 	//自身のターンが終了した
 	m_bTurnEndFlg = true;

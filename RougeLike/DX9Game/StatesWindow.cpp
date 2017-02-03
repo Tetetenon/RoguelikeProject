@@ -2,6 +2,8 @@
 #include "TextureManager.h"
 #include "Input.h"
 
+#include "MenuWindow.h"
+
 //ステータスウィンドウ描画フラグ
 bool CStatesWindow::m_bDrawFlg = false;
 
@@ -38,8 +40,11 @@ CStatesWindow::~CStatesWindow(void)
 //---------------------------------------------------------------------------------------
 void CStatesWindow::Update(void)
 {
+	//描画処理を行っていない場合処理しない
+	if (!m_bDrawFlg)
+		return;
 	//決定(L)又は戻る(K)でウィンドウを閉じる
-	if(CInput::GetKeyTrigger(DIK_L) || CInput::GetKeyTrigger(DIK_K) || CInput::GetJoyTrigger(0,2) || CInput::GetJoyTrigger(0,3))
+	if(CInput::GetKeyTrigger(DIK_L)|| CInput::GetJoyTrigger(0,2) || !CMenuWindow::GetDrawFlg())
 	{
 		m_bDrawFlg = false;
 	}

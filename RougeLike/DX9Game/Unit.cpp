@@ -218,7 +218,7 @@ void CUnit::TurnUpdate()
 	//ステート状態によって処理を分岐させる
 	switch (m_nStateNumber)
 	{
-		//入力待ち(プレイヤー)
+		//入力待ち
 	case CTurn::GAME_STATE_STAND_BY:
 		InputUpdate();
 		break;
@@ -1615,7 +1615,6 @@ void CUnit::SetStateAbnormal(int nStateNum)
 //---------------------------------------------------------------------------------------
 void CUnit::TurnStartStateProcessing()
 {
-
 	//メッセージ表記
 	TCHAR	str[256];
 	//現在の状態異常で処理を分岐

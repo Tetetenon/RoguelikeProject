@@ -58,6 +58,10 @@ void CMenuSelect::Update(void)
 			//選択中コマンドを上に
 			m_nSelectNumber --;
 
+			//ループ
+			if (m_nSelectNumber < 0)
+				m_nSelectNumber = MENU_MAX - 1;
+
 			//ボタン入力インターバルを0にする
 			m_nInterval = 0;
 		}
@@ -66,6 +70,9 @@ void CMenuSelect::Update(void)
 		{
 			//選択中コマンドを下に
 			m_nSelectNumber ++;
+
+			//ループ
+			m_nSelectNumber %= MENU_MAX;
 
 			//ボタン入力インターバルを0にする
 			m_nInterval = 0;
@@ -101,15 +108,6 @@ void CMenuSelect::Update(void)
 			//ボタン入力インターバルを0にする
 			m_nInterval = 0;
 		}
-	}
-	//-----許容領域範囲内に居るか確認-----
-	if(m_nSelectNumber < 0)
-	{
-		m_nSelectNumber = 0;
-	}
-	if(m_nSelectNumber >= MENU_MAX)
-	{
-		m_nSelectNumber = MENU_MAX - 1;
 	}
 
 	//位置情報の設定
