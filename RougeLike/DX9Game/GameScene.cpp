@@ -350,7 +350,7 @@ void CGameScene::InitObj()
 		for(int j = 0;j < MAP_SIZE;j++)
 		{
 
-			if(CMapData::Get_TerrainMapSituation(i,j) == IN_THE_WALL)
+			if(CMapData::Get_TerrainMapSituation(i,j) == WALL)
 				m_pFieldObjMaker->PutObj(MODEL_TREE,i,j);
 
 			if(CMapData::Get_TerrainMapSituation(i,j) == STAIRS)
@@ -438,7 +438,7 @@ void CGameScene::UpdateObj()
 			for(int j = 0;j < MAP_SIZE;j++)
 			{
 
-				if(CMapData::Get_TerrainMapSituation(i,j) == IN_THE_WALL)
+				if(CMapData::Get_TerrainMapSituation(i,j) == WALL)
 					m_pFieldObjMaker->PutObj(MODEL_TREE,i,j);
 
 				if(CMapData::Get_TerrainMapSituation(i,j) == STAIRS)
@@ -483,8 +483,10 @@ void CGameScene::UpdateObj()
 	m_pEnemyGenerator->Update();
 	m_pFieldGenerator->Update();
 
+	//カメラの更新
 	m_pCamera->Update();
-	m_pCamera -> PostUpdate();		//カメラ更新
+	m_pCamera -> PostUpdate();
+
 	m_pMessageWindow ->Update();	//メッセージウインドウ更新
 	m_pHPDraw ->Update();			//HP更新
 	m_pMap ->UpDate();				//マップデータ更新

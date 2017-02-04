@@ -50,6 +50,8 @@ static GRID_TYPE GetTerrainType(const Map& map_data)
 	switch (map_data.m_terrain)
 	{
 	case FLOOR:
+	case ROOT:
+	case ROOT_ENTRANCE:
 		if (map_data.m_isVisible == FALSE) return TYPE_WALL;
 		return TYPE_FLOOR;
 	case STAIRS:

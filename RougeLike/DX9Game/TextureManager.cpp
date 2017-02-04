@@ -14,7 +14,6 @@ bool				CTextureManager::m_TextureLoad[TEXTURE_MAX] = {false};	//ƒeƒNƒXƒ`ƒƒ“Ç‚İ
 #define TEXTURE_PATH_SELECT_WINDOW	_T("../data/texture/Window2.png")		//‘I‘ğ’†ƒEƒBƒ“ƒhƒE
 #define TEXTURE_PATH_FLOOR			_T("../data/Texture/Floor.png")			//°
 #define TEXTURE_PATH_WALL			_T("../data/Texture/Wall.png")			//ƒJƒx
-#define TEXTURE_PATH_IN_THE_WALL	_T("../data/Texture/In_The_Wall.png")	//•Ç‚Ì’†
 
 #define TEXTURE_PATH_TITLE			_T("../data/texture/Title.png")			//ƒ^ƒCƒgƒ‹
 #define TEXTURE_PATH_RESULT			_T("../data/texture/Result.png")		//ƒŠƒUƒ‹ƒg
@@ -130,14 +129,6 @@ void CTextureManager::LoadTexture()
 	{
 		//ƒeƒNƒXƒ`ƒƒ‚Ì“Ç‚İ‚İ
 		D3DXCreateTextureFromFile(pDevice,TEXTURE_PATH_WALL,&m_TextureData[TEXTURE_WALL]);
-	}
-
-	//•Ç‚Ì’†
-	//ƒeƒNƒXƒ`ƒƒ‚Ì“Ç‚İ‚İ‚ªŠ®—¹‚µ‚Ä‚¢‚È‚¯‚ê‚Î“Ç‚İ‚Ş
-	if(!m_TextureLoad[TEXTURE_IN_THE_WALL])
-	{
-		//ƒeƒNƒXƒ`ƒƒ‚Ì“Ç‚İ‚İ
-		D3DXCreateTextureFromFile(pDevice,TEXTURE_PATH_IN_THE_WALL,&m_TextureData[TEXTURE_IN_THE_WALL]);
 	}
 
 	//ƒ^ƒCƒgƒ‹

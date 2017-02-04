@@ -16,7 +16,7 @@ CFade::CFade(void)
 	m_nFadeTime = 0;
 
 	//テクスチャの設定
-	m_nTextureID = TEXTURE_IN_THE_WALL;
+	m_nTextureID = TEXTURE_WALL;
 }
 
 //---------------------------------------------------------------------------------------

@@ -495,7 +495,7 @@ void CPlayer::InputUpdate()
 						int EnemySearch = CMapData::Get_UnitMapSituation(PosX, PosZ);
 
 						//移動先が床(又は階段)ならば移動可能
-						if ((FLOOR == Situation || STAIRS == Situation) && EnemySearch == 0)
+						if ((Situation == FLOOR || Situation == STAIRS || Situation == ROOT || Situation == ROOT_ENTRANCE) && EnemySearch == 0)
 						{
 							//マーキング消去
 							CMapData::Back_UnitMap(m_nUnit_Pos_X, m_nUnit_Pos_Z);

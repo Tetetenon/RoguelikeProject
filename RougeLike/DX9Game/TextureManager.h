@@ -9,7 +9,6 @@ enum TEXTURENUM
 	TEXTURE_SELECT_WINDOW,		//選択中ウインドウ
 	TEXTURE_FLOOR,				//床
 	TEXTURE_WALL,				//壁
-	TEXTURE_IN_THE_WALL,		//壁の中
 	TEXTURE_TITLE,				//タイトル
 	TEXTURE_RESULT,				//リザルト
 	TEXTURE_GAMECLEAR,			//ゲームクリア

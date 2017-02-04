@@ -1,2 +1,6 @@
-﻿  ItemGenerator.cpp
+﻿  MapData.cpp
+c:\users\40029\documents\roguelikeproject\rougelike\dx9game\mapdata.cpp(768): warning C4482: 非標準の拡張機能が使用されています: enum 'CMapData::VectorFlg' が限定名で使用されます
+c:\users\40029\documents\roguelikeproject\rougelike\dx9game\mapdata.cpp(775): warning C4482: 非標準の拡張機能が使用されています: enum 'CMapData::VectorFlg' が限定名で使用されます
+c:\users\40029\documents\roguelikeproject\rougelike\dx9game\mapdata.cpp(1242): warning C4482: 非標準の拡張機能が使用されています: enum 'CMapData::VectorFlg' が限定名で使用されます
+c:\users\40029\documents\roguelikeproject\rougelike\dx9game\mapdata.cpp(1253): warning C4482: 非標準の拡張機能が使用されています: enum 'CMapData::VectorFlg' が限定名で使用されます
   DX9Game.vcxproj -> C:\Users\40029\Documents\RoguelikeProject\RougeLike\Debug\DX9Game.exe

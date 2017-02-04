@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include "EnemyGenerator.h"
 #include "ItemGenerator.h"
 #include "define.h"
@@ -22,13 +23,11 @@
 //マップの状況
 enum Situation
 {
-	WALL_UP  = 1,	//壁(上向き)
-	WALL_DOWN,		//壁(下向き)
-	WALL_RIGH,		//壁(右向き)
-	WALL_LEFT,		//壁(左向き)
+	WALL,			//カベ
 	FLOOR,			//床
+	ROOT,			//通路
+	ROOT_ENTRANCE,	//通路入口
 	STAIRS,			//階段
-	IN_THE_WALL = 99,	//壁の中
 	etc
 };
 
@@ -100,6 +99,16 @@ private:
 	static AStar		m_AStarData[MAP_SIZE][MAP_SIZE];//A*アルゴリズムに使用する構造体
 	static AStarList*	m_pAstarList;
 public:
+	//方向
+	enum VectorFlg
+	{
+		//縦
+		Vectical = 0,
+		//横
+		Horizon,
+		Max
+	};
+
 	CMapData(void);										//コンストラクタ
 	~CMapData(void);									//デストラクタ
 
@@ -191,5 +200,8 @@ public:
 
 	//指定された位置の親の場所を返す
 	static void GetParentPos(int ChildPosX,int ChildPosZ,int *ParentPosX,int *ParentPosZ);
+
+	//指定された区画同士が一部でも重なっているか返す
+	static bool CheckSectionOverRide(int Section1,int Section2, VectorFlg VectorFlg);
 };
 
