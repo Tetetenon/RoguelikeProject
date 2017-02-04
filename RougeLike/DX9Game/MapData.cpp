@@ -307,9 +307,6 @@ void CMapData:: Draw()
 void CMapData:: Fin()
 {
 }
-
-
-
 //---------------------------------------------------------------------------------------
 // 指定した地形の状態を返す
 //---------------------------------------------------------------------------------------
@@ -489,6 +486,9 @@ void CMapData::MapGeneration()
 	//階段をどこかの部屋の中に設定する
 	StairsSet();
 
+	//フィールド上にオブジェクトを設置する
+	SetFieldObj();
+
 	//階層数加算
 	m_nHierarchyNum ++;
 
@@ -536,10 +536,6 @@ void CMapData::DivideMap()
 
 	//３パターンの中から、ランダムに選択し、区画を分ける
 	m_nDividPattern = rand()%4;
-
-	//デバッグモードのみ処理
-	if(DebugMode)
-		m_nDividPattern = 3;
 
 	switch(m_nDividPattern)
 	{
@@ -1233,7 +1229,9 @@ void CMapData::GetParentPos(int ChildPosX,int ChildPosZ,int *ParentPosX,int *Par
 	*ParentPosX = (int)m_AStarData[ChildPosZ][ChildPosX].m_ParentPos.x;
 	*ParentPosZ = (int)m_AStarData[ChildPosZ][ChildPosX].m_ParentPos.y;
 }
+//---------------------------------------------------------------------------------------
 //指定された部屋同士が一部でも重なっているか返す
+//---------------------------------------------------------------------------------------
 bool CMapData::CheckSectionOverRide(int Section1, int Section2, VectorFlg VectorFlg)
 {
 	switch (VectorFlg)
@@ -1261,5 +1259,52 @@ bool CMapData::CheckSectionOverRide(int Section1, int Section2, VectorFlg Vector
 			return true;
 	default:
 		return false;
+	}
+}
+
+//---------------------------------------------------------------------------------------
+//フィールド上にオブジェクトを配置する
+//---------------------------------------------------------------------------------------
+void CMapData::SetFieldObj()
+{
+	//部屋の状態を確認し、一定以上の空間が存在する場合、家を設置する
+
+	//全ての部屋を確認
+	for (int i = 0; i < m_CountMakeRoom; i++)
+	{
+		//家を建てられる数
+		int MakeHomePositionNum = 0;
+
+		//部屋のサイズが、一定値以上ならば、家を建てる
+		//家を設置できる場所があるか確認
+		for (int j = m_Room[i].top; j < m_Room[i].bottom; j++)
+		{
+			for (int k = m_Room[i].left; k < m_Room[i].right; k++)
+			{
+				//場所情報が床の物のみカウント
+				if(m_MapData[j][k].m_terrain == FLOOR)
+					MakeHomePositionNum++;
+			}
+		}
+
+		//床の数が一定以上存在する場合、家を建てる
+		if (MakeHomePositionNum > MakeHomeSize)
+		{
+			int MakePosZ = rand() % (m_Room[i].bottom - m_Room[i].top) + m_Room[i].top;
+			int MakePosX = rand() % (m_Room[i].right - m_Room[i].left) + m_Room[i].left;
+
+			//指定した位置が床になるまで回す
+			while (m_MapData[MakePosZ][MakePosX].m_terrain != FLOOR)
+			{
+				MakePosZ = rand() % (m_Room[i].bottom - m_Room[i].top) + m_Room[i].top;
+				MakePosX = rand() % (m_Room[i].right - m_Room[i].left) + m_Room[i].left;
+			}
+
+			//空いている空間に家を設定
+			m_MapData[MakePosZ][MakePosX].m_terrain = HOME;
+
+			//家は一個のみ作成する
+			break;
+		}
 	}
 }

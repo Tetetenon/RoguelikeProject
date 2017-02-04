@@ -20,14 +20,41 @@
 //生成できる部屋の最大数
 #define ROOM_MAX_NUM	(MAP_SIZE / SECTION_MIN_SIZE) * (MAP_SIZE / SECTION_MIN_SIZE)
 
+//家を建てられる空間のサイズ
+#define MakeHomeSize (6)
+
 //マップの状況
 enum Situation
 {
-	WALL,			//カベ
-	FLOOR,			//床
-	ROOT,			//通路
-	ROOT_ENTRANCE,	//通路入口
-	STAIRS,			//階段
+	//基本系
+	WALL,				//カベ
+	FLOOR,				//床
+	ROOT,				//通路
+	ROOT_ENTRANCE,		//通路入口
+	STAIRS,				//階段
+
+	BASIC_MAX,
+
+	//オブジェクト系
+	LAKE,			//湖
+	LAKE_LEFTUP,	//湖左上
+	LAKE_LEFTDOWN,	//湖左下
+	LAKE_RIGHTUP,	//湖右上
+	LAKE_RIGHTDOWN,	//湖右下
+	FOUNTAIN,			//噴水
+	MUSHROOM,			//キノコ
+	HOME,				//家
+
+	OBJ_MAX,
+
+	//罠系
+	TRAP_POISON,
+	TRAP_NUMBNESS,
+	TRAP_SLEEP,
+	TRAP_CONFUSION,
+
+	TRAP_MAX,
+
 	etc
 };
 
@@ -67,9 +94,6 @@ class CMapData
 private:
 
 	//-----マップデータ-----
-	//static Map						m_TerrainMap[MAP_SIZE][MAP_SIZE];			//マップ情報
-	//static Map						m_ItemMap[MAP_SIZE][MAP_SIZE];				//マップ上のアイテム情報格納
-	//static Map						m_UnitMap[MAP_SIZE][MAP_SIZE];				//マップ上のユニット情報格納
 	static Map						m_MapData[MAP_SIZE][MAP_SIZE];				// 新しいマップ情報
 
 	static bool						m_bCheckFlg[MAP_SIZE][MAP_SIZE];			//確認が完了したか
@@ -203,5 +227,8 @@ public:
 
 	//指定された区画同士が一部でも重なっているか返す
 	static bool CheckSectionOverRide(int Section1,int Section2, VectorFlg VectorFlg);
+
+	//フィールド上にオブジェクトを配置する
+	static void SetFieldObj();
 };
 

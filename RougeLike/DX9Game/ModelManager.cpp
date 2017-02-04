@@ -16,6 +16,10 @@ bool	CModelManager::m_MeshLoadFlg[MODEL_MAX] = {false};	//モデルデータ読み込みフ
 #define PATH_MESH_STAIRS		_T("../data/model/model/Stairs.x")			//フィールドオブジェ(階段)
 #define PATH_MESH_HIT			_T("../data/model/model/Hit.x")				//戦闘時ヒット
 #define PATH_MESH_DELETE		_T("../data/model/model/Delete.x")			//戦闘時消滅
+#define PATH_MESH_HOME			_T("../data/model/model/Home.x")			//家
+#define PATH_MESH_MUSHROOM		_T("../data/model/model/Mushroom.x")		//キノコ
+#define PATH_MESH_FOUNTAIN		_T("../data/model/model/Fountain.x")		//噴水
+
 
 
 
@@ -106,13 +110,32 @@ void CModelManager::LoadMesh()
 	}
 
 	//-----戦闘消滅の読み込み-----
-	if(!m_MeshLoadFlg[MODEL_DELETE])
+	if (!m_MeshLoadFlg[MODEL_DELETE])
 	{
 		//モデルデータのロード
-		m_MeshLoadFlg[MODEL_DELETE] = m_MeshData[MODEL_DELETE].Initialize(PATH_MESH_DELETE,true);
+		m_MeshLoadFlg[MODEL_DELETE] = m_MeshData[MODEL_DELETE].Initialize(PATH_MESH_DELETE, true);
 	}
 
+	//-----家の読み込み-----
+	if (!m_MeshLoadFlg[MODEL_HOME])
+	{
+		//モデルデータのロード
+		m_MeshLoadFlg[MODEL_HOME] = m_MeshData[MODEL_HOME].Initialize(PATH_MESH_HOME, true);
+	}
 
+	//-----キノコの読み込み-----
+	if (!m_MeshLoadFlg[MODEL_MUSHROOM])
+	{
+		//モデルデータのロード
+		m_MeshLoadFlg[MODEL_MUSHROOM] = m_MeshData[MODEL_MUSHROOM].Initialize(PATH_MESH_MUSHROOM, true);
+	}
+
+	//-----噴水の読み込み-----
+	if (!m_MeshLoadFlg[MODEL_FOUNTAIN])
+	{
+		//モデルデータのロード
+		m_MeshLoadFlg[MODEL_FOUNTAIN] = m_MeshData[MODEL_FOUNTAIN].Initialize(PATH_MESH_FOUNTAIN, true);
+	}
 }
 
 //---------------------------------------------------------------------------------------

@@ -349,12 +349,19 @@ void CGameScene::InitObj()
 	{
 		for(int j = 0;j < MAP_SIZE;j++)
 		{
+			switch (CMapData::Get_TerrainMapSituation(i, j))
+			{
+			case WALL:
+				m_pFieldObjMaker->PutObj(MODEL_TREE, i, j);
+				break;
+			case STAIRS:
+				m_pFieldObjMaker->PutObj(MODEL_STAIRS, i, j);
+				break;
+			case HOME:
+				m_pFieldObjMaker->PutObj(MODEL_HOME, i, j);
+				break;
 
-			if(CMapData::Get_TerrainMapSituation(i,j) == WALL)
-				m_pFieldObjMaker->PutObj(MODEL_TREE,i,j);
-
-			if(CMapData::Get_TerrainMapSituation(i,j) == STAIRS)
-				m_pFieldObjMaker->PutObj(MODEL_STAIRS,i,j);
+			}
 		}
 	}
 

@@ -16,6 +16,9 @@ enum MODELNUM
 	MODEL_STAIRS,			//フィールドオブジェ(階段)
 	MODEL_HIT,				//戦闘時ヒットオブジェト
 	MODEL_DELETE,			//戦闘時消滅
+	MODEL_HOME,				//家
+	MODEL_MUSHROOM,			//キノコ
+	MODEL_FOUNTAIN,			//噴水
 	MODEL_MAX
 };
 

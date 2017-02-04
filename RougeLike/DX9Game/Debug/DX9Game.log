@@ -1,6 +1,80 @@
 ﻿  MapData.cpp
-c:\users\40029\documents\roguelikeproject\rougelike\dx9game\mapdata.cpp(768): warning C4482: 非標準の拡張機能が使用されています: enum 'CMapData::VectorFlg' が限定名で使用されます
-c:\users\40029\documents\roguelikeproject\rougelike\dx9game\mapdata.cpp(775): warning C4482: 非標準の拡張機能が使用されています: enum 'CMapData::VectorFlg' が限定名で使用されます
-c:\users\40029\documents\roguelikeproject\rougelike\dx9game\mapdata.cpp(1242): warning C4482: 非標準の拡張機能が使用されています: enum 'CMapData::VectorFlg' が限定名で使用されます
-c:\users\40029\documents\roguelikeproject\rougelike\dx9game\mapdata.cpp(1253): warning C4482: 非標準の拡張機能が使用されています: enum 'CMapData::VectorFlg' が限定名で使用されます
+c:\users\40029\documents\roguelikeproject\rougelike\dx9game\mapdata.cpp(764): warning C4482: 非標準の拡張機能が使用されています: enum 'CMapData::VectorFlg' が限定名で使用されます
+c:\users\40029\documents\roguelikeproject\rougelike\dx9game\mapdata.cpp(771): warning C4482: 非標準の拡張機能が使用されています: enum 'CMapData::VectorFlg' が限定名で使用されます
+c:\users\40029\documents\roguelikeproject\rougelike\dx9game\mapdata.cpp(1240): warning C4482: 非標準の拡張機能が使用されています: enum 'CMapData::VectorFlg' が限定名で使用されます
+c:\users\40029\documents\roguelikeproject\rougelike\dx9game\mapdata.cpp(1251): warning C4482: 非標準の拡張機能が使用されています: enum 'CMapData::VectorFlg' が限定名で使用されます
+  コードを生成中...
+  コンパイル中...
+  UnitManager.cpp
+  Unit.cpp
+  Turn.cpp
+  TrickWindowCursor.cpp
+  TrickWindow.cpp
+  Trick.cpp
+  TitleScene.cpp
+  Title.cpp
+  TextureManager.cpp
+  StatesWindow.cpp
+  StatesValue.cpp
+  StatesFont.cpp
+  StatesCharacter.cpp
+  ResultScene.cpp
+  Result.cpp
+  PressSpace.cpp
+  Player.cpp
+  Particle.cpp
+  Operation.cpp
+  ModelManager.cpp
+  コードを生成中...
+  コンパイル中...
+  MiniMap.cpp
+  MessageWindow.cpp
+  Mesh.cpp
+  MenuWindow_Back.cpp
+  MenuWindow.cpp
+  MenuSelect.cpp
+  MapObjManager.cpp
+  Main.cpp
+  LevelUp.cpp
+  ItemWindowCursor.cpp
+  ItemWindow.cpp
+  ItemManager.cpp
+  ItemGenerator.cpp
+  ItemDescriptionFrame.cpp
+  ItemCommandWindow.cpp
+  ItemCommandCursor.cpp
+  Item.cpp
+  Input.cpp
+  HitObj.cpp
+  HierarchieNum.cpp
+  コードを生成中...
+  コンパイル中...
+  HPDraw.cpp
+  Graphics.cpp
+  GameWnd.cpp
+  GameScene.cpp
+  GameClearScene.cpp
+  GameClear.cpp
+  FieldObjMaker.cpp
+  FieldObj.cpp
+  FieldItem.cpp
+  Fade.cpp
+  EquipmentWindowCursor.cpp
+  EquipmentWindow.cpp
+  EquipmentCommandWindow.cpp
+  EquipmentCommandCursor.cpp
+  EnemyManager.cpp
+  EnemyGenerator.cpp
+  Enemy.cpp
+  EffectObj.cpp
+  DeleteObj.cpp
+  Circle.cpp
+  コードを生成中...
+  コンパイル中...
+  Camera.cpp
+  C3DObj.cpp
+  C2DTexture.cpp
+  Battle.cpp
+  2DWindow.cpp
+  コードを生成中...
   DX9Game.vcxproj -> C:\Users\40029\Documents\RoguelikeProject\RougeLike\Debug\DX9Game.exe
