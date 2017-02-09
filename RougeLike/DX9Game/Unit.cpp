@@ -23,6 +23,7 @@
 
 #define FLASHTIME	5	//点滅時の切り替え時間
 #define FLASHNUM	3	//点滅回数
+#define DAMAGE_DRAWTIME 10	//ダメージ数値を描画する時間
 
 //行動にかかる時間
 #define ACTION_TIME	0.6f
@@ -279,13 +280,17 @@ void CUnit::Draw()
 
 		//ユニットサークルの描画
 		m_Circle.Draw(m_nUnitNumber);
-
-		//レベルアップポリゴンのポインタの中身があれば、描画
-		if(m_pLevelUp)
-		{
-			m_pLevelUp ->Draw();
-		}
-
+	}
+}
+//---------------------------------------------------------------------------------------
+//ビルボードの描画
+//---------------------------------------------------------------------------------------
+void CUnit::BillBordDraw()
+{
+	//レベルアップポリゴンのポインタの中身があれば、描画
+	if (m_pLevelUp)
+	{
+		m_pLevelUp->Draw();
 	}
 }
 
@@ -357,6 +362,11 @@ bool CUnit::AttackUpdate()
 		BattleDamage();
 		break;
 
+		//与えたダメージを描画する
+	case CTurn::BATTLE_STATE_DAMEGE_DRAW:
+		BattleDamageDraw();
+		break;
+
 		//戦闘終了、ステート関連の設定
 	case CTurn::BATTLE_STATE_END:
 		BattleEnd();
@@ -386,6 +396,9 @@ void CUnit::TurnEndUpdate()
 void CUnit::DamegeHP (int Damage)
 {
 	m_nHP -= Damage;	//体力を減らす
+
+	//ダメージポリゴンの生成
+	new CDamageNotation(Damage, D3DXVECTOR3(m_world._41, m_world._42, m_world._43));
 
 	//もし体力が0以下ならば、死亡メッセージを出させる
 	if(m_nHP <= 0)
@@ -748,18 +761,6 @@ bool CUnit::FindEnemy(int PosX,int PosZ)
 	}
 	return false;
 
-}
-//---------------------------------------------------------------------------------------
-//指定した位置の敵に攻撃を行う
-//---------------------------------------------------------------------------------------
-bool CUnit::Attack(int CorrectionPosX,int CorrectionPosY)
-{
-	//ユニットの攻撃をした配列位置
-	int Direction_X = m_nUnit_Pos_X;
-	int Direction_Z = m_nUnit_Pos_Z;
-
-	//敵の探索を行い、その結果を変数とする
-	return FindEnemy(Direction_X,Direction_Z);
 }
 //---------------------------------------------------------------------------------------
 //正面の敵に攻撃を行う
@@ -1387,6 +1388,7 @@ void CUnit::BattleDamage()
 
 			//倒した相手の被経験値を取得
 			int Exp = pNowUnit ->GetXP();
+
 			//倒した相手の被経験値を加算
 			m_nExp += Exp;
 
@@ -1433,6 +1435,11 @@ void CUnit::BattleDamage()
 
 				//経験値を最大経験値分引く
 				m_nExp -= MAX_EXP;
+
+				if (m_nUnitNumber == OBJ_NUM_PLAYER)
+				{
+					CHPDraw::SetMaxHP(m_nMaxHP);
+				}
 			};
 		}
 			//次のユニットへうつる
@@ -1488,16 +1495,36 @@ void CUnit::BattleDamage()
 	}
 	
 	//ステートを進める
-	CTurn::BattleState_Advance(CTurn::BATTLE_STATE_END);
+	CTurn::BattleState_Advance(CTurn::BATTLE_STATE_DAMEGE_DRAW);
 	//ステートリセット
 	CTurn::TimeStateReset();
+}
+//---------------------------------------------------------------------------------------
+//ダメージ数値を描画する
+//---------------------------------------------------------------------------------------
+void CUnit::BattleDamageDraw()
+{
+	//経過時間を加算
+	g_Timer++;
+
+	//経過時間が一定以上か確認
+	if (g_Timer >= DAMAGE_DRAWTIME)
+	{
+		//一定以上ならば、次のステートに移る
+
+		//経過時間初期化
+		g_Timer = 0;
+	
+		//ステートを進める
+		CTurn::BattleState_Advance(CTurn::BATTLE_STATE_END);
+
+	}
 }
 //---------------------------------------------------------------------------------------
 //バトルステート初期化、自身のターンステート更新
 //---------------------------------------------------------------------------------------
 void CUnit::BattleEnd()
 {
-
 	//ステートの遷移(ターンの終了)
 	m_nStateNumber = CTurn::GAME_STATE_TURN_END;
 
@@ -1713,15 +1740,21 @@ void CUnit::ChackFeetItem()
 	//足元のアイテムの検索
 	if(ItemSearch != 0)
 	{
-		//m_pFootItem =  (CFieldItem*)ItemFind(ItemSearch);
 		m_pFootItem = CItemManager::Find(ItemSearch);
+
+		//アイテムデータの取得
+		CItem ItemData = m_pFootItem->GetItemData();
 	
 		//インベントリに拾ったアイテムを追加
-		if(m_pInventory->SetItem(m_pFootItem->GetItemData()))
+		if(m_pInventory->SetItem(ItemData))
 		{
+			//名前の取得
+			TCHAR ItemName[256];
+			_stprintf_s(ItemName, _T("%s"), ItemData.GetName());
+
 			//メッセージ表記
 			TCHAR	str[256];
-			_stprintf_s(str, _T("%sはアイテムを拾った"),m_szName);
+			_stprintf_s(str, _T("%sは%sを拾った"),m_szName,ItemName);
 	
 			//メッセージテスト
 			MessageWindow::SetMassege(str);
@@ -1754,4 +1787,61 @@ CTurn::GameState CUnit::GetUnitTurnState()
 bool CUnit::GetUnitProc()
 {
 	return m_bTurn;
+}
+
+//---------------------------------------------------------------------------------------
+//位置を移動させる
+//---------------------------------------------------------------------------------------
+void CUnit::MovePos(int PosX, int PosY)
+{
+	//マーキング消去
+	CMapData::Back_UnitMap(m_nUnit_Pos_X, m_nUnit_Pos_Z);
+
+	m_nUnit_Pos_X = PosX;
+	m_nUnit_Pos_Z = PosY;
+
+	//マーキング
+	CMapData::Set_UnitMap(m_nUnit_Pos_X, m_nUnit_Pos_Z, m_nUnitNumber);
+
+	//ワールドマトリックスからローカル軸抽出、座標抽出
+	D3DXMATRIX world = GetWorld();
+
+	//それぞれの軸の値を格納する
+	D3DXVECTOR3 vX, vY, vZ, vP;
+
+	vX = D3DXVECTOR3(world._11, world._12, world._13);	//vX:X軸回転
+	vY = D3DXVECTOR3(world._21, world._22, world._23);	//vY:Y軸回転
+	vZ = D3DXVECTOR3(world._31, world._32, world._33);	//vZ:Z軸回転
+	vP = D3DXVECTOR3(world._41, world._42, world._43);	//位置情報
+
+	world._41 = world._43 = 0.0f;	//原点へ移動させる
+
+	m_Pos.x = (m_nUnit_Pos_X - (MAP_SIZE / 2)) * GRIDSIZE + GRIDSIZE / 2;
+	m_Pos.z = -((m_nUnit_Pos_Z)-(MAP_SIZE / 2)) * GRIDSIZE - GRIDSIZE / 2;
+
+	vP = vP + (m_Pos - vP) * (m_fTimer / (float)ACTION_TIME);
+
+	if (vP == m_Pos)
+	{
+		m_bDestination = true;
+	}
+
+	//回転行列の作成
+	D3DXMATRIX rot_X, rot_Y, rot_Z;
+	D3DXMatrixRotationAxis(&rot_X, &vX, m_Angle.x);		//&rot_YにvYとangle.yの値を掛け合わせた行列を格納する
+	D3DXMatrixRotationAxis(&rot_Y, &vY, m_Angle.y);		//&rot_Zに現在の角度(vY)に回転度数(angle.y)をかけた値の行列を格納
+	D3DXMatrixRotationAxis(&rot_Z, &vZ, m_Angle.z);		//&rot_Zに現在の角度(vZ)に回転度数(angle.z)をかけた値の行列を格納
+
+														//回転度数初期化
+	m_Angle = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+	//計算結果の行列をワールド行列に反映させる
+	world *= (rot_Z *rot_Y * rot_X);
+
+	world._41 = vP.x;
+	world._42 = vP.y;
+	world._43 = vP.z;
+
+	//ワールドマトリックスを設定
+	SetWorld(world);
 }

@@ -4,7 +4,6 @@
 #include "ModelManager.h"
 #include "GameScene.h"
 #include"MapObjManager.h"
-int CFieldObj::m_nMakeNum_Debug = 0;
 //---------------------------------------------------------------------------------------
 //コンストラクタ
 //---------------------------------------------------------------------------------------
@@ -21,7 +20,6 @@ CMeshObj(Scene)
 
 	//オブジェクトをリストに追加
 	CMapObjManager::Add(m_ObjNumber,this);
-	m_nMakeNum_Debug++;
 }
 
 //---------------------------------------------------------------------------------------
@@ -29,11 +27,6 @@ CMeshObj(Scene)
 //---------------------------------------------------------------------------------------
 CFieldObj::~CFieldObj(void)
 {
-	m_nMakeNum_Debug--;
-	if (m_nMakeNum_Debug == 0)
-	{
-		int a = 0;
-	}
 }
 
 
@@ -42,6 +35,21 @@ CFieldObj::~CFieldObj(void)
 //---------------------------------------------------------------------------------------
 void CFieldObj::Update()
 {
+	//マップ上で一番上のオブジェクトの場合、上にユニットがいるか確認する必要がないため、スル―
+	if (m_nUnit_Pos_Z <= 0)
+		return;
+
+	//自身の上にユニットが存在するかどうかを確認する
+	if (0 != CMapData::Get_UnitMapSituation(m_nUnit_Pos_X,m_nUnit_Pos_Z - 1))
+	{
+		//ユニットが存在する場合、フラグを立てて、半透明描画に切り替える
+		m_bNearUnitFlg = true;
+	}
+	else
+	{
+		//存在しない場合、不透明描画にする
+		m_bNearUnitFlg = false;
+	}
 }
 //---------------------------------------------------------------------------------------
 //描画
@@ -91,6 +99,12 @@ void CFieldObj::SetObject(CMeshObj *pSetter,int SetNumber,int PosX,int PosY)
 	//モデルのスケールを変更する
 	D3DXMatrixScaling(&world,0.3f,0.3f,0.3f);
 
+	//自身のマップ配列状での位置を設定する
+	pFieldObj->m_nUnit_Pos_X = PosX;
+	pFieldObj->m_nUnit_Pos_Z = PosY;
+
+	//自身の上にオブジェクトが存在するかのフラグを初期化する
+	pFieldObj->m_bNearUnitFlg = false;
 
 	//位置情報を設定
 	world._41 = (PosX - (MAP_SIZE / 2)) * GRIDSIZE + GRIDSIZE / 2;

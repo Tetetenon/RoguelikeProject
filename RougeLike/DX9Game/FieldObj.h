@@ -9,7 +9,7 @@ class CFieldObj :
 {
 private:
 	int m_ObjNumber;				//オブジェクトを一意に定める番号
-	static int m_nMakeNum_Debug;		
+	bool m_bNearUnitFlg;			//自身の配列上での上にユニットが存在するか
 public:
 	CFieldObj(CGameScene* pScene);		//コンストラクタ
 	virtual ~CFieldObj(void);		//デストラクタ
@@ -18,6 +18,12 @@ public:
 	void DrawAlpha();				//描画(半透明)
 	void Update();					//更新(削除フラグの確認用)
 	void Fin();						//終了処理
+
+	//自身の上にユニットが存在するか
+	bool GetNearUnitFlg()
+	{
+		return m_bNearUnitFlg;
+	}
 
 	//フィールド上にオブジェクトを設置する
 	static void SetObject(CMeshObj *pSetter,int nSetNumber,int PosX,int PosY);

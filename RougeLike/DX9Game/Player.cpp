@@ -17,12 +17,14 @@
 #include "MiniMap.h"
 #include "UnitManager.h"
 
+//回復する間隔
+#define RecoveryIntervalTime 3
+
 CInventoryCursor	CPlayer::m_InventoryCursor;	//アイテムウインドウのカーソルの位置を特定する
 CCommandCursor		CPlayer::m_CommandCursor;	//コマンドカーソルの位置を特定する
 
 LPD3DXFONT			CPlayer::m_pFont;			//描画フォントの設定
 RECT				CPlayer::m_FontDrawPos;		//フォントの描画位置を設定する
-int					CPlayer::m_nDividPattern;	//生成するマップパターン
 
 CTurn::GameState	CPlayer::m_State_Cpy;					//外部からステートの変更を掛ける
 bool	CPlayer::m_bState_Change_Flg = false;;	//外部からのステート変更がかかったか
@@ -42,9 +44,6 @@ CPlayer::CPlayer(CGameScene* pScene):
 CUnit(pScene),
 m_nEquipmentInterval(0)
 {
-	//オブジェクトのIDを設定
-	m_uID = ID_PLAYER;
-
 	//使用するモデル番号を設定
 	m_nMeshNumber = MODEL_PLAYER;
 	
@@ -181,6 +180,9 @@ m_nEquipmentInterval(0)
 	//装備コマンドウィンドウ描画時間を初期化
 	m_nEquipmentInterval = 0;
 
+	//回復する間隔を初期化
+	m_nRecoveryInterval = 0;
+
 	m_bDirectionFlg[Forword] = true;
 
 	//シーン上にオブジェクトの追加
@@ -201,6 +203,9 @@ CPlayer::~CPlayer(void)
 
 	//装備インベントリの終了処理
 	m_pEquipment ->Fin();
+
+	//回復する間隔を初期化
+	m_nRecoveryInterval = 0;
 }
 //---------------------------------------------------------------------------------------
 //文字描画位置を設定
@@ -311,11 +316,26 @@ void CPlayer::InputUpdate()
 			//状態異常の処理
 			TurnStartStateProcessing();
 		m_bTurn = true;
-		//HP自動回復
-		m_nHP++;
-		//最大数値を超えない様に
-		if (m_nHP > m_nMaxHP)
-			m_nHP = m_nMaxHP;
+
+		//回復間隔を加算
+		m_nRecoveryInterval++;
+		//回復する間隔が一定以上を超えたら回復
+		if (m_nRecoveryInterval >= RecoveryIntervalTime)
+		{
+			//HP自動回復
+			m_nHP++;
+			//最大数値を超えない様に
+			if (m_nHP > m_nMaxHP)
+				m_nHP = m_nMaxHP;
+			//UI側に表記するHPデータに変更をか ける
+			CHPDraw::SetHP(m_nHP);
+
+			//回復間隔を初期化
+			m_nRecoveryInterval = 0;
+		}
+
+		//経過ターン数を加算
+		CTurn::AddTurnValue();
 	}
 
 	//旧ステート情報の確保
@@ -355,17 +375,22 @@ void CPlayer::InputUpdate()
 		}
 		else
 		{
-
 			//-----方向キー入力をした-----
 			if (CInput::GetKeyPress(DIK_W) || CInput::GetKeyPress(DIK_S) || CInput::GetKeyPress(DIK_A) || CInput::GetKeyPress(DIK_D) ||
 				abs(CInput::GetJoyAxis(0, JOY_X)) > JoyMoveCap || abs(CInput::GetJoyAxis(0, JOY_Y)) > JoyMoveCap)
 			{
-				//メニューウィンドウが出ていなければ攻撃
+				//メニューウィンドウが出ていなければ処理
 				if (!CMenuWindow::GetDrawFlg())
 				{
 					//向きフラグ初期化
 					for (int i = 0; i < MaxDirection; i++)
 						m_bDirectionFlg[i] = false;
+					//斜め移動固定化フラグ
+					bool bDiagonalMoveFlg = false;
+					//斜め移動固定キー入力がされているかどうか確認を行う
+					if (CInput::GetKeyPress(DIK_J) || CInput::GetJoyPress(0, 6))
+						//押されている
+						bDiagonalMoveFlg = true;
 
 					//移動予定の位置
 					int PosX = m_nUnit_Pos_X;
@@ -376,10 +401,8 @@ void CPlayer::InputUpdate()
 						//向きフラグ上
 						m_bDirectionFlg[Forword] = true;
 
-						bool a = CInput::GetJoyPress(0, 5);
-
 						//スペースキーを押していなかった場合、移動する
-						if (!CInput::GetKeyPress(DIK_Q) && !CInput::GetJoyPress(0, 5))
+						if (!CInput::GetKeyPress(DIK_Q) && !CInput::GetJoyPress(0, 7))
 						{
 							//行き先設定
 							PosZ--;
@@ -395,7 +418,7 @@ void CPlayer::InputUpdate()
 						m_bDirectionFlg[Back] = true;
 
 						//スペースキーを押していなかった場合、移動する
-						if (!CInput::GetKeyPress(DIK_Q) && !CInput::GetJoyPress(0, 5))
+						if (!CInput::GetKeyPress(DIK_Q) && !CInput::GetJoyPress(0, 7))
 						{
 							//行き先設定
 							PosZ++;
@@ -411,7 +434,7 @@ void CPlayer::InputUpdate()
 						m_bDirectionFlg[Right] = true;
 
 						//スペースキーを押していなかった場合、移動
-						if (!CInput::GetKeyPress(DIK_Q) && !CInput::GetJoyPress(0, 5))
+						if (!CInput::GetKeyPress(DIK_Q) && !CInput::GetJoyPress(0, 7))
 						{
 							//行き先設定
 							PosX++;
@@ -427,13 +450,24 @@ void CPlayer::InputUpdate()
 						m_bDirectionFlg[Left] = true;
 
 						//スペースを押していなかった場合、移動する
-						if (!CInput::GetKeyPress(DIK_Q) && !CInput::GetJoyPress(0, 5))
+						if (!CInput::GetKeyPress(DIK_Q) && !CInput::GetJoyPress(0, 7))
 						{
 							//行き先設定
 							PosX--;
 
 							//移動フラグ　真
 							bMoveSuccess = true;
+						}
+					}
+					//斜め移動固定フラグが立っていた場合、斜め以外の移動の場合、行動をロックする
+					if (bDiagonalMoveFlg)
+					{
+						//上下左右どちらかの入力が入っていない場合、斜め移動ではないため、移動フラグ、行き先を初期化する
+						if (PosX == m_nUnit_Pos_X || PosZ == m_nUnit_Pos_Z)
+						{
+							PosX = m_nUnit_Pos_X;
+							PosZ = m_nUnit_Pos_Z;
+							bMoveSuccess = false;
 						}
 					}
 
@@ -767,7 +801,7 @@ void CPlayer::ItemUpdate()
 		case EFFECT_EQUIPMENT_ATTACK:
 		case EFFECT_EQUIPMENT_DEFENCE:
 			//メッセージテスト
-			MessageWindow::SetMassege(_T("…が、何も起こらなかった"));
+			MessageWindow::SetMassege(_T("おいしかった。"));
 			break;
 			//回復効果
 		case EFFECT_RECOVERY:

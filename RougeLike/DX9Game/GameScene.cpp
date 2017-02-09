@@ -60,11 +60,12 @@ CGameScene::CGameScene():
 	CMapObjManager::Create();
 	CParticleManager::Create();
 	CEffectObjManager::Create();
+	CDamageBillBoardManager::Create();
 
 	//シングルトンのポインタの取得
 	m_pCamera	= CCamera::GetPointer();			//カメラ
 	m_pSky		= CSky::GetPointer();				//スカイドーム
-
+	m_pDamageManager = CDamageBillBoardManager::GetManager();	//ダメージ表記マネージャー
 	
 	//メンバクラスのコンストラクタを起動
 	m_pFieldObjMaker	= new CFieldObjMaker(this);		//フィールドオブジェクト
@@ -118,9 +119,11 @@ CGameScene::~CGameScene()
 	//シングルトンの削除
 	CCamera::Delete();
 	CSky::Delete();
+	CDamageBillBoardManager::Destory();
 	//シングルトンのポインタの中身をきれいに
 	m_pCamera	= NULL;			//カメラ
 	m_pSky		= NULL;			//スカイドーム
+	m_pDamageManager = NULL;	//ダメージ表記
 
 	//メンバクラスのポインタを消去
 	delete m_pEnemyGenerator;	//エネミージェネレーター
@@ -304,8 +307,6 @@ void CGameScene::InitObj()
 	CMapObjManager::Init();		//フィールドオブジェマネージャーの管理オブジェクトの初期化
 	CParticleManager::Init();	//パーティクルマネージャーの初期化
 	CEffectObjManager::Init();	//エフェクトマネージャーの初期化
-	//プレイヤーのポインタを取得する
-	CMapObjManager::PlayerSet();
 
 	//カメラの初期化
 	m_pCamera->Init();
@@ -384,6 +385,8 @@ void CGameScene::FinObj()
 	CParticleManager::Fin();
 	CEffectObjManager::Fin();
 
+	m_pDamageManager->ManagerObjFin();
+
 	//メッセージウインドウの終了処理
 	m_pMessageWindow ->Fin();
 
@@ -444,12 +447,18 @@ void CGameScene::UpdateObj()
 		{
 			for(int j = 0;j < MAP_SIZE;j++)
 			{
-
-				if(CMapData::Get_TerrainMapSituation(i,j) == WALL)
-					m_pFieldObjMaker->PutObj(MODEL_TREE,i,j);
-
-				if(CMapData::Get_TerrainMapSituation(i,j) == STAIRS)
-					m_pFieldObjMaker->PutObj(MODEL_STAIRS,i,j);
+				switch (CMapData::Get_TerrainMapSituation(i, j))
+				{
+				case WALL:
+						m_pFieldObjMaker->PutObj(MODEL_TREE, i, j);
+						break;
+				case STAIRS:
+					m_pFieldObjMaker->PutObj(MODEL_STAIRS, i, j);
+					break;
+				case HOME:
+					m_pFieldObjMaker->PutObj(MODEL_HOME, i, j);
+					break;
+				}
 			}
 		}
 
@@ -485,6 +494,9 @@ void CGameScene::UpdateObj()
 	CMapObjManager::Update();
 	CParticleManager::Update();
 	CEffectObjManager::Update();
+
+	//ダメージ表記の更新
+	m_pDamageManager->ManagerObjUpdate();
 
 	//ジェネレーターの更新
 	m_pEnemyGenerator->Update();
@@ -620,6 +632,8 @@ void CGameScene::DrawObj()
 	CItemManager::Draw();
 	CUnitManager::Draw();
 	CEffectObjManager::Draw();
+
+	m_pDamageManager->ManagerObjDraw();
 	
 	pD ->SetRenderState(D3DRS_ALPHABLENDENABLE,TRUE);
 

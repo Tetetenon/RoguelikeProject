@@ -19,6 +19,11 @@ enum MODELNUM
 	MODEL_HOME,				//‰Æ
 	MODEL_MUSHROOM,			//ƒLƒmƒR
 	MODEL_FOUNTAIN,			//•¬…
+	MODEL_DRAGON,			//ƒhƒ‰ƒSƒ“
+	MODEL_APPLE,			//—ÑŒç
+	MODEL_HERB,				//–ò‘
+	MODEL_SWORD,			//Œ•
+	MODEL_SHIELD,			//‚
 	MODEL_MAX
 };
 

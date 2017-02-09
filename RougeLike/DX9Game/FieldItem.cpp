@@ -96,10 +96,27 @@ void CFieldItem::Generation(CMeshObj *pGeneration)
 	pFieldItem ->m_Item.EffectSetting(pFieldItem ->m_Item.GetID());
 
 	//アイテムの効能を設定する
-	pFieldItem ->m_Item.SetValue(rand()%10 + 5);
+	pFieldItem ->m_Item.SetValue(10);
 
 	//メッシュの設定
-	pFieldItem ->SetMesh(CModelManager::GetMesh(pFieldItem -> m_nMeshNumber));
+	switch (pFieldItem->m_Item.GetID())
+	{
+	case ITEM_APPLE:
+		pFieldItem->SetMesh(CModelManager::GetMesh(MODEL_APPLE));
+		break;
+	case ITEM_HERB:
+		pFieldItem->SetMesh(CModelManager::GetMesh(MODEL_HERB));
+		break;
+	case ITEM_SWORD:
+		pFieldItem->SetMesh(CModelManager::GetMesh(MODEL_SWORD));
+		break;
+	case ITEM_SHIELD:
+		pFieldItem->SetMesh(CModelManager::GetMesh(MODEL_SHIELD));
+		break;
+	default:
+		pFieldItem->SetMesh(CModelManager::GetMesh(MODEL_WALL));
+		break;
+	}
 
 	//生存フラグ
 	pFieldItem ->m_ItemDelete = true;
@@ -128,7 +145,7 @@ void CFieldItem::Generation(CMeshObj *pGeneration)
 	D3DXMATRIX world = pGeneration ->GetWorld();
 
 	//モデルのスケールを変更する
-	D3DXMatrixScaling(&world,0.03f,0.03f,0.03f);
+	D3DXMatrixScaling(&world,0.1f,0.1f,0.1f);
 	
 
 	//それぞれの軸の値を格納する

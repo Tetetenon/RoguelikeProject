@@ -1,4 +1,5 @@
 #include "Turn.h"
+#include "Graphics.h"
 
 //静的メンバの実体定義
 int						CTurn::m_State;										//ターンの状態を格納
@@ -6,6 +7,7 @@ int						CTurn::m_BattleState;								//戦闘ステートの状況を保存
 int						CTurn::m_nSelectState_Num[GAME_STATE_MAX];			//ステートごとのユニットの選択数
 int						CTurn::m_StateTime;									//1ステートの時間
 CTurn::UnitTurnState	CTurn::m_UnitTurnState = CTurn::UNIT_TURN_PLAYER;	//現在は誰のターンか
+int						CTurn::m_nTurnValue;								//経過ターン数
 
 //---------------------------------------------------------------------------------------
 //コンストラクタ
@@ -76,4 +78,11 @@ void CTurn::BattleState_Advance(int nBattleStateNumber)
 	{
 		m_BattleState %= BATTLE_STATE_MAX;
 	}
+}
+//---------------------------------------------------------------------------------------
+//ターン数を加算する
+//---------------------------------------------------------------------------------------
+void CTurn::AddTurnValue()
+{
+	m_nTurnValue++;
 }

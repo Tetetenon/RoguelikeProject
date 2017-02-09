@@ -21,7 +21,7 @@ private:
 
 	static LPD3DXFONT		m_pFont;				//描画フォントの設定
 	static RECT				m_FontDrawPos;			//フォントの描画位置を設定する
-	static int				m_nDividPattern;		//生成するマップパターン
+	int						m_nRecoveryInterval;	//回復する間隔数値
 public:
 	CPlayer(CGameScene* pScene);					//コンストラクタ
 	~CPlayer(void);								//デストラクタ

@@ -260,6 +260,18 @@ void CUnitManager::Draw()
 
 	//エネミーの描画
 	CEnemyManager::Draw();
+
+	//ビルボードの描画
+	UnitIterator = m_pUnitManager->begin();
+	
+	for (; UnitIterator != m_pUnitManager->end(); ++UnitIterator)
+	{
+		for (auto ListIterator = UnitIterator->second.begin(); ListIterator != UnitIterator->second.end(); ++ListIterator)
+		{
+			(*ListIterator)->BillBordDraw();
+		}
+	}
+
 }
 //---------------------------------------------------------------------------------------
 //管理するオブジェクトの終了処理

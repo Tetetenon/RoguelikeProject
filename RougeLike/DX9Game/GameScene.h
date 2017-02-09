@@ -57,6 +57,8 @@
 
 #include "HierarchieNum.h"			//現在の階層数を、フェードイン中に表示する
 
+#include "DamageBillBoardManager.h"	//ダメージ表記マネージャー
+
 #define GAME_CLEAR	(1)
 #define GAME_OVER	(2)
 
@@ -102,6 +104,7 @@ private:
 	CStatesFont*				m_pStatesFont;				//ステータス項目文字
 	CStatesValue*				m_pStatesValue;				//ステータス数値
 
+	CDamageBillBoardManager*	m_pDamageManager;			//ダメージ表記マネージャー
 
 	//-----技ウィンドウ-----
 	CTrickWindowCursor*			m_pTrickWindowCursor;		//技ウィンドウカーソル
@@ -136,15 +139,6 @@ public:
 	{
 		lstrcat(m_szDebug, psz);
 	}
-
-	////-----オブジェクト関連の操作-----
-	////シーン上にオブジェクトを追加
-	//void Add(C3DObj* pObj);
-	////シーン上のオブジェクトを削除
-	//void Del(C3DObj* pObj);
-	////シーン上のオブジェクトを探索する
-	//C3DObj* Find(UINT uID,C3DObj *p);
-
 	//マップの再生成フラグを立てる
 	static void MapReMake ()	{m_MapMake = true;}	
 

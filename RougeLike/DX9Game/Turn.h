@@ -28,6 +28,7 @@ public:
 		BATTLE_STATE_FLASHING,			//相手の描画をつけたり消したり…
 		BATTLE_STATE_WINDOW,			//メッセージウインドウにメッセージを送る
 		BATTLE_STATE_DAMAGE,			//相手のHPをダメージ分減らす
+		BATTLE_STATE_DAMEGE_DRAW,		//ダメージ数値を描画する
 		BATTLE_STATE_END,				//戦闘終了(ターンステートの更新)
 		BATTLE_STATE_MAX,				//ステート最大数
 	};
@@ -84,7 +85,13 @@ public:
 	{
 		m_UnitTurnState = ChangeData;
 	}
-
+	//ターン数を取得する
+	static int GetTurnValue()
+	{
+		return m_nTurnValue;
+	}
+	//ターン数を加算する
+	static void AddTurnValue();
 private:
 	static int m_State;									//ターンの状態を格納
 
@@ -95,5 +102,7 @@ private:
 	static int m_StateTime;								//1ステートの時間
 
 	static UnitTurnState m_UnitTurnState;				//現在は誰のターンか
+
+	static int m_nTurnValue;							//経過ターン数
 };
 

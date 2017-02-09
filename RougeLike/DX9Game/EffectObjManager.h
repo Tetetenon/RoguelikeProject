@@ -21,6 +21,7 @@ private:
 	//シングルトン
 	static EFFECTOBJ_MAP*	m_pEffectManager;
 
+	//次のエフェクトの番号
 	static int				m_nEffectNumber;
 
 	//関数
@@ -28,8 +29,7 @@ private:
 	CEffectObjManager();					//コンストラクタ
 	~CEffectObjManager();					//デストラクタ
 public:
-
-	//変数
+	//関数
 	static void Init();						//初期化
 	static void Fin();						//終了処理
 	static void Update();					//更新

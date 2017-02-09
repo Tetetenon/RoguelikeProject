@@ -241,6 +241,17 @@ void CEnemyManager::Draw()
 			(*ListIterator)->Draw();
 		}
 	}
+
+	//ビルボードの描画
+	UnitIterator = m_pEnemyManager->begin();
+	
+	for (; UnitIterator != m_pEnemyManager->end(); ++UnitIterator)
+	{
+		for (auto ListIterator = UnitIterator->second.begin(); ListIterator != UnitIterator->second.end(); ++ListIterator)
+		{
+			(*ListIterator)->BillBordDraw();
+		}
+	}
 }
 //---------------------------------------------------------------------------------------
 //管理するオブジェクトの終了処理

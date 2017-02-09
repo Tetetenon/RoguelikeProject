@@ -80,11 +80,7 @@ bool CGraphics::Initialize(HWND hWnd, int nWidth, int nHeight, bool bWindow)
 	//-------- ここから３Ｄ関連
 	// ビューマトリックス設定
 	D3DXMatrixLookAtLH(&m_MatView,
-//						&D3DXVECTOR3(m_nWidth / 2.0f, 0.0f, //-1000.0f),// 視点座標
-//							-(m_nHeight / 2) / tanf(D3DXToRadian(FOVY) / 2)),
-
-//--------------------------------------------------------------------------------------------------------
-&D3DXVECTOR3(CAMERA_POS_X,CAMERA_POS_Y,CAMERA_POS_Z),
+						&D3DXVECTOR3(CAMERA_POS_X,CAMERA_POS_Y,CAMERA_POS_Z),
 						&D3DXVECTOR3(  0.0f, 0.0f,     0.0f),		// 注視点座標
 						&D3DXVECTOR3(  0.0f, 1.0f,     0.0f));		// アップベクトル
 	m_pDevice->SetTransform(D3DTS_VIEW, &m_MatView);
@@ -113,7 +109,6 @@ bool CGraphics::Initialize(HWND hWnd, int nWidth, int nHeight, bool bWindow)
 	light.Ambient.r = light.Ambient.g = light.Ambient.b = light.Ambient.a = 0.2f;
 
 	light.Specular = light.Diffuse;
-	//vecDir = D3DXVECTOR3(1.0f, -1.0f, 1.0f);					// 光の向きを決める
 	vecDir = D3DXVECTOR3(0.0f, -1.0f, 1.0f);					// 光の向きを決める
 	D3DXVec3Normalize((D3DXVECTOR3*)&light.Direction, &vecDir);	// 正規化したベクトルを返す
 	m_pDevice->SetLight(0, &light);

@@ -38,6 +38,9 @@
 //‰~ü—¦
 #define PI 3.14159265359f
 
+//ƒQ[ƒ€ƒNƒŠƒAŠK‘w
+const int GameClearNum = 5;
+
 //
 #define MASS_SIZE 3
 

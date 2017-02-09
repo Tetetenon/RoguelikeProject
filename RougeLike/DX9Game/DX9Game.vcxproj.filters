@@ -288,6 +288,9 @@
     <Filter Include="UI関連\DamageNotation">
       <UniqueIdentifier>{08df5e79-4949-4d99-abf4-265a6ed14c1d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="システム\マネージャー\BillBoardManager">
+      <UniqueIdentifier>{6afc099c-0333-441f-bdcb-e1b5070ccba1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameWnd.cpp">
@@ -514,6 +517,9 @@
     </ClCompile>
     <ClCompile Include="DamageNotation.cpp">
       <Filter>UI関連\DamageNotation</Filter>
+    </ClCompile>
+    <ClCompile Include="DamageBillBoardManager.cpp">
+      <Filter>システム\マネージャー\BillBoardManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -744,6 +750,9 @@
     </ClInclude>
     <ClInclude Include="DamageNotation.h">
       <Filter>UI関連\DamageNotation</Filter>
+    </ClInclude>
+    <ClInclude Include="DamageBillBoardManager.h">
+      <Filter>システム\マネージャー\BillBoardManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -74,9 +74,9 @@ struct AStar
 	int			m_nPosX;
 	int			m_nPosZ;
 	int			m_nMapStatus;		//マップの状態を保存
-	int			m_nCost;			//スタート位置から自身の位置までの移動コスト
-	int			m_nHeuristic;		//自身の位置から目標地点までのコスト
-	int			m_nScore;			//コストとヒューリスティック値の合計値
+	float		m_nCost;			//スタート位置から自身の位置までの移動コスト
+	float		m_nHeuristic;		//自身の位置から目標地点までのコスト
+	float		m_nScore;			//コストとヒューリスティック値の合計値
 	D3DXVECTOR2	m_ParentPos;		//自身の親の位置
 };
 
@@ -214,7 +214,7 @@ public:
 	static void SearchPosition(int SearchPosX,int SearchPosZ,int EnemyPosX,int EnemyPosZ,int PlayerPosX,int PlayerPosZ);
 
 	//A*アルゴリズムにおける、値を計算する
-	static int AStarCalculator(int NowPosX,int NowPosZ,int GoalPosX,int GoalPosZ);
+	static float AStarCalculator(int NowPosX,int NowPosZ,int GoalPosX,int GoalPosZ);
 
 	//リスト内の、最もスコアの小さい位置を検索し、渡す
 	static void SearchMinScoreData(int *PosX,int *PosZ);
@@ -230,5 +230,11 @@ public:
 
 	//フィールド上にオブジェクトを配置する
 	static void SetFieldObj();
+
+	//生成した部屋の数を取得する
+	static int GetMakeRoomNum()
+	{
+		return m_CountMakeRoom;
+	}
 };
 

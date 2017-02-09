@@ -101,6 +101,7 @@
   <ItemGroup>
     <ClCompile Include="2DWindow.cpp" />
     <ClCompile Include="Battle.cpp" />
+    <ClCompile Include="DamageBillBoardManager.cpp" />
     <ClCompile Include="C2DTexture.cpp" />
     <ClCompile Include="C3DObj.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -178,6 +179,7 @@
   <ItemGroup>
     <ClInclude Include="2DWindow.h" />
     <ClInclude Include="Battle.h" />
+    <ClInclude Include="DamageBillBoardManager.h" />
     <ClInclude Include="C2DTexture.h" />
     <ClInclude Include="C3DObj.h" />
     <ClInclude Include="Camera.h" />

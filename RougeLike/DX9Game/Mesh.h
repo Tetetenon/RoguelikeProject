@@ -65,7 +65,7 @@ public:
 	void SetBColor(float r, float g, float b, float a) {m_cvBColor.r = r; m_cvBColor.g = g; m_cvBColor.b = b; m_cvBColor.a = a;}
 	D3DCOLORVALUE& GetBColor() {return m_cvBColor;}
 	
-	void MaterialAlpha() {m_pMaterial->Diffuse.a = 0.3f;}
+	void MaterialAlpha() {m_pMaterial->Diffuse.a = 0.2f;}
 	void MaterialNoAlpha() {m_pMaterial->Diffuse.a = 1.0f;}
 };
 

@@ -19,8 +19,16 @@ int			CEnemy::m_nLevelUpData[UPSTATES_MAX];	//レベルアップ時上昇ステータス情報格
 bool		CEnemy::m_bStatesLoad = false;			//ステータス情報ファイル読み込みフラグ
 bool		CEnemy::m_bLevelUpLoad = false;			//レベルアップ時上昇値ファイル読み込みフラグ
 
-#define PATH_DATA_ENEMY		("../data/txt/Enemy.txt")
-#define PATH_LEVEL_UP_ENEMY ("../data/txt/LevelUp_Enemy.txt")
+//基本ステータス記述テキスト
+#define PATH_DATA_ENEMY_BEAR	("../data/txt/Enemy_Bear.txt")
+#define PATH_DATA_ENEMY_WOLF	("../data/txt/Enemy_Wolr.txt")
+#define PATH_DATA_ENEMY_BEE		("../data/txt/Enemy_Bee.txt")
+#define PATH_DATA_ENEMY_BOSS	("../data/txt/Enemy_Boss.txt")
+//レベルアップ時増加ステータス記述テキスト
+#define PATH_LEVEL_UP_ENEMY_BEAR	("../data/txt/LevelUp_Enemy_Bear.txt")
+#define PATH_LEVEL_UP_ENEMY_BEE		("../data/txt/LevelUp_Enemy_Bee.txt")
+#define PATH_LEVEL_UP_ENEMY_WOLF	("../data/txt/LevelUp_Enemy_Wolf.txt")
+#define PATH_LEVEL_UP_ENEMY_BOSS	("../data/txt/LevelUp_Enemy_Boss.txt")
 
 using namespace std;
 //---------------------------------------------------------------------------------------
@@ -34,6 +42,8 @@ CUnit(pScene)
 
 	//ユニットのステート状態を設定
 	m_nStateNumber = CTurn::GAME_STATE_STAND_BY;
+	//プレイヤーを発見していない状態
+	m_bPlayerFindFlg = false;
 }
 
 //---------------------------------------------------------------------------------------
@@ -44,6 +54,9 @@ CEnemy::~CEnemy(void)
 	//生成が完全に完了したエネミーが消滅する場合、
 	if(m_bMakeSuccess)
 	{
+		//プレイヤーを発見していない状態
+		m_bPlayerFindFlg = false;
+
 		//アイテムインベントリの終了処理
 		m_pInventory ->Fin();
 
@@ -66,6 +79,9 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 	if(!pGenerator)
 		return;
 
+	//現在の階層が、最終階層ならば、種類をドラゴンに設定する
+	int nHierarchy = CMapData::GetHierarchieNum();
+
 	//エネミーを追加
 	CEnemy* pEnemy = new CEnemy(pGenerator ->GetScene());
 
@@ -73,34 +89,302 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 	pEnemy -> CUnit::Init();
 
 	//エネミーの種類
-	int nEnemyType = rand()%3;
+	pEnemy -> m_nEnemyType = rand()%EnemyType::TYPE_BOSS;
+
+	//最終階層のみドラゴンを生成
+	if (nHierarchy == GameClearNum)
+	{
+		pEnemy->m_nEnemyType = EnemyType::TYPE_BOSS;
+	}
 
 	//生成完了状況初期化
 	pEnemy ->m_bMakeSuccess = false;
 
 	//エネミーの種別を設定
-	switch(nEnemyType)
+	switch(pEnemy->m_nEnemyType)
 	{
-	case 0:
+	case TYPE_BEE:
 		//名前の設定
 		sprintf_s(pEnemy -> m_szName, ("はち"));
 
 		//モデルデータの読み込み
 		pEnemy -> m_nMeshNumber = MODEL_BEE;
+
+		//txtファイルを1行ずつ読み込む(1度読み込めばあとは読み込んだデータ変数を読み込む)
+		if (!m_bStatesLoad)
+		{
+			//ファイルの読み込み
+			ifstream ifs(PATH_DATA_ENEMY_BEE);
+
+			string str;
+
+			int i = 0;	//格納配列係数
+
+			string token;
+
+			while (getline(ifs, str))
+			{
+				istringstream stream(str);
+
+				//1行のうち、文字列とコンマを分割する
+				while (getline(stream, token, ','))
+				{
+					m_nEnemyData[i] = stoi(token);
+					i++;
+					if (i >= STATES_MAX)
+						break;
+				}
+			}
+
+			//ファイルを閉じる
+			ifs.close();
+			//読み込み完了
+			m_bStatesLoad = true;
+		}
+
+		//txtファイルを1行ずつ読み込む(1度読み込めばあとは読み込んだデータ変数を読み込む)
+		if (!m_bLevelUpLoad)
+		{
+			//ファイルの読み込み
+			ifstream ifs(PATH_LEVEL_UP_ENEMY_BEE);
+
+			string str;
+
+			int i = 0;	//格納配列係数
+
+			string token;
+
+			while (getline(ifs, str))
+			{
+				istringstream stream(str);
+
+				//1行のうち、文字列とコンマを分割する
+				while (getline(stream, token, ','))
+				{
+					m_nLevelUpData[i] = stoi(token);
+					i++;
+					if (i >= UPSTATES_MAX)
+						break;
+				}
+			}
+
+			//ファイルを閉じる
+			ifs.close();
+			//読み込み完了
+			m_bStatesLoad = true;
+		}
 		break;
-	case 1:
+	case TYPE_WOLF:
 		//名前の設定
 		sprintf_s(pEnemy -> m_szName, ("おおかみ"));
 
 		//モデルデータ読み込み
 		pEnemy -> m_nMeshNumber = MODEL_WOLF;
+
+		//txtファイルを1行ずつ読み込む(1度読み込めばあとは読み込んだデータ変数を読み込む)
+		if (!m_bStatesLoad)
+		{
+			//ファイルの読み込み
+			ifstream ifs(PATH_DATA_ENEMY_WOLF);
+
+			string str;
+
+			int i = 0;	//格納配列係数
+
+			string token;
+
+			while (getline(ifs, str))
+			{
+				istringstream stream(str);
+
+				//1行のうち、文字列とコンマを分割する
+				while (getline(stream, token, ','))
+				{
+					m_nEnemyData[i] = stoi(token);
+					i++;
+					if (i >= STATES_MAX)
+						break;
+				}
+			}
+
+			//ファイルを閉じる
+			ifs.close();
+			//読み込み完了
+			m_bStatesLoad = true;
+		}
+
+		//txtファイルを1行ずつ読み込む(1度読み込めばあとは読み込んだデータ変数を読み込む)
+		if (!m_bLevelUpLoad)
+		{
+			//ファイルの読み込み
+			ifstream ifs(PATH_LEVEL_UP_ENEMY_WOLF);
+
+			string str;
+
+			int i = 0;	//格納配列係数
+
+			string token;
+
+			while (getline(ifs, str))
+			{
+				istringstream stream(str);
+
+				//1行のうち、文字列とコンマを分割する
+				while (getline(stream, token, ','))
+				{
+					m_nLevelUpData[i] = stoi(token);
+					i++;
+					if (i >= UPSTATES_MAX)
+						break;
+				}
+			}
+
+			//ファイルを閉じる
+			ifs.close();
+			//読み込み完了
+			m_bStatesLoad = true;
+		}
 		break;
-	case 2:
+	case TYPE_BEAR:
 		//名前の設定
 		sprintf_s(pEnemy -> m_szName, ("くま"));
 
 		//モデルデータ読み込み
-		pEnemy -> m_nMeshNumber = MODEL_BEAR;
+			pEnemy->m_nMeshNumber = MODEL_BEAR;
+		//txtファイルを1行ずつ読み込む(1度読み込めばあとは読み込んだデータ変数を読み込む)
+		if (!m_bStatesLoad)
+		{
+			//ファイルの読み込み
+			ifstream ifs(PATH_DATA_ENEMY_BEAR);
+
+			string str;
+
+			int i = 0;	//格納配列係数
+
+			string token;
+
+			while (getline(ifs, str))
+			{
+				istringstream stream(str);
+
+				//1行のうち、文字列とコンマを分割する
+				while (getline(stream, token, ','))
+				{
+					m_nEnemyData[i] = stoi(token);
+					i++;
+					if (i >= STATES_MAX)
+						break;
+				}
+			}
+
+			//ファイルを閉じる
+			ifs.close();
+			//読み込み完了
+			m_bStatesLoad = true;
+		}
+
+		//txtファイルを1行ずつ読み込む(1度読み込めばあとは読み込んだデータ変数を読み込む)
+		if (!m_bLevelUpLoad)
+		{
+			//ファイルの読み込み
+			ifstream ifs(PATH_LEVEL_UP_ENEMY_BEAR);
+
+			string str;
+
+			int i = 0;	//格納配列係数
+
+			string token;
+
+			while (getline(ifs, str))
+			{
+				istringstream stream(str);
+
+				//1行のうち、文字列とコンマを分割する
+				while (getline(stream, token, ','))
+				{
+					m_nLevelUpData[i] = stoi(token);
+					i++;
+					if (i >= UPSTATES_MAX)
+						break;
+				}
+			}
+
+			//ファイルを閉じる
+			ifs.close();
+			//読み込み完了
+			m_bStatesLoad = true;
+		}
+		break;
+
+	case TYPE_BOSS:
+		//名前の設定
+		sprintf_s(pEnemy->m_szName, ("ドラゴン"));
+
+		//モデルデータ読み込み
+		pEnemy->m_nMeshNumber = MODEL_DRAGON;
+		//txtファイルを1行ずつ読み込む(1度読み込めばあとは読み込んだデータ変数を読み込む)
+		if (!m_bStatesLoad)
+		{
+			//ファイルの読み込み
+			ifstream ifs(PATH_DATA_ENEMY_BOSS);
+
+			string str;
+
+			int i = 0;	//格納配列係数
+
+			string token;
+
+			while (getline(ifs, str))
+			{
+				istringstream stream(str);
+
+				//1行のうち、文字列とコンマを分割する
+				while (getline(stream, token, ','))
+				{
+					m_nEnemyData[i] = stoi(token);
+					i++;
+					if (i >= STATES_MAX)
+						break;
+				}
+			}
+
+			//ファイルを閉じる
+			ifs.close();
+			//読み込み完了
+			m_bStatesLoad = true;
+		}
+
+		//txtファイルを1行ずつ読み込む(1度読み込めばあとは読み込んだデータ変数を読み込む)
+		if (!m_bLevelUpLoad)
+		{
+			//ファイルの読み込み
+			ifstream ifs(PATH_LEVEL_UP_ENEMY_BOSS);
+
+			string str;
+
+			int i = 0;	//格納配列係数
+
+			string token;
+
+			while (getline(ifs, str))
+			{
+				istringstream stream(str);
+
+				//1行のうち、文字列とコンマを分割する
+				while (getline(stream, token, ','))
+				{
+					m_nLevelUpData[i] = stoi(token);
+					i++;
+					if (i >= UPSTATES_MAX)
+						break;
+				}
+			}
+
+			//ファイルを閉じる
+			ifs.close();
+			//読み込み完了
+			m_bStatesLoad = true;
+		}
 		break;
 
 		//デバッグ用処理
@@ -127,70 +411,6 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 
 	//生きている
 	pEnemy -> m_bSurvival = true;
-
-    //txtファイルを1行ずつ読み込む(1度読み込めばあとは読み込んだデータ変数を読み込む)
-	if(!m_bStatesLoad)
-	{
-		//ファイルの読み込み
-		ifstream ifs(PATH_DATA_ENEMY);
-
-		string str;
-		
-		int i = 0;	//格納配列係数
-		
-		string token;
-
-		while(getline(ifs,str))
-		{
-		    istringstream stream(str);
-
-		    //1行のうち、文字列とコンマを分割する
-		    while(getline(stream,token,','))
-			{
-				m_nEnemyData[i] = stoi(token);
-				i++;
-				if(i >= STATES_MAX)
-					break;
-		    }
-		}
-
-		//ファイルを閉じる
-		ifs.close();
-		//読み込み完了
-		m_bStatesLoad= true;
-	}
-
-    //txtファイルを1行ずつ読み込む(1度読み込めばあとは読み込んだデータ変数を読み込む)
-	if(!m_bLevelUpLoad)
-	{
-		//ファイルの読み込み
-		ifstream ifs(PATH_LEVEL_UP_ENEMY);
-
-		string str;
-		
-		int i = 0;	//格納配列係数
-		
-		string token;
-
-		while(getline(ifs,str))
-		{
-		    istringstream stream(str);
-
-		    //1行のうち、文字列とコンマを分割する
-		    while(getline(stream,token,','))
-			{
-				m_nLevelUpData[i] = stoi(token);
-				i++;
-				if(i >= UPSTATES_MAX)
-					break;
-		    }
-		}
-
-		//ファイルを閉じる
-		ifs.close();
-		//読み込み完了
-		m_bStatesLoad= true;
-	}
 	
 	//-----ステータスの設定-----
 
@@ -221,40 +441,43 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 	//防御力
 	pEnemy -> m_nDefenceUpNum = m_nLevelUpData[UPSTATES_DF];
 
-	
+	//どの部屋に配置するか決定する
+	int MakeRoomNumber = rand() % CMapData::GetMakeRoomNum();
+	//部屋のデータを取得する
+	RECT RoomPos = CMapData::GetRoomFloorPlan(MakeRoomNumber);
+
 	//位置情報を仮的に設定
-	int PosX = rand()%MAP_SIZE;
-	int PosZ = rand()%MAP_SIZE;
+	int PosX = rand() % (RoomPos.right - RoomPos.left) + RoomPos.left;
+	int PosZ = rand() % (RoomPos.bottom - RoomPos.top) + RoomPos.top;
 
 	//場所確認回数
 	int nMakeLimit = 0;
 
 	//位置情報を設定
-	while(1)
+	while (1)
 	{
 		//場所確認回数が一定数を超えたら生成を中止
-		if(nMakeLimit > 15)
+		if (nMakeLimit > 15)
 		{
 			delete pEnemy;
 			return;
 		}
 
 		//接地可能か確認
-		if(FLOOR == CMapData::Get_TerrainMapSituation(PosX,PosZ) &&
-			0 == CMapData::Get_UnitMapSituation(PosX,PosZ) && 
-			CMapData::CheckInTheRoom(PosX,PosZ))
+		if (FLOOR == CMapData::Get_TerrainMapSituation(PosX, PosZ) &&
+			0 == CMapData::Get_UnitMapSituation(PosX, PosZ))
 			break;
 
 		//不可能だった場合、再設定する。
-		PosX = rand()%MAP_SIZE;
-		PosZ = rand()%MAP_SIZE;
+		PosX = rand() % (RoomPos.right - RoomPos.left) + RoomPos.left;
+		PosZ = rand() % (RoomPos.bottom - RoomPos.top) + RoomPos.top;
 
 		//場所確認回数を加算
-		nMakeLimit ++;
+		nMakeLimit++;
 	}
 
-	pEnemy -> m_nUnit_Pos_X = PosX;
-	pEnemy -> m_nUnit_Pos_Z = PosZ;
+	pEnemy->m_nUnit_Pos_X = PosX;
+	pEnemy->m_nUnit_Pos_Z = PosZ;
 
 	//経験値蓄積値を設定
 	pEnemy -> m_nExp = m_nEnemyData[STATES_EXP];
@@ -267,6 +490,10 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 
 	//モデルのスケールを変更する
 	D3DXMatrixScaling(&world,0.125f,0.125f,0.125f);
+	if (nHierarchy == GameClearNum)
+	{
+		D3DXMatrixScaling(&world, 0.5f, 0.5f, 0.5f);
+	}
 
 	//位置情報設定
 	world._41 = (pEnemy -> m_nUnit_Pos_X - (MAP_SIZE / 2)) * GRIDSIZE + GRIDSIZE / 2;
@@ -300,6 +527,9 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 	//ユニット生成数をカウント
 	m_nMakeNumber ++;
 
+	//目標となる移動地点を設定する
+	pEnemy->TergetPositionSet();
+
 	//シーン上にオブジェクトの追加
 	CUnitManager::Add(pEnemy->m_nUnitNumber, pEnemy);
 }
@@ -332,6 +562,37 @@ void CEnemy::InputUpdate()
 		if (m_nHP > m_nMaxHP)
 			m_nHP = m_nMaxHP;
 	}
+	//プレイヤーの位置情報を取得
+	int PlayerPos_X = CUnitManager::GetPlayerPosX();
+	int PlayerPos_Z = CUnitManager::GetPlayerPosZ();
+
+	//差を計算
+	int Distance_X = PlayerPos_X - m_nUnit_Pos_X;
+	int Distance_Z = m_nUnit_Pos_Z - PlayerPos_Z;
+
+	if (!m_bPlayerFindFlg)
+	{
+		//プレイヤーと同じ部屋にいる、もしくはプレイヤーとの距離が一定値以下になった場合、発見状態に移行する
+		//プレイヤーの現在いる部屋を取得
+		int nPlayerExistenceRoomNumber = CMapData::GetRoomNumber(PlayerPos_X, PlayerPos_X);
+		//現在自分がいる部屋の番号を取得
+		int nExistenceRoomNumber = CMapData::GetRoomNumber(m_nUnit_Pos_X, m_nUnit_Pos_Z);
+
+		//プレイヤーと自身の距離を計算する(斜めを考慮)
+		float Distance = (float)pow((PlayerPos_X - m_nUnit_Pos_X)*(PlayerPos_X - m_nUnit_Pos_X) + (PlayerPos_Z - m_nUnit_Pos_Z)*(PlayerPos_Z - m_nUnit_Pos_Z),0.5);
+
+		//自分のいる部屋と、相手がいる部屋が同じであれば、発見状態に移行する
+		//通路の場合は移行しない
+		if ((nExistenceRoomNumber == nPlayerExistenceRoomNumber) && nExistenceRoomNumber != ROOM_MAX_NUM)
+		{
+			m_bPlayerFindFlg = true;
+		}
+		//自身とプレイヤーの距離が一定値以下になれば、発見条谷移行する
+		if (Distance < VisibilityDistance[m_nEnemyType])
+		{
+			m_bPlayerFindFlg = true;
+		}
+	}
 
 	//旧ステート情報の確保
 	m_nOldStateNumber = m_nStateNumber;
@@ -342,17 +603,8 @@ void CEnemy::InputUpdate()
 	//A*による移動
 	MoveCompletion = A_StarMove();
 
-	//プレイヤーの位置情報を取得
-	int PlayerPos_X = CUnitManager::GetPlayerPosX();
-	int PlayerPos_Z = CUnitManager::GetPlayerPosZ();
-
-	//差を計算
-	int Distance_X = PlayerPos_X - m_nUnit_Pos_X;
-	int Distance_Z = m_nUnit_Pos_Z - PlayerPos_Z;
-
 	if(!MoveCompletion)
 	{
-		
 		//攻撃判定(もしプレイヤーがそばに居たら攻撃をする)
 		if(abs(Distance_X) <= 1 && abs(Distance_Z) <= 1)
 		{
@@ -408,7 +660,6 @@ void CEnemy::InputUpdate()
 				else
 					nAngle = 0;
 			}
-
 			else if(m_bDirectionFlg[2])
 			{
 				if(m_bDirectionFlg[1])
@@ -599,18 +850,36 @@ bool CEnemy::A_StarMove()
 	int SearchPositionX = m_nUnit_Pos_X;
 	int SearchPositionZ = m_nUnit_Pos_Z;
 
-	//プレイヤーの位置情報
-	int PlayerPositionX = CUnitManager::GetPlayerPosX();
-	int PlayerPositionZ = CUnitManager::GetPlayerPosZ();
 
+	//プレイヤーを発見している状態かどうかで目標位置を変更する
+	if (m_bPlayerFindFlg)
+	{
+		//プレイヤーを見つけていた場合
+		//プレイヤーの位置情報
+		m_TergetPositionX = CUnitManager::GetPlayerPosX();
+		m_TergetPositionZ = CUnitManager::GetPlayerPosZ();
+	}
+	else
+	{
+		//プレイヤーを見つけていない場合
+
+		//ターゲットとしている位置に到達しているかどうか?
+		if ((m_TergetPositionX == m_nUnit_Pos_X) && (m_TergetPositionZ == m_nUnit_Pos_Z))
+		{
+			//到達している場合、新しい地点を設定
+			TergetPositionSet();
+		}
+		//到達していない場合、そのまま目標地点まで移動する
+
+	}
 	//探索した位置をクローズ化
 	CMapData::CompleteCellCal(SearchPositionX,SearchPositionZ,2);
 
 	//探索を行う位置がプレイヤーの位置、又は異常値が返ってくるまで処理を行う
-	while((SearchPositionX != PlayerPositionX || SearchPositionZ != PlayerPositionZ) && (SearchPositionX != -99 && SearchPositionZ != -99))
+	while((SearchPositionX != m_TergetPositionX || SearchPositionZ != m_TergetPositionZ) && (SearchPositionX != -99 && SearchPositionZ != -99))
 	{
 		//周囲を探索する
-		CMapData::SearchPosition(SearchPositionX,SearchPositionZ,m_nUnit_Pos_X,m_nUnit_Pos_Z,PlayerPositionX,PlayerPositionZ);
+		CMapData::SearchPosition(SearchPositionX,SearchPositionZ,m_nUnit_Pos_X,m_nUnit_Pos_Z,m_TergetPositionX,m_TergetPositionZ);
 
 		//最もスコアの小さい位置を取得
 		CMapData::SearchMinScoreData(&SearchPositionX,&SearchPositionZ);
@@ -646,9 +915,9 @@ bool CEnemy::A_StarMove()
 		CMapData::GetParentPos(SearchPositionX,SearchPositionZ,&ParentPosX,&ParentPosZ);
 	}
 
-	//その位置がプレイヤーの位置の場合、移動しない
+	//その位置にユニットがいる場合、移動しない
 	int UnitMapSituation = CMapData::Get_UnitMapSituation(SearchPositionX,SearchPositionZ);
-	if(UnitMapSituation != 0)
+	if(UnitMapSituation < OBJ_NUM_ENEMY)
 	{
 		//自身のステートの設定
 		m_nStateNumber = CTurn::GAME_STATE_TURN_END;
@@ -797,4 +1066,23 @@ bool CEnemy::A_StarMove()
 	CMapData::InitAStarData();
 
 	return true;
+}
+
+//---------------------------------------------------------------------------------------
+//ターゲットとなる地点を設定する
+//---------------------------------------------------------------------------------------
+void CEnemy::TergetPositionSet()
+{
+	//移動目標となる部屋を設定する
+	int MoveTergetRoomNumber = rand() % CMapData::GetMakeRoomNum();
+
+	//部屋のデータを取得
+	RECT RoomData = CMapData::GetRoomFloorPlan(MoveTergetRoomNumber);
+
+	//目標地点を決定
+	do
+	{
+		m_TergetPositionX = rand() % (RoomData.right - RoomData.left) + RoomData.left;
+		m_TergetPositionZ = rand() % (RoomData.bottom - RoomData.top) + RoomData.top;
+	} while (FLOOR != CMapData::Get_TerrainMapSituation(m_TergetPositionX,m_TergetPositionZ));
 }

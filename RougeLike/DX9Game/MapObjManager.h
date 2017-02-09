@@ -9,7 +9,6 @@
 #include<vector>
 
 class CFieldObj;
-class CUnit;
 
 
 typedef std::vector<CFieldObj*>					FIELDOBJ_LIST;	//フィールドオブジェクトのリスト
@@ -24,8 +23,6 @@ private:
 
 	//マネージャークラス
 	static FIELDOBJ_MAP*	m_pMapObjManager;
-
-	static CUnit*			m_pPlayer;			//プレイヤーの位置取得用
 	static bool				m_bDeleteFlg;		//全オブジェクト削除フラグ
 	static int				m_nNextObjNumber;	//次に生成されたオブジェクトにつける番号
 
@@ -50,8 +47,6 @@ public:
 	static void SetNextNumber(int Number) { m_nNextObjNumber = Number; }
 
 	static FIELDOBJ_MAP* GetPointer();		//マネージャーデバイスのポインタを渡す
-
-	static void PlayerSet();				//プレイヤーのポインタを設定する
 
 	//-----フィールドオブジェの操作-----
 	//フィールドオブジェクトのリストへの追加

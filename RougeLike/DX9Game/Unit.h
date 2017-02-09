@@ -9,6 +9,7 @@
 #include "EquipmentWindow.h"
 #include "TrickWindow.h"
 #include "LevelUp.h"
+#include"DamageNotation.h"
 #include<fstream>
 #include<iostream>
 #include<string>
@@ -17,7 +18,7 @@
 #include"Turn.h"
 
 //行動にかかる時間
-#define ACTION_TIME	0.6f
+#define ACTION_TIME	0.5f
 
 //満腹度最大値
 #define MAX_SATIETY	100
@@ -188,6 +189,7 @@ public:
 	void WaitUpdate();										//待機更新
 	void TurnUpdate();										//行動更新	
 	virtual void Draw();									//描画
+	void BillBordDraw();									//ビルボードの描画
 
 	//ステート別更新
 	virtual void InputUpdate();		//入力更新
@@ -228,7 +230,7 @@ public:
 	bool SlightRightBack();			//斜め右後ろの敵に攻撃
 	bool SlightLeftBack();			//斜め左後ろの敵に攻撃
 
-	bool Attack(int CorrectionPosX,int CorrectionPosY);	//指定した補正値の場所へ攻撃を行う
+	//bool Attack(int CorrectionPosX,int CorrectionPosY);	//指定した補正値の場所へ攻撃を行う
 
 	bool FindEnemy(int,int);		//指定した位置に敵がいるか
 
@@ -240,6 +242,7 @@ public:
 	void BattleFlasing();			//相手の描画を点滅させる
 	void BattleWindow();			//メッセージウインドウにメッセージを送る
 	void BattleDamage();			//相手に算出されたダメージを与える
+	void BattleDamageDraw();		//ダメージ数値を描画する
 	void BattleEnd();				//戦闘ステートが最後まで行ったので、バトルステート初期化、自身のターンステート更新
 	virtual void TurnEndUpdate();	//ターン終了更新
 
@@ -296,4 +299,7 @@ public:
 	{
 		m_bTurnEndFlg = ChangeFlg; 
 	}
+
+	//位置を移動させる
+	void MovePos(int PosX, int PosY);
 };

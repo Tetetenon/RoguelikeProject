@@ -3,6 +3,7 @@
 #include "Input.h"
 
 #include "Turn.h"
+#include "MapData.h"
 
 #define MAKEPERCENTAGE 15
 
@@ -49,8 +50,11 @@ void CEnemyGenerator::Fin()
 //---------------------------------------------------------------------------------------
 void CEnemyGenerator::Update()
 {
+	//階層数を取得
+	int Hierarchy = CMapData::GetHierarchieNum();
+
 	//ターンステートが一定のステートの際、エネミーを確率で生成する
-	if(CTurn::GetState() == CTurn::GAME_STATE_STAND_BY)
+	if(CTurn::GetState() == CTurn::GAME_STATE_STAND_BY && Hierarchy != GameClearNum)
 	{
 		int nRand = rand()%100;
 		//生成確立5%かつフィールドに配置できる最大エネミー数に到達していない
@@ -109,6 +113,15 @@ void CEnemyGenerator::MakeEnemy ()
 {
 	//生成数を設定
 	int nMakeNum = rand()%8;
+
+	//階層数を取得
+	int Hierarchy = CMapData::GetHierarchieNum();
+
+	//階層数が最終階層ならば、生成数を一体に設定
+	if (Hierarchy == GameClearNum)
+	{
+		nMakeNum = 1;
+	}
 
 	//生成
 	for(int i = 0;i < nMakeNum;i++)

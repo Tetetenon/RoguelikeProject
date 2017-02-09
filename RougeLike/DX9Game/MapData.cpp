@@ -2,14 +2,10 @@
 #include "Graphics.h"
 #include "TextureManager.h"
 #include "GameScene.h"
-
 #include "MessageWindow.h"
-
 #include"UnitManager.h"
-
 #include <stdlib.h>
 #include <tchar.h>
-
 #include<fstream>
 #include<iostream>
 #include<string>
@@ -62,10 +58,10 @@ CMapData::CMapData(void)
 	}
 
 	//ユニットの最大設置可能数を設定
-	CEnemyGenerator::SetMaxGenerator((int)nFloorCounter / 5);
+	CEnemyGenerator::SetMaxGenerator((int)(nFloorCounter / 5));
 
 	//アイテムの最大生成数を設定
-	CItemGenerator::SetMaxItem(20 + rand()%10);
+	CItemGenerator::SetMaxItem((int)(nFloorCounter / 20));
 
 	//アイテムマップ初期化
 	for(int i = 0;i < MAP_SIZE;i++)
@@ -501,7 +497,7 @@ void CMapData::MapGeneration()
 	
 	
 	//10階層移動したら、シーンをゲームクリアに遷移させる
-	if(m_nHierarchyNum > 10)
+	if(m_nHierarchyNum > GameClearNum)
 	{
 		//ゲームのクリア状況をクリアに変更する
 		CGameScene::GameClearStateChange(GAME_CLEAR);
@@ -536,6 +532,10 @@ void CMapData::DivideMap()
 
 	//３パターンの中から、ランダムに選択し、区画を分ける
 	m_nDividPattern = rand()%4;
+	if (m_nHierarchyNum == GameClearNum - 1)
+	{
+		m_nDividPattern = 3;
+	}
 
 	switch(m_nDividPattern)
 	{
@@ -639,6 +639,7 @@ void CMapData::DivideMap()
 			}
 		}
 		break;
+		//大部屋
 	case 3:
 		{
 			m_Section[0].left		= 0;
@@ -646,6 +647,9 @@ void CMapData::DivideMap()
 
 			m_Section[0].top		= 0;
 			m_Section[0].bottom	= MAP_SIZE;
+
+			//生成した数を加算
+			m_CountMakeRoom = 1;
 		}
 		break;
 	}
@@ -1084,8 +1088,8 @@ void CMapData::SearchPosition(int SearchPosX,int SearchPosZ,int EnemyPosX,int En
 		//スコアの計算を行う
 		ASarSetData(ChildPosX,ChildPosZ,EnemyPosX,EnemyPosZ,PlayerPosX,PlayerPosZ);
 
-		if(UnitSituNum > 1)
-			m_AStarData[ChildPosZ][ChildPosX].m_nCost += 1500;
+		if(UnitSituNum >= OBJ_NUM_ENEMY)
+			m_AStarData[ChildPosZ][ChildPosX].m_nCost *= 10;
 
 		//計算を行った状態に遷移する
 		CMapData::CompleteCellCal(ChildPosX,ChildPosZ,1);
@@ -1121,14 +1125,14 @@ void CMapData::SearchPosition(int SearchPosX,int SearchPosZ,int EnemyPosX,int En
 //---------------------------------------------------------------------------------------
 //A*アルゴリズムにおける、距離を計算する
 //---------------------------------------------------------------------------------------
-int CMapData::AStarCalculator(int NowPosX,int NowPosZ,int GoalPosX,int GoalPosZ)
+float CMapData::AStarCalculator(int NowPosX,int NowPosZ,int GoalPosX,int GoalPosZ)
 {
 	//現在の位置と、目標地点の位置の距離を計算する
 	int DistanceX = abs(NowPosX - GoalPosX);
 	int DistanceZ = abs(NowPosZ - GoalPosZ);
 
 	//値を暫定的に計算する
-	int HeuristicScoreNum = DistanceX + DistanceZ;
+	float HeuristicScoreNum = DistanceX + DistanceZ;
 
 	//斜め移動も可能なため、縦、横の数値の低い分、スコア値から減算する
 	//引く数値
@@ -1137,7 +1141,9 @@ int CMapData::AStarCalculator(int NowPosX,int NowPosZ,int GoalPosX,int GoalPosZ)
 	if(DistanceX > DistanceZ)
 		SubNum = DistanceZ;
 
-	//HeuristicScoreNum -= SubNum;
+	//もし、斜め移動の場合、スコア、コストを加算する
+	if (DistanceX > 0 && DistanceZ > 0)
+		HeuristicScoreNum+= 0.5f;
 
 	//計算が完了した数値をヒューリスティック値として返す
 	return HeuristicScoreNum;

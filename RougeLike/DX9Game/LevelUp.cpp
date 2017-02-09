@@ -170,10 +170,10 @@ void CLevelUp::SetVertex()
 	m_pD3DVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
 	// 頂点座標の設定
-	pVtx[0].vtx = D3DXVECTOR3(- POLYGON_SIZE_X / 2.0f,- POLYGON_SIZE_Y/2.0f,0.0f);
-	pVtx[1].vtx = D3DXVECTOR3(- POLYGON_SIZE_X / 2.0f,  POLYGON_SIZE_Y/2.0f,0.0f);
-	pVtx[2].vtx = D3DXVECTOR3(  POLYGON_SIZE_X / 2.0f,- POLYGON_SIZE_Y/2.0f,0.0f);
-	pVtx[3].vtx = D3DXVECTOR3(  POLYGON_SIZE_X / 2.0f,  POLYGON_SIZE_Y/2.0f,0.0f);
+	pVtx[0].vtx = D3DXVECTOR3(-POLYGON_SIZE_X / 2.0f,-POLYGON_SIZE_Y/2.0f,0.0f);
+	pVtx[1].vtx = D3DXVECTOR3( POLYGON_SIZE_X / 2.0f,-POLYGON_SIZE_Y/2.0f,0.0f);
+	pVtx[2].vtx = D3DXVECTOR3(-POLYGON_SIZE_X / 2.0f, POLYGON_SIZE_Y/2.0f,0.0f);
+	pVtx[3].vtx = D3DXVECTOR3( POLYGON_SIZE_X / 2.0f, POLYGON_SIZE_Y/2.0f,0.0f);
 
 	// 頂点データをアンロックする
 	m_pD3DVtxBuff->Unlock();
@@ -204,8 +204,8 @@ HRESULT CLevelUp::MakeVertex()
 
 		// 頂点座標の設定
 		pVtx[0].vtx = D3DXVECTOR3(-POLYGON_SIZE_X / 2.0f,-POLYGON_SIZE_Y / 2.0f,0.0f);
-		pVtx[1].vtx = D3DXVECTOR3(-POLYGON_SIZE_X / 2.0f, POLYGON_SIZE_Y / 2.0f,0.0f);
-		pVtx[2].vtx = D3DXVECTOR3( POLYGON_SIZE_X / 2.0f,-POLYGON_SIZE_Y / 2.0f,0.0f);
+		pVtx[1].vtx = D3DXVECTOR3( POLYGON_SIZE_X / 2.0f,-POLYGON_SIZE_Y / 2.0f,0.0f);
+		pVtx[2].vtx = D3DXVECTOR3(-POLYGON_SIZE_X / 2.0f, POLYGON_SIZE_Y / 2.0f,0.0f);
 		pVtx[3].vtx = D3DXVECTOR3( POLYGON_SIZE_X / 2.0f, POLYGON_SIZE_Y / 2.0f,0.0f);
 
 		// 法線の設定

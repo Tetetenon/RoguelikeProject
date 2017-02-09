@@ -19,7 +19,12 @@ bool	CModelManager::m_MeshLoadFlg[MODEL_MAX] = {false};	//モデルデータ読み込みフ
 #define PATH_MESH_HOME			_T("../data/model/model/Home.x")			//家
 #define PATH_MESH_MUSHROOM		_T("../data/model/model/Mushroom.x")		//キノコ
 #define PATH_MESH_FOUNTAIN		_T("../data/model/model/Fountain.x")		//噴水
+#define PATH_MESH_DRAGON		_T("../data/model/model/Dragon.x")			//ドラゴン
 
+#define PATH_MESH_APPLE			_T("../data/model/model/Apple.x")			//林檎
+#define PATH_MESH_HERB			_T("../data/model/model/Herb.x")			//薬草
+#define PATH_MESH_SWORD			_T("../data/model/model/Sword.x")			//剣
+#define PATH_MESH_SHIELD		_T("../data/model/model/Shield.x")			//盾
 
 
 
@@ -135,6 +140,40 @@ void CModelManager::LoadMesh()
 	{
 		//モデルデータのロード
 		m_MeshLoadFlg[MODEL_FOUNTAIN] = m_MeshData[MODEL_FOUNTAIN].Initialize(PATH_MESH_FOUNTAIN, true);
+	}
+
+	//-----ドラゴンの読み込み-----
+	if (!m_MeshLoadFlg[MODEL_DRAGON])
+	{
+		//モデルデータのロード
+		m_MeshLoadFlg[MODEL_DRAGON] = m_MeshData[MODEL_DRAGON].Initialize(PATH_MESH_DRAGON, true);
+	}
+	//-----林檎の読み込み-----
+	if (!m_MeshLoadFlg[MODEL_APPLE])
+	{
+		//モデルデータのロード
+		m_MeshLoadFlg[MODEL_APPLE] = m_MeshData[MODEL_APPLE].Initialize(PATH_MESH_APPLE, true);
+	}
+
+	//-----薬草の読み込み-----
+	if (!m_MeshLoadFlg[MODEL_HERB])
+	{
+		//モデルデータのロード
+		m_MeshLoadFlg[MODEL_HERB] = m_MeshData[MODEL_HERB].Initialize(PATH_MESH_HERB, true);
+	}
+
+	//-----剣の読み込み-----
+	if (!m_MeshLoadFlg[MODEL_SWORD])
+	{
+		//モデルデータのロード
+		m_MeshLoadFlg[MODEL_SWORD] = m_MeshData[MODEL_SWORD].Initialize(PATH_MESH_SWORD, true);
+	}
+
+	//-----盾の読み込み-----
+	if (!m_MeshLoadFlg[MODEL_SHIELD])
+	{
+		//モデルデータのロード
+		m_MeshLoadFlg[MODEL_SHIELD] = m_MeshData[MODEL_SHIELD].Initialize(PATH_MESH_SHIELD, true);
 	}
 }
 

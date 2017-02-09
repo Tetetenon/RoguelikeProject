@@ -197,7 +197,7 @@ void CItemManager::Fin()
 	}
 
 	//¶¬”‚ð‰Šú‰»‚·‚é
-	m_MakeItemNum = 0;
+	m_MakeItemNum = 1;
 
 	//ƒŠƒXƒg‚ð‘|œ
 	m_pItemManager->clear();

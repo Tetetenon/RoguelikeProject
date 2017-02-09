@@ -1,12 +1,9 @@
 #include "MapObjManager.h"
 
 #include"FieldObj.h"
-#include"Unit.h"
-#include "UnitManager.h"
 
 FIELDOBJ_MAP* CMapObjManager::m_pMapObjManager = NULL;
 
-CUnit*			CMapObjManager::m_pPlayer = NULL;			//プレイヤーの位置取得用
 bool			CMapObjManager::m_bDeleteFlg = false;		//全オブジェクト削除フラグ
 int				CMapObjManager::m_nNextObjNumber = 0;	//次に生成されたオブジェクトにつける番号
 
@@ -17,7 +14,6 @@ CMapObjManager::CMapObjManager()
 {
 	//初期化
 	m_pMapObjManager->clear();
-	m_pPlayer = NULL;
 	m_bDeleteFlg = false;
 	m_nNextObjNumber = 0;
 }
@@ -31,7 +27,6 @@ CMapObjManager::~CMapObjManager()
 	m_bDeleteFlg = false;
 
 	//プレイヤーポインタの開放
-	m_pPlayer = NULL;
 	m_nNextObjNumber = 0;
 
 	//中身の掃除
@@ -177,16 +172,6 @@ void CMapObjManager::Update()
 //---------------------------------------------------------------------------------------
 void CMapObjManager::Draw(bool Alpha)//Alpha:半透明描画をするか
 {
-	//プレイヤーの位置
-	D3DXVECTOR3 PlayerPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	//プレイヤーのポインタが存在するか確認する
-	if (m_pPlayer)
-	{
-		//プレイヤーの位置を取得する
-		PlayerPos = m_pPlayer->GetPos();
-	}
-
-
 	//リストの先頭を取得する
 	auto MapIterator = m_pMapObjManager->begin();
 
@@ -195,45 +180,18 @@ void CMapObjManager::Draw(bool Alpha)//Alpha:半透明描画をするか
 	{
 		for (auto ListIterator = MapIterator->second.begin(); ListIterator != MapIterator->second.end(); ++ListIterator)
 		{
-			//プレイヤーのポインタが存在していない場合、描画処理をすべて不透明で行う
-			if (!m_pPlayer)
+			//描画するオブジェクトの上にユニットが存在するかどうかで、描画を切り替える
+			if ((*ListIterator)->GetNearUnitFlg())
 			{
-				if(!Alpha)
-					(*ListIterator)->Draw();
+				if (Alpha)
+					(*ListIterator)->DrawAlpha();
 			}
 			else
 			{
-				//オブジェクトの位置と、プレイヤーの位置の距離を計算する
-				//オブジェクトの位置を取得
-				D3DXVECTOR3 ObjPos = (*ListIterator)->GetPos();
-
-				//オブジェクトの位置とプレイヤーの位置の比較
-				float DistanceX = abs(ObjPos.x - PlayerPos.x);
-				float DistanceZ = ObjPos.z - PlayerPos.z;
-
-				//半透明描画フラグ
-				bool AlphaDrawFlg = true;
-
-				//自身の位置と、プレイヤーの位置が近ければ、モデルを半透明の物に変更する
-				if (DistanceX <= GRIDSIZE)
-				{
-					if (DistanceZ < 0 && DistanceZ > -GRIDSIZE * 1.5)
-					{
-						if (Alpha)
-							(*ListIterator)->DrawAlpha();
-					}
-					else
-					{
-						if (!Alpha)
-							(*ListIterator)->Draw();
-					}
-				}
-				else
-				{
-					if (!Alpha)
-						(*ListIterator)->Draw();
-				}
+				if (!Alpha)
+					(*ListIterator)->Draw();
 			}
+			
 		}
 	}
 }
@@ -273,12 +231,4 @@ FIELDOBJ_MAP* CMapObjManager::GetPointer()
 void CMapObjManager::ChangeDeleteFlg(bool ChangeFlg)
 {
 	m_bDeleteFlg = ChangeFlg;
-}
-//---------------------------------------------------------------------------------------
-//プレイヤーのポインタを設定する
-//---------------------------------------------------------------------------------------
-void CMapObjManager::PlayerSet()
-{
-	//プレイヤーへのポインタを取得する
-	m_pPlayer = CUnitManager::Find(OBJ_NUM_PLAYER);
 }
