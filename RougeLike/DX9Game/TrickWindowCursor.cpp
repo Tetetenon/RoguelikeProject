@@ -1,4 +1,5 @@
 #include "TrickWindowCursor.h"
+#include "TrickWindow.h"
 #include "Graphics.h"
 #include "Input.h"
 
@@ -6,21 +7,25 @@
 //---------------------------------------------------------------------------------------
 //マクロ定義
 //---------------------------------------------------------------------------------------
-
-
-
 //ウインドウサイズ
 #define WINDOW_WIDHT  300
 #define WINDOW_HEIGHT  30
 
-int		CTrickWindowCursor::m_Number = 0;				//現在選択しているアイテムが何番目の物かを管理する
-
-
+//---------------------------------------------------------------------------------------
+//静的メンバ変数定義
+//---------------------------------------------------------------------------------------
+CTrickWindowCursor* CTrickWindowCursor::m_pTrickWindowCursor = NULL;
 //---------------------------------------------------------------------------------------
 //コンストラクタ
 //---------------------------------------------------------------------------------------
 CTrickWindowCursor::CTrickWindowCursor(void)
 {
+	//ボタン入力経過時間を0にする
+	m_nInterval = 0;
+
+	//現在選択中の技番号を初期化
+	m_nNumber = 0;
+
 	//デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CGraphics::GetDevice();
 
@@ -29,9 +34,6 @@ CTrickWindowCursor::CTrickWindowCursor(void)
 
 	//ポリゴン位置情報の設定
 	SetPos();
-
-	//ボタン入力経過時間を0にする
-	m_nInterval = 0;
 }
 
 
@@ -42,21 +44,42 @@ CTrickWindowCursor::~CTrickWindowCursor(void)
 {
 	//ボタン入力経過時間を0にする
 	m_nInterval = 0;
+
+	//現在選択中の技番号を初期化
+	m_nNumber = 0;
 }
 
 //---------------------------------------------------------------------------------------
-//初期化
+//実体の生成
 //---------------------------------------------------------------------------------------
-void CTrickWindowCursor::Init()
+void CTrickWindowCursor::Create()
 {
-
+	//中身がなければ作成
+	if (!m_pTrickWindowCursor)
+	{
+		m_pTrickWindowCursor = new CTrickWindowCursor;
+	}
 }
 //---------------------------------------------------------------------------------------
-//終了
+//実体の削除
 //---------------------------------------------------------------------------------------
-void CTrickWindowCursor::Fin()
+void CTrickWindowCursor::Delete()
 {
-
+	//中身があれば削除
+	if (m_pTrickWindowCursor)
+	{
+		delete m_pTrickWindowCursor;
+		m_pTrickWindowCursor = NULL;
+	}
+}
+//---------------------------------------------------------------------------------------
+//実体のポインタを渡す
+//---------------------------------------------------------------------------------------
+CTrickWindowCursor* CTrickWindowCursor::GetPointer()
+{
+	//念のため作成関数を呼ぶ
+	Create();
+	return m_pTrickWindowCursor;
 }
 
 //---------------------------------------------------------------------------------------
@@ -97,16 +120,16 @@ void CTrickWindowCursor::Update()
 	m_nInterval ++;
 
 	//アイテム選択中のみ操作可能
-	if(CTrickWindow::GetDrawFlg())
+	if(m_pTrickWindow->GetDrawFlg())
 	{
 		if((CInput::GetKeyTrigger(DIK_W) || (CInput::GetJoyAxis(0,JOY_Y) <= -JoyMoveCap)) && m_nInterval >= ButtonIntervalTime)
 		{
 			//上に移動
-			m_Number --;
+			m_nNumber --;
 
 			//ループ
-			if (m_Number < 0)
-				m_Number = TRICK_NUM_MAX - 1;
+			if (m_nNumber < 0)
+				m_nNumber = TRICK_NUM_MAX - 1;
 			//位置情報再設定
 			SetPos();
 
@@ -117,9 +140,9 @@ void CTrickWindowCursor::Update()
 		if((CInput::GetKeyTrigger(DIK_S) || (CInput::GetJoyAxis(0,JOY_Y) >= JoyMoveCap)) && m_nInterval >= ButtonIntervalTime)
 		{
 			//下に移動
-			m_Number ++;
+			m_nNumber ++;
 			//ループ
-			m_Number %= TRICK_NUM_MAX;
+			m_nNumber %= TRICK_NUM_MAX;
 
 			//位置情報を再設定
 			SetPos();
@@ -136,10 +159,10 @@ void CTrickWindowCursor::Update()
 void CTrickWindowCursor::SetVertex ()
 {	
 	//位置情報設定
-	m_aVertex[0].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (m_Number + 1)					,0.0f);
-	m_aVertex[1].pos = D3DXVECTOR3((float)SCREEN_WIDTH				,(float)WINDOW_HEIGHT * (m_Number + 1)					,0.0f);
-	m_aVertex[2].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (m_Number + 1) + WINDOW_HEIGHT	,0.0f);
-	m_aVertex[3].pos = D3DXVECTOR3((float)SCREEN_WIDTH				,(float)WINDOW_HEIGHT * (m_Number + 1) + WINDOW_HEIGHT	,0.0f);
+	m_aVertex[0].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (m_nNumber + 1)					,0.0f);
+	m_aVertex[1].pos = D3DXVECTOR3((float)SCREEN_WIDTH				,(float)WINDOW_HEIGHT * (m_nNumber + 1)					,0.0f);
+	m_aVertex[2].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (m_nNumber + 1) + WINDOW_HEIGHT	,0.0f);
+	m_aVertex[3].pos = D3DXVECTOR3((float)SCREEN_WIDTH				,(float)WINDOW_HEIGHT * (m_nNumber + 1) + WINDOW_HEIGHT	,0.0f);
 
 	//パースペクティブ設定?
 	m_aVertex[0].rhw = 1.0f;
@@ -166,15 +189,24 @@ void CTrickWindowCursor::SetVertex ()
 void CTrickWindowCursor::SetPos()
 {
 	//位置情報設定
-	m_aVertex[0].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (m_Number + 1)					,0.0f);
-	m_aVertex[1].pos = D3DXVECTOR3((float)SCREEN_WIDTH				,(float)WINDOW_HEIGHT * (m_Number + 1)					,0.0f);
-	m_aVertex[2].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (m_Number + 1) + WINDOW_HEIGHT	,0.0f);
-	m_aVertex[3].pos = D3DXVECTOR3((float)SCREEN_WIDTH				,(float)WINDOW_HEIGHT * (m_Number + 1) + WINDOW_HEIGHT	,0.0f);
+	m_aVertex[0].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (m_nNumber + 1)					,0.0f);
+	m_aVertex[1].pos = D3DXVECTOR3((float)SCREEN_WIDTH				,(float)WINDOW_HEIGHT * (m_nNumber + 1)					,0.0f);
+	m_aVertex[2].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (m_nNumber + 1) + WINDOW_HEIGHT	,0.0f);
+	m_aVertex[3].pos = D3DXVECTOR3((float)SCREEN_WIDTH				,(float)WINDOW_HEIGHT * (m_nNumber + 1) + WINDOW_HEIGHT	,0.0f);
 }
 //---------------------------------------------------------------------------------------
 //選択中の技番号を返す
 //---------------------------------------------------------------------------------------
 int CTrickWindowCursor::GetTrickNum()
 {
-	return m_Number;
+	return m_nNumber;
+}
+
+//---------------------------------------------------------------------------------------
+//メンバ変数のポインタを設定する
+//---------------------------------------------------------------------------------------
+void CTrickWindowCursor::SetPointer()
+{
+	//ポインタの取得
+	m_pTrickWindow = CTrickWindow::GetPointer();
 }

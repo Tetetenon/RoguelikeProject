@@ -8,14 +8,18 @@ class CItemDescriptionFrame :
 	public C2DTexture
 {
 private:
+	//シングルトン
+	static CItemDescriptionFrame* m_pItemdescriptionFrame;
 	LPD3DXFONT		m_Font;						//説明文描画用フォント
 	RECT			m_FontPosition;				//説明用フォント位置
 	_TCHAR			m_Description[ITEM_MAX][DESCRIPTION_FONT_MAX];	//説明文
-public:
+
 	CItemDescriptionFrame(void);		//コンストラクタ
 	~CItemDescriptionFrame(void);		//デストラクタ
-
-	void Init(void);					//初期化
+public:
+	static void Create();
+	static void Delete();
+	static CItemDescriptionFrame* GetPointer();
 
 	void Draw(int ItemNumber);			//描画
 

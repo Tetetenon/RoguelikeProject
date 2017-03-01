@@ -3,19 +3,20 @@
 #include"Particle.h"
 
 //静的変数宣言
-PARTICLE_MAP*	CParticleManager::m_pParticleManager = NULL;
-int				CParticleManager::m_nNextID = 0;
+CParticleManager*	CParticleManager::m_pParticleManager = NULL;
 
 //---------------------------------------------------------------------------------------
 //コンストラクタ
 //---------------------------------------------------------------------------------------
 CParticleManager::CParticleManager()
 {
+	//リストの作成
+	m_pParticleMap = new PARTICLE_MAP();
 	//初期化
 	m_nNextID = 0;
 
 	//リスト初期化
-	m_pParticleManager->clear();
+	m_pParticleMap->clear();
 }
 
 //---------------------------------------------------------------------------------------
@@ -26,8 +27,12 @@ CParticleManager::~CParticleManager()
 	//初期化
 	m_nNextID = 0;
 
-	//リスト初期化
-	m_pParticleManager->clear();
+	//終了処理
+	Fin();
+	//削除
+	delete m_pParticleMap;
+	//中身の掃除
+	m_pParticleMap = NULL;
 }
 //---------------------------------------------------------------------------------------
 //マネージャーの作成
@@ -37,7 +42,7 @@ void CParticleManager::Create()
 	//マネージャーポインタの中身がまだなければ作成する
 	if (!m_pParticleManager)
 	{
-		m_pParticleManager = new PARTICLE_MAP();
+		m_pParticleManager = new CParticleManager;
 	}
 }
 //---------------------------------------------------------------------------------------
@@ -48,13 +53,18 @@ void CParticleManager::Delete()
 	//NULLチェック
 	if (m_pParticleManager)
 	{
-		//終了処理
-		Fin();
-		//削除
 		delete m_pParticleManager;
-		//中身の掃除
 		m_pParticleManager = NULL;
 	}
+}
+//---------------------------------------------------------------------------------------
+//マネージャーの実体を渡す
+//---------------------------------------------------------------------------------------
+CParticleManager* CParticleManager::GetPointer()
+{
+	//念のため作成関数を呼ぶ
+	Create();
+	return m_pParticleManager;
 }
 //---------------------------------------------------------------------------------------
 //管理オブジェクトの追加
@@ -62,10 +72,10 @@ void CParticleManager::Delete()
 void CParticleManager::Add(int ID, CParticle* pAdd)
 {
 	//IDが既に登録されているか確認を行う
-	auto ParticleIterator = m_pParticleManager->find(ID);
+	auto ParticleIterator = m_pParticleMap->find(ID);
 
 	//そのIDが登録されているか確認を行う
-	if (ParticleIterator != m_pParticleManager->end())
+	if (ParticleIterator != m_pParticleMap->end())
 	{
 		//IDが既に登録されているため、オブジェクトデータのみ登録
 		ParticleIterator->second.push_back(pAdd);
@@ -77,7 +87,7 @@ void CParticleManager::Add(int ID, CParticle* pAdd)
 		NewList.push_back(pAdd);
 
 		PARTICLE_PAIR NewParticlePair(ID,NewList);
-		m_pParticleManager->insert(NewParticlePair);
+		m_pParticleMap->insert(NewParticlePair);
 	}
 }
 
@@ -87,10 +97,10 @@ void CParticleManager::Add(int ID, CParticle* pAdd)
 void CParticleManager::Del(int ID)
 {
 	//IDでオブジェクトの検索
-	auto ParticleIterator = m_pParticleManager->find(ID);
+	auto ParticleIterator = m_pParticleMap->find(ID);
 
 	//検索したオブジェクトが存在していた場合、削除を行う
-	if (ParticleIterator != m_pParticleManager->end())
+	if (ParticleIterator != m_pParticleMap->end())
 	{
 		auto ListIterator = ParticleIterator->second.begin();
 		(*ListIterator)->Fin();
@@ -105,10 +115,10 @@ void CParticleManager::Del(int ID)
 CParticle* CParticleManager::Find(int ID)
 {
 	//IDでオブジェクトの探索
-	auto ParticleIterator = m_pParticleManager->find(ID);
+	auto ParticleIterator = m_pParticleMap->find(ID);
 
 	//そのIDのオブジェクトが存在している場合、データを返す
-	if (ParticleIterator != m_pParticleManager->end())
+	if (ParticleIterator != m_pParticleMap->end())
 	{
 		return ParticleIterator->second[0];
 	}
@@ -124,9 +134,9 @@ CParticle* CParticleManager::Find(int ID)
 void CParticleManager::Init()
 {
 	//リストの先頭を取得
-	auto ParticleIterator = m_pParticleManager->begin();
+	auto ParticleIterator = m_pParticleMap->begin();
 
-	for (; ParticleIterator != m_pParticleManager->end(); ++ParticleIterator)
+	for (; ParticleIterator != m_pParticleMap->end(); ++ParticleIterator)
 	{
 		for (auto ListIterator = ParticleIterator->second.begin(); ListIterator != ParticleIterator->second.end();)
 		{
@@ -142,9 +152,9 @@ void CParticleManager::Init()
 void CParticleManager::Update()
 {
 	//リストの先頭を取得
-	auto ParticleIterator = m_pParticleManager->begin();
+	auto ParticleIterator = m_pParticleMap->begin();
 
-	for (; ParticleIterator != m_pParticleManager->end(); ++ParticleIterator)
+	for (; ParticleIterator != m_pParticleMap->end(); ++ParticleIterator)
 	{
 		for (auto ListIterator = ParticleIterator->second.begin(); ListIterator != ParticleIterator->second.end();)
 		{
@@ -174,9 +184,9 @@ void CParticleManager::Update()
 void CParticleManager::Draw()
 {
 	//リストの先頭を取得
-	auto ParticleIterator = m_pParticleManager->begin();
+	auto ParticleIterator = m_pParticleMap->begin();
 
-	for (; ParticleIterator != m_pParticleManager->end(); ++ParticleIterator)
+	for (; ParticleIterator != m_pParticleMap->end(); ++ParticleIterator)
 	{
 		for (auto ListIterator = ParticleIterator->second.begin(); ListIterator != ParticleIterator->second.end();)
 		{
@@ -192,9 +202,9 @@ void CParticleManager::Draw()
 void CParticleManager::Fin()
 {
 	//リストの先頭を取得
-	auto ParticleIterator = m_pParticleManager->begin();
+	auto ParticleIterator = m_pParticleMap->begin();
 
-	for (; ParticleIterator != m_pParticleManager->end(); ++ParticleIterator)
+	for (; ParticleIterator != m_pParticleMap->end(); ++ParticleIterator)
 	{
 		for (auto ListIterator = ParticleIterator->second.begin(); ListIterator != ParticleIterator->second.end();)
 		{
@@ -207,5 +217,5 @@ void CParticleManager::Fin()
 	}
 
 	//リストの掃除
-	m_pParticleManager->clear();
+	m_pParticleMap->clear();
 }

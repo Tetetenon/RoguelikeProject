@@ -1,20 +1,27 @@
 #pragma once
 
 #include "2DWindow.h"
-#include "TrickWindow.h"
+
+class CTrickWindow;
 
 class CTrickWindowCursor:
 	public C2DWindow
 {
 private:
-	static int	m_Number;			//現在選択しているが何番目の物かを管理する
+	//シングルトン
+	static CTrickWindowCursor* m_pTrickWindowCursor;
+
+	CTrickWindow*	m_pTrickWindow;
+
+	int	m_nNumber;			//現在選択しているが何番目の物かを管理する
 	int			m_nInterval;		//ボタン入力経過時間
-public:
+
 	CTrickWindowCursor(void);		//コンストラクタ
 	~CTrickWindowCursor(void);	//デストラクタ
-
-	void Init();				//初期化
-	void Fin();					//終了処理
+public:
+	static void Create();
+	static void Delete();
+	static CTrickWindowCursor* GetPointer();
 
 	void Draw();				//描画
 	void Update();				//更新
@@ -23,6 +30,9 @@ public:
 
 	void SetPos();				//ポリゴンの位置情報を設定する
 
-	static int GetTrickNum();			//選択している技の情報を返却する。
+	int GetTrickNum();			//選択している技の情報を返却する。
+
+	//メンバ変数のポインタを設定する
+	void SetPointer();
 };
 

@@ -10,14 +10,17 @@ CEffectObj::CEffectObj(CGameScene *pScene):
 CMeshObj(pScene),
 m_nLifeTime(OBJ_LIFE)
 {
+	//ポインタを取得
+	m_pEffectObjManager = CEffectObjManager::GetPointer();
+
 	//自身の番号を設定
-	m_nEffectID = CEffectObjManager::GetEffectNumber();
+	m_nEffectID = m_pEffectObjManager->GetEffectNumber();
 
 	//次のエフェクト番号の設定
-	CEffectObjManager::SetEffectNumber(m_nEffectID + 1);
+	m_pEffectObjManager->SetEffectNumber(m_nEffectID + 1);
 
 	//マネージャーに追加
-	CEffectObjManager::Add(m_nEffectID,this);
+	m_pEffectObjManager->Add(m_nEffectID,this);
 }
 
 //---------------------------------------------------------------------------------------

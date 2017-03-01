@@ -3,6 +3,7 @@
 #include "C3DObj.h"
 
 class CCamera;
+class CParticleManager;
 
 //パーティクルのパターン
 enum ParticlePattern
@@ -53,6 +54,7 @@ class CParticle:
 	public C3DObj
 {
 private:
+	CParticleManager* m_pParticlemanager;
 
 	TParticleParam		m_pp;
 	float				m_fTime;			// パーティクル生成時間

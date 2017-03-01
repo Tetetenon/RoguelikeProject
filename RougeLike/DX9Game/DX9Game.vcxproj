@@ -109,6 +109,7 @@
     <ClCompile Include="EditTexture.cpp" />
     <ClCompile Include="EffectObj.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
+    <ClCompile Include="Equipment.cpp" />
     <ClCompile Include="EquipmentCommandCursor.cpp" />
     <ClCompile Include="EquipmentCommandWindow.cpp" />
     <ClCompile Include="EquipmentWindow.cpp" />
@@ -118,12 +119,14 @@
     <ClCompile Include="GameClearScene.cpp" />
     <ClCompile Include="HierarchieNum.cpp" />
     <ClCompile Include="EffectObjManager.cpp" />
+    <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="ItemCommandCursor.cpp" />
     <ClCompile Include="ItemCommandWindow.cpp" />
     <ClCompile Include="ItemDescriptionFrame.cpp" />
     <ClCompile Include="ItemManager.cpp" />
     <ClCompile Include="LevelUp.cpp" />
     <ClCompile Include="MapObjManager.cpp" />
+    <ClCompile Include="MenuStatesWindow.cpp" />
     <ClCompile Include="MiniMap.cpp" />
     <ClCompile Include="Operation.cpp" />
     <ClCompile Include="Particle.cpp" />
@@ -170,6 +173,7 @@
     <ClCompile Include="TrickWindow.cpp" />
     <ClCompile Include="TrickWindowCursor.cpp" />
     <ClCompile Include="Turn.cpp" />
+    <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="Unit.cpp" />
     <ClCompile Include="Circle.cpp" />
     <ClCompile Include="UnitManager.cpp" />
@@ -187,6 +191,7 @@
     <ClInclude Include="EditTexture.h" />
     <ClInclude Include="EffectObj.h" />
     <ClInclude Include="EnemyManager.h" />
+    <ClInclude Include="Equipment.h" />
     <ClInclude Include="EquipmentCommandCursor.h" />
     <ClInclude Include="EquipmentCommandWindow.h" />
     <ClInclude Include="EquipmentWindow.h" />
@@ -196,12 +201,14 @@
     <ClInclude Include="GameClearScene.h" />
     <ClInclude Include="HierarchieNum.h" />
     <ClInclude Include="EffectObjManager.h" />
+    <ClInclude Include="Inventory.h" />
     <ClInclude Include="ItemCommandCursor.h" />
     <ClInclude Include="ItemCommandWindow.h" />
     <ClInclude Include="ItemDescriptionFrame.h" />
     <ClInclude Include="ItemManager.h" />
     <ClInclude Include="LevelUp.h" />
     <ClInclude Include="MapObjManager.h" />
+    <ClInclude Include="MenuStatesWindow.h" />
     <ClInclude Include="MiniMap.h" />
     <ClInclude Include="Operation.h" />
     <ClInclude Include="Particle.h" />
@@ -250,6 +257,7 @@
     <ClInclude Include="TrickWindow.h" />
     <ClInclude Include="TrickWindowCursor.h" />
     <ClInclude Include="Turn.h" />
+    <ClInclude Include="UIManager.h" />
     <ClInclude Include="Unit.h" />
     <ClInclude Include="Circle.h" />
     <ClInclude Include="UnitManager.h" />

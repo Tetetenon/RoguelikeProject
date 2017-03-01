@@ -50,6 +50,9 @@ void CParticle::GetDefaultParam(TParticleParam& pp)
 CParticle::CParticle(CGameScene* pScene)
 	: C3DObj(pScene)
 {
+	//ポインタを取得
+	m_pParticlemanager = CParticleManager::GetPointer();
+
 	m_uID = ID_PARTICLE;
 
 	GetDefaultParam(m_pp);
@@ -71,12 +74,12 @@ CParticle::CParticle(CGameScene* pScene)
 	m_bDeleteFlg = false;
 
 	//IDを設定
-	m_nID = CParticleManager::GetNextID();
+	m_nID = m_pParticlemanager->GetNextID();
 	//次のID番号を指定する
-	CParticleManager::SetNextID(m_nID + 1);
+	m_pParticlemanager->SetNextID(m_nID + 1);
 
 	//マネージャーへ登録
-	CParticleManager::Add(m_nID,this);
+	m_pParticlemanager->Add(m_nID,this);
 }
 
 //---------------------------------------------------------------------------------------
@@ -85,6 +88,9 @@ CParticle::CParticle(CGameScene* pScene)
 CParticle::CParticle(CGameScene* pScene, TParticleParam* ppp)
 	: C3DObj(pScene)
 {
+	//ポインタを取得
+	m_pParticlemanager = CParticleManager::GetPointer();
+
 	m_uID = ID_PARTICLE;
 
 	GetDefaultParam(m_pp);
@@ -111,12 +117,12 @@ CParticle::CParticle(CGameScene* pScene, TParticleParam* ppp)
 	m_bDeleteFlg = false;
 
 	//IDを設定
-	m_nID = CParticleManager::GetNextID();
+	m_nID = m_pParticlemanager->GetNextID();
 	//次のID番号を指定する
-	CParticleManager::SetNextID(m_nID + 1);
+	m_pParticlemanager->SetNextID(m_nID + 1);
 
 	//マネージャーへ登録
-	CParticleManager::Add(m_nID, this);
+	m_pParticlemanager->Add(m_nID, this);
 }
 
 //---------------------------------------------------------------------------------------

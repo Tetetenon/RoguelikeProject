@@ -5,7 +5,8 @@
 #include "Turn.h"
 #include "TextureManager.h"
 #include "TrickWindowCursor.h"
-#include "Player.h"
+#include "Unit.h"
+#include "UnitManager.h"
 #include "MenuWindow.h"
 //---------------------------------------------------------------------------------------
 //マクロ定義
@@ -18,8 +19,7 @@
 //---------------------------------------------------------------------------------------
 //静的メンバ定義
 //---------------------------------------------------------------------------------------
-bool				CTrickWindow::m_bDrawFlg;				//描画フラグ
-CTrickWindowCursor	CTrickWindow::m_TrickCursor;			//選択しているアイテムウインドウの取得
+CTrickWindow* CTrickWindow::m_pTrickWindow = NULL;
 //---------------------------------------------------------------------------------------
 //コンストラクタ
 //---------------------------------------------------------------------------------------
@@ -27,6 +27,7 @@ CTrickWindow::CTrickWindow(void)
 {
 	//メンバ初期化
 	m_bDrawFlg = false;
+	m_nInputInterval = 0;
 
 	//デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CGraphics::GetDevice();
@@ -62,56 +63,86 @@ CTrickWindow::CTrickWindow(void)
 	m_Trick[TRICK_NAME_3].SetValue(5);
 	m_Trick[TRICK_NAME_4].SetValue(5);
 }
-
-
 //---------------------------------------------------------------------------------------
 //デストラクタ
 //---------------------------------------------------------------------------------------
 CTrickWindow::~CTrickWindow(void)
 {
-}
-
-//---------------------------------------------------------------------------------------
-//初期化
-//---------------------------------------------------------------------------------------
-void CTrickWindow::Init()
-{
+	m_bDrawFlg = false;
+	m_nInputInterval = 0;
 }
 //---------------------------------------------------------------------------------------
-//終了処理
+//実体の作成
 //---------------------------------------------------------------------------------------
-void CTrickWindow::Fin()
+void CTrickWindow::Create()
 {
-
+	//実体がなければ作成
+	if (!m_pTrickWindow)
+	{
+		m_pTrickWindow = new CTrickWindow;
+	}
+}
+//---------------------------------------------------------------------------------------
+//実体の削除
+//---------------------------------------------------------------------------------------
+void CTrickWindow::Delete()
+{
+	//実体があれば削除
+	if (m_pTrickWindow)
+	{
+		delete m_pTrickWindow;
+		m_pTrickWindow = NULL;
+	}
+}
+//---------------------------------------------------------------------------------------
+//実体のポインタを渡す
+//---------------------------------------------------------------------------------------
+CTrickWindow* CTrickWindow::GetPointer()
+{
+	//念のため作成関数を呼ぶ
+	Create();
+	return m_pTrickWindow;
 }
 //---------------------------------------------------------------------------------------
 //更新
 //---------------------------------------------------------------------------------------
 void CTrickWindow::UpDate()
 {
+	m_nInputInterval++;
+
 	//技選択中のみ操作可能
 	if(m_bDrawFlg)
 	{
+		//入力からの経過時間が一定以上でなkれば処理を行わない
+		if (m_nInputInterval < ButtonIntervalTime)
+			return;
+
 		//Lで決定
 		if(CInput::GetKeyTrigger(DIK_L) || CInput::GetJoyTrigger(0,3))
 		{
 			//ここで戦闘ステートへ移動
 
 			//技を使用
-			CPlayer::SetState(CTurn::GAME_STATE_ATTACK);
+			m_pPlayer->SetState(CTurn::GAME_STATE_ATTACK);
 			
 			//自身のフラグを倒す
 			m_bDrawFlg = false;
 
 			//メニューの描画フラグを倒す
-			CMenuWindow::ChangDrawFlg();
+			m_pMenuWindow->ChangDrawFlg();
+
+			//入力経過時間を初期化
+			m_nInputInterval = 0;
 		}
 
 		//KとIキーで戻る
-		if(CInput::GetKeyTrigger(DIK_K) || CInput::GetJoyTrigger(0, 2) || !CMenuWindow::GetDrawFlg())
+		if(CInput::GetKeyTrigger(DIK_K) || CInput::GetJoyTrigger(0, 2) || !m_pMenuWindow->GetDrawFlg())
 		{
 			//自身のフラグを倒す
 			m_bDrawFlg = false;
+
+			//入力経過時間を初期化
+			m_nInputInterval = 0;
 		}
 	}
 }
@@ -135,7 +166,7 @@ void CTrickWindow::Draw()
 		pDevice ->SetFVF(FVF_VERTEX_2D);
 
 		//技ウインドウ分描画
-		for(int i = 0;i < ITEM_NUM_MAX;i++)
+		for(int i = 0;i < TRICK_NUM_MAX;i++)
 		{
 			TrickName = m_Trick[i].GetName();
 			TrickID	= m_Trick[i].GetID();
@@ -248,6 +279,18 @@ int CTrickWindow::GetEffectValue(int Receipt)
 		return -99;
 		break;
 	}
+}
+
+//---------------------------------------------------------------------------------------
+//メンバ変数のポインタを設定する
+//---------------------------------------------------------------------------------------
+void CTrickWindow::SetPointer()
+{
+	//プレイヤーへのポインタを取得する
+	CUnitManager* pUnitManager = CUnitManager::GetPointer();
+	m_pPlayer = pUnitManager->GetPlayerPointer();
+	//メニューウィンドウへのポインタを取得する
+	m_pMenuWindow = CMenuWindow::GetPointer();
 }
 
 //---------------------------------------------------------------------------------------

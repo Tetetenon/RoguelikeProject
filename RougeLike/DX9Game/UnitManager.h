@@ -21,12 +21,13 @@ private:
 	//変数宣言
 
 	//シングルトン
-	static UNIT_MAP* m_pUnitManager;
+	static CUnitManager* m_pManager;
+	UNIT_MAP* m_pUnitManager;
 
-	static CUnit*	m_pPlayer;			//プレイヤーポインター
+	CUnit*	m_pPlayer;			//プレイヤーポインター
 
-	static bool		m_bMoveCanFlg;		//移動可能フラグ
-	static int		m_nMakeNumber;		//ユニットを何体生成したか。
+	bool		m_bMoveCanFlg;		//移動可能フラグ
+	int		m_nMakeNumber;		//ユニットを何体生成したか。
 
 
 	CUnitManager();		//コンストラクタ
@@ -34,50 +35,53 @@ private:
 public:
 
 	//関数宣言
-	static void Init();			//初期化
-	static void Fin();			//終了処理
-	static void Update();		//更新
-	static void Draw();			//描画
+	void Init();		//初期化
+	void Fin();			//終了処理
+	void Update();		//更新
+	void Draw();		//描画
+
+	void EnemyDelete();	//エネミーの削除
 
 	//ユニットマネージャーの作成
 	static void Create();
 	//ユニットマネージャーの削除
-	static void Destroy();
+	static void Delete();
 
 	//マネージャーのポインタを渡す
-	UNIT_MAP* GetPointer();
+	static CUnitManager* GetPointer();
 
 	//プレイヤーのポインタを取得する
-	static void SetPlayerPointer();
+	void SetPlayerPointer();
 	//プレイヤーのレベルを渡す
-	static int GetPlayerLevel();
+	int GetPlayerLevel();
 
 	//ユニット全ての行動可能フラグを変更する
-	static void ChangeMoveCanFlg(bool ChangeFlg);
+	void ChangeMoveCanFlg(bool ChangeFlg);
 
 	//-----ユニット関連の操作-----
 	//ユニットを追加する
-	static void Add(int UnitID,CUnit* pUnit);
+	void Add(int UnitID,CUnit* pUnit);
 	//ユニットを削除する
-	static void Del(int UnitID);
+	void Del(int UnitID);
 	//ユニットを探索する
-	static CUnit*  Find(int UnitID);
+	CUnit*  Find(int UnitID);
 
 	//-----プレイヤーの情報を渡す-----
-	static int GetPlayerPosX();
-	static int GetPlayerPosZ();
+	CUnit* GetPlayerPointer();
+	int GetPlayerPosX();
+	int GetPlayerPosZ();
 
-	static bool GetMoveFlg()
+	bool GetMoveFlg()
 	{
 		return m_bMoveCanFlg;
 	}
 
-	static int GetMakeNum()
+	int GetMakeNum()
 	{
 		return m_nMakeNumber;
 	}
 
-	static void AddMakeNum(int nAddNum)
+	void AddMakeNum(int nAddNum)
 	{
 		m_nMakeNumber += nAddNum;
 	}

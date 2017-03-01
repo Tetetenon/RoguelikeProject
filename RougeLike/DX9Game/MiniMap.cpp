@@ -3,6 +3,12 @@
 #include "TextureManager.h"
 #include "EditTexture.h"
 #include "MapData.h"
+#include "Input.h"
+
+//---------------------------------------------------------------------------------------
+//静的メンバ変数宣言
+//---------------------------------------------------------------------------------------
+CMiniMap* CMiniMap::m_pMinimap = NULL;
 
 namespace
 {
@@ -91,9 +97,9 @@ static DWORD GetGridColorByMapData(const Map& map_data)
 	return GRID_COLOR[GetGridTypeByMapData(map_data)];
 }
 
-static void WriteGrid(int x, int y, CEditTexture* pMiniMap)
+static void WriteGrid(int x, int y, CEditTexture* pMiniMap,CMapData* pMapData)
 {
-	const DWORD col = GetGridColorByMapData(CMapData::Get_MapData(x,y));
+	const DWORD col = GetGridColorByMapData(pMapData->Get_MapData(x,y));
 	WriteGridForTexture(x,y,col, pMiniMap);
 }
 
@@ -104,10 +110,14 @@ static void WriteGrid(int x, int y, CEditTexture* pMiniMap)
 CMiniMap::CMiniMap(void)
 	: m_pEditTexture(NULL)
 {
+	m_nMapMode = 0;
+	m_nInterval = 0;
+
+	SizeChange();
+
 	m_pEditTexture = new CEditTexture(POLYGON_WIDTH,POLYGON_HEIGHT,CGraphics::GetDevice());
 	//
-	m_pEditTexture->FillColor(D3DCOLOR_RGBA(0,0,0,0));	
-	SetPosLeftUpOrigin(POLYGON_ORIGIN_X,POLYGON_ORIGIN_Y,POLYGON_WIDTH,POLYGON_HEIGHT);
+	m_pEditTexture->FillColor(D3DCOLOR_RGBA(0,0,0,0));
 }
 
 
@@ -118,18 +128,76 @@ CMiniMap::~CMiniMap(void)
 {
 	delete m_pEditTexture;
 }
-
+//---------------------------------------------------------------------------------------
+//実体の作成
+//---------------------------------------------------------------------------------------
+void CMiniMap::Create()
+{
+	//中身がなければ作成
+	if (!m_pMinimap)
+	{
+		m_pMinimap = new CMiniMap;
+	}
+}
+//---------------------------------------------------------------------------------------
+//実体の削除
+//---------------------------------------------------------------------------------------
+void CMiniMap::Delete()
+{
+	//中身があれば削除
+	if (m_pMinimap)
+	{
+		delete m_pMinimap;
+		m_pMinimap = NULL;
+	}
+}
+//---------------------------------------------------------------------------------------
+//実体のポインタを渡す
+//---------------------------------------------------------------------------------------
+CMiniMap* CMiniMap::GetPointer()
+{
+	//念のため作成関数を呼ぶ
+	Create();
+	return m_pMinimap;
+}
 //---------------------------------------------------------------------------------------
 //更新
 //---------------------------------------------------------------------------------------
 void CMiniMap::Update()
 {
+	m_nInterval++;
+
 	// ミニマップのクリア
 	m_pEditTexture->FillColor(GRID_COLOR[TYPE_LINE]);
 	// 各グリッドの更新
 	for (int y = 0; y < MAP_SIZE; ++y)
 		for (int x = 0; x < MAP_SIZE; ++x)
-			WriteGrid(x,y,m_pEditTexture);
+			WriteGrid(x,y,m_pEditTexture,m_pMapData);
+
+
+	//Mを押すとマップサイズを変更
+	if (m_nInterval < ButtonIntervalTime)
+		return;
+	if (CInput::GetKeyTrigger(DIK_M) || CInput::GetJoyTrigger(0, 11))
+	{
+		m_nMapMode++;
+		m_nMapMode %= MAX_MAP_MODE;
+
+		//サイズの変更
+		SizeChange();
+
+		m_nInterval = 0;
+	}
+	if (CInput::GetKeyTrigger(DIK_N) || CInput::GetJoyTrigger(0, 10))
+	{
+		m_nMapMode++;
+		m_nMapMode %= MAX_MAP_MODE;
+
+		//サイズの変更
+		SizeChange();
+
+		m_nInterval = 0;
+	}
 }
 
 //---------------------------------------------------------------------------------------
@@ -156,9 +224,42 @@ void CMiniMap::Draw()
 	pDevice -> DrawPrimitiveUP(
 		D3DPT_TRIANGLESTRIP,          //プリミティブの種類List（三角形描く）Strip(つなげて作る)
 		NUM_POLYGON,                 //ポリゴン数
-		m_aVertex,            //配列の先頭アドレス
+		m_aVertex,					//配列の先頭アドレス
 		sizeof(VERTEX_2D)            //データの大きさ
 		);
 
 
+}
+
+//---------------------------------------------------------------------------------------
+//ポインタの設定
+//---------------------------------------------------------------------------------------
+void CMiniMap::SetPointer()
+{
+	//ポインタの取得
+	m_pMapData = CMapData::GetPointer();
+}
+
+//---------------------------------------------------------------------------------------
+//ポリゴンのサイズを変更する
+//---------------------------------------------------------------------------------------
+void CMiniMap::SizeChange()
+{
+	//現在のモードでポリゴンサイズを変更する
+	switch (m_nMapMode)
+	{
+		//ノーマルサイズ
+	case 0:
+		SetPosLeftUpOrigin(POLYGON_ORIGIN_X, POLYGON_ORIGIN_Y, POLYGON_WIDTH, POLYGON_HEIGHT);
+		break;
+		//最大サイズ
+	case 1:
+		SetPosLeftUpOrigin(0,0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		break;
+		//消去
+	case 2:
+		SetPosLeftUpOrigin(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,0,0);
+		break;
+
+	}
 }

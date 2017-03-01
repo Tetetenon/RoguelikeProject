@@ -10,16 +10,20 @@
 CFieldObj::CFieldObj(CGameScene* Scene):
 CMeshObj(Scene)
 {
+	//ポインタを取得
+	m_pMapObjManager = CMapObjManager::GetPointer();
+	m_pMapData = CMapData::GetPointer();
+
 	//IDの設定
 	m_uID = ID_MESHOOBJ;
 
 	//自身の番号の設定
-	m_ObjNumber = CMapObjManager::GetNextNumber();
+	m_ObjNumber = m_pMapObjManager->GetNextNumber();
 	//次の番号を設定
-	CMapObjManager::SetNextNumber(m_ObjNumber + 1);
+	m_pMapObjManager->SetNextNumber(m_ObjNumber + 1);
 
 	//オブジェクトをリストに追加
-	CMapObjManager::Add(m_ObjNumber,this);
+	m_pMapObjManager->Add(m_ObjNumber,this);
 }
 
 //---------------------------------------------------------------------------------------
@@ -40,7 +44,7 @@ void CFieldObj::Update()
 		return;
 
 	//自身の上にユニットが存在するかどうかを確認する
-	if (0 != CMapData::Get_UnitMapSituation(m_nUnit_Pos_X,m_nUnit_Pos_Z - 1))
+	if ((0 != m_pMapData->Get_UnitMapSituation(m_nUnit_Pos_X,m_nUnit_Pos_Z - 1)) || (0 != m_pMapData->Get_ItemMapSituation(m_nUnit_Pos_X, m_nUnit_Pos_Z - 1)))
 	{
 		//ユニットが存在する場合、フラグを立てて、半透明描画に切り替える
 		m_bNearUnitFlg = true;

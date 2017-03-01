@@ -6,6 +6,9 @@
 #include "define.h"
 
 #include "Structure.h"
+class CFade;
+class CUnitManager;
+class CEnemyGenerator;
 
 //区画のサイズ
 #define SECTION_MIN_SIZE 8
@@ -92,37 +95,49 @@ struct AStarList
 class CMapData
 {
 private:
+	//シングルトン
+	static CMapData* m_pMapData;
 
 	//-----マップデータ-----
-	static Map						m_MapData[MAP_SIZE][MAP_SIZE];				// 新しいマップ情報
+	Map						m_MapData[MAP_SIZE][MAP_SIZE];				// 新しいマップ情報
 
-	static bool						m_bCheckFlg[MAP_SIZE][MAP_SIZE];			//確認が完了したか
-	static int						m_nCost[MAP_SIZE][MAP_SIZE];				//現在地からの移動コスト
-	static int						m_nScore[MAP_SIZE][MAP_SIZE];				//特定の位置から目標位置までのコスト
+	CUnitManager*			m_pUnitManager;
+	CEnemyGenerator*		m_pEnemyGerenator;
+	bool						m_bCheckFlg[MAP_SIZE][MAP_SIZE];			//確認が完了したか
+	int						m_nCost[MAP_SIZE][MAP_SIZE];				//現在地からの移動コスト
+	int						m_nScore[MAP_SIZE][MAP_SIZE];				//特定の位置から目標位置までのコスト
 
-	static LPDIRECT3DVERTEXBUFFER9	m_pD3DVtxBuff;								//頂点バッファインタフェースへのポインタ
-	static LPDIRECT3DINDEXBUFFER9	m_pD3DIdxBuff;								//インデックスバッファ
-	static D3DXMATRIX				m_mtxWorld;									//ワールドマトリックス
+	LPDIRECT3DVERTEXBUFFER9	m_pD3DVtxBuff;								//頂点バッファインタフェースへのポインタ
+	LPDIRECT3DINDEXBUFFER9	m_pD3DIdxBuff;								//インデックスバッファ
+	D3DXMATRIX				m_mtxWorld;									//ワールドマトリックス
 
-	static int						m_NumVertexIndex;							//インデックス数
-	static int						m_NumVertex;								//総頂点数
-	static int						m_NumPolygon;								//ポリゴン数
+	int						m_NumVertexIndex;							//インデックス数
+	int						m_NumVertex;								//総頂点数
+	int						m_NumPolygon;								//ポリゴン数
 
-	static RECT						m_Section[ROOM_MAX_NUM];					//区画
-	static RECT						m_Room[ROOM_MAX_NUM];						//部屋の大きさ(間取り?)
+	RECT					m_Section[ROOM_MAX_NUM];					//区画
+	RECT					m_Room[ROOM_MAX_NUM];						//部屋の大きさ(間取り?)
 
-	static int						m_CountMakeRoom;							//実際に生成した部屋の数
+	int						m_CountMakeRoom;							//実際に生成した部屋の数
 
-	static int						m_nHierarchyNum;							//階層数を保持する
+	int						m_nHierarchyNum;							//階層数を保持する
 
-	static LPD3DXFONT				m_pFont;									//描画フォントの設定
-	static RECT						m_FontDrawPos;								//フォントの描画位置を設定する
-	static int						m_nDividPattern;							//生成するマップパターン
-	
+	LPD3DXFONT				m_pFont;									//描画フォントの設定
+	RECT					m_FontDrawPos;								//フォントの描画位置を設定する
+	int						m_nDividPattern;							//生成するマップパターン
+	CFade*					m_pFade;
 
-	static AStar		m_AStarData[MAP_SIZE][MAP_SIZE];//A*アルゴリズムに使用する構造体
-	static AStarList*	m_pAstarList;
+	AStar		m_AStarData[MAP_SIZE][MAP_SIZE];//A*アルゴリズムに使用する構造体
+	AStarList*	m_pAstarList;
+
+	CMapData(void);										//コンストラクタ
+	~CMapData(void);									//デストラクタ
 public:
+	static void Create();
+	static void Delete();
+	static CMapData* GetPointer();
+
+
 	//方向
 	enum VectorFlg
 	{
@@ -133,9 +148,6 @@ public:
 		Max
 	};
 
-	CMapData(void);										//コンストラクタ
-	~CMapData(void);									//デストラクタ
-
 	void Init();										//初期化
 	void UpDate();										//更新
 	void Draw();										//描画
@@ -144,97 +156,100 @@ public:
 	void SetFontPos();									//文字描画位置を設定
 
 	//現在の階層数を取得
-	static int GetHierarchieNum()	{return m_nHierarchyNum;}
+	int GetHierarchieNum()	{return m_nHierarchyNum;}
 
 	// ----地形情報の取得
-	static const Map& Get_MapData(int,int);
+	const Map& Get_MapData(int,int);
 
 	//-----地形マップ状態取得-----
-	static int Get_TerrainMapSituation (int,int);				//地形配列の位置を指定し状態を返す
+	int Get_TerrainMapSituation (int,int);				//地形配列の位置を指定し状態を返す
 
 	//-----ユニットマップ状態取得-----
-	static int Get_UnitMapSituation (int,int);					//ユニット配列の位置を指定し、状態を返す
+	int Get_UnitMapSituation (int,int);					//ユニット配列の位置を指定し、状態を返す
 
 	//-----アイテムマップ状態取得-----
-	static int Get_ItemMapSituation (int,int);					//アイテム配列の位置を取得し、状態を返す
+	int Get_ItemMapSituation (int,int);					//アイテム配列の位置を取得し、状態を返す
 
 	//-----ユニットマップ操作-----
-	static void Back_UnitMap	(int,int);				//指定した位置情報を元に戻す。
-	static void Set_UnitMap		(int,int,int);			//指定した位置情報を指定した値に変更する。
+	void Back_UnitMap	(int,int);				//指定した位置情報を元に戻す。
+	void Set_UnitMap		(int,int,int);			//指定した位置情報を指定した値に変更する。
 
 	//-----可視化-----
-	static void SetDark(int,int, BOOL);
-	static void SetVisibleProcess(int,int);
-	static void SetRoomVisible(int);
+	void SetDark(int,int, BOOL);
+	void SetVisibleProcess(int,int);
+	void SetRoomVisible(int);
 
 	//-----アイテムマップ操作-----
-	static void Back_ItemMap	(int,int);				//指定した位置情報を元に戻す。
-	static void Set_ItemMap		(int,int,int);				//指定した位置情報を指定した値に変更する。
+	void Back_ItemMap	(int,int);				//指定した位置情報を元に戻す。
+	void Set_ItemMap		(int,int,int);				//指定した位置情報を指定した値に変更する。
 
 	//-----マップをすべて初期化する-----
-	static void AllInitMapData();
+	void AllInitMapData();
 
 	//-----マップを生成する-----
-	static void MapGeneration();
+	void MapGeneration();
 
 	//マップを区画で分離する
-	static void DivideMap();
+	void DivideMap();
 
 	//部屋を作成する
-	static void MakeRoom();
+	void MakeRoom();
 
 	//通路を作成する
-	static void MakeRoot();
+	void MakeRoot();
 
 	//階段の位置を決定する
-	static void StairsSet();
+	void StairsSet();
 
 	//指定された位置が、部屋の中か判定する
-	static bool CheckInTheRoom(int,int);
+	bool CheckInTheRoom(int,int);
 
 	//指定された位置に階段があるか判断する
-	static bool CheckStairs(int,int);
+	bool CheckStairs(int,int);
 
 	//指定された位置が、どの部屋か、判別し、部屋番号を返す(部屋にいなければ、最大部屋番号を渡す)
-	static int GetRoomNumber(int,int);
+	int GetRoomNumber(int,int);
 
 	//指定された部屋番号の間取りを取得する
-	static RECT GetRoomFloorPlan(int);
+	RECT GetRoomFloorPlan(int);
 
 	//現在の階層数を描画する
-	static void DrawHierarchyNum();
+	void DrawHierarchyNum();
 
 	//A*アルゴリズム用構造体の初期化を行う
-	static void InitAStarData();	
+	void InitAStarData();	
 
 	//A*アルゴリズムの構造体のデータを設定する
-	static void ASarSetData(int NowPosX,int NowPosZ,int EnemyPosX,int EnemyPosZ,int PlayerPosX,int PlayerPosZ);
+	void ASarSetData(int NowPosX,int NowPosZ,int EnemyPosX,int EnemyPosZ,int PlayerPosX,int PlayerPosZ);
 
 	//指定された位置周囲の移動可能な場所を検索しリストへ追加する
-	static void SearchPosition(int SearchPosX,int SearchPosZ,int EnemyPosX,int EnemyPosZ,int PlayerPosX,int PlayerPosZ);
+	void SearchPosition(int SearchPosX,int SearchPosZ,int EnemyPosX,int EnemyPosZ,int PlayerPosX,int PlayerPosZ);
 
 	//A*アルゴリズムにおける、値を計算する
-	static float AStarCalculator(int NowPosX,int NowPosZ,int GoalPosX,int GoalPosZ);
+	float AStarCalculator(int NowPosX,int NowPosZ,int GoalPosX,int GoalPosZ);
 
 	//リスト内の、最もスコアの小さい位置を検索し、渡す
-	static void SearchMinScoreData(int *PosX,int *PosZ);
+	void SearchMinScoreData(int *PosX,int *PosZ);
 
 	//セルの状態を遷移させる
-	static void CompleteCellCal(int PosX,int PosZ,int State);
+	void CompleteCellCal(int PosX,int PosZ,int State);
 
 	//指定された位置の親の場所を返す
-	static void GetParentPos(int ChildPosX,int ChildPosZ,int *ParentPosX,int *ParentPosZ);
+	void GetParentPos(int ChildPosX,int ChildPosZ,int *ParentPosX,int *ParentPosZ);
 
 	//指定された区画同士が一部でも重なっているか返す
-	static bool CheckSectionOverRide(int Section1,int Section2, VectorFlg VectorFlg);
+	bool CheckSectionOverRide(int Section1,int Section2, VectorFlg VectorFlg);
 
 	//フィールド上にオブジェクトを配置する
-	static void SetFieldObj();
+	void SetFieldObj();
 
 	//生成した部屋の数を取得する
-	static int GetMakeRoomNum()
+	int GetMakeRoomNum()
 	{
 		return m_CountMakeRoom;
 	}
+
+	//メンバ変数のポインタを設定する
+	void SetPointer();
 };
 

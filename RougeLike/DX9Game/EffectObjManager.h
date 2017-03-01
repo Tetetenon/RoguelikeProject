@@ -19,10 +19,11 @@ private:
 	//変数
 
 	//シングルトン
-	static EFFECTOBJ_MAP*	m_pEffectManager;
+	static CEffectObjManager* m_pEffectManager;
+	EFFECTOBJ_MAP*	m_pEffectMap;
 
 	//次のエフェクトの番号
-	static int				m_nEffectNumber;
+	int				m_nEffectNumber;
 
 	//関数
 
@@ -30,25 +31,26 @@ private:
 	~CEffectObjManager();					//デストラクタ
 public:
 	//関数
-	static void Init();						//初期化
-	static void Fin();						//終了処理
-	static void Update();					//更新
-	static void Draw();						//描画
+	void Init();						//初期化
+	void Fin();						//終了処理
+	void Update();					//更新
+	void Draw();						//描画
 
 	static void Create();					//マネージャーの作成
 	static void Delete();					//マネージャーの削除
+	static CEffectObjManager* GetPointer();				//ポインタを渡す
 
 	//エフェクトの番号の取得
-	static int GetEffectNumber() { return m_nEffectNumber; }
+	int GetEffectNumber() { return m_nEffectNumber; }
 	//エフェクト番号の設定
-	static void SetEffectNumber(int nNumber) { m_nEffectNumber = nNumber; }
+	void SetEffectNumber(int nNumber) { m_nEffectNumber = nNumber; }
 
 	//-----リストの操作-----
 	//オブジェクトの追加
-	static void Add(int ID, CEffectObj* pAdd);
+	void Add(int ID, CEffectObj* pAdd);
 	//オブジェクトの削除
-	static void Del(int ID);
+	void Del(int ID);
 	//オブジェクトの探索
-	static CEffectObj* Find(int ID);
+	CEffectObj* Find(int ID);
 };
 

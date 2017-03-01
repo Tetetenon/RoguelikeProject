@@ -6,8 +6,7 @@
 //---------------------------------------------------------------------------------------
 //静的メンバ定義
 //---------------------------------------------------------------------------------------
-int			CStatesFont::m_nTextureNumber[STATES_FONT_MAX];		//使用するテクスチャ設定用
-VERTEX_2D	CStatesFont::m_aVertex[STATES_FONT_MAX][NUM_VERTEX];	//ポリゴン情報格納用
+CStatesFont* CStatesFont::m_pStatesFont;
 
 //---------------------------------------------------------------------------------------
 //コンストラクタ
@@ -28,6 +27,40 @@ CStatesFont::CStatesFont(void)
 //---------------------------------------------------------------------------------------
 CStatesFont::~CStatesFont(void)
 {
+}
+//---------------------------------------------------------------------------------------
+//実体の作成
+//---------------------------------------------------------------------------------------
+void CStatesFont::Create()
+{
+	//中身の確認
+	if (!m_pStatesFont)
+	{
+		//中身が存在しなければ作成
+		m_pStatesFont = new CStatesFont;
+	}
+}
+//---------------------------------------------------------------------------------------
+//実体の削除
+//---------------------------------------------------------------------------------------
+void CStatesFont::Delete()
+{
+	//中身の確認
+	if (m_pStatesFont)
+	{
+		//中身があれば削除
+		delete m_pStatesFont;
+		m_pStatesFont = NULL;
+	}
+}
+//---------------------------------------------------------------------------------------
+//実体のポインタを渡す
+//---------------------------------------------------------------------------------------
+CStatesFont* CStatesFont::GetPointer()
+{
+	//念のため作成
+	Create();
+	return m_pStatesFont;
 }
 //---------------------------------------------------------------------------------------
 //描画
@@ -86,10 +119,10 @@ void CStatesFont::SetVertex()
 	for(int i = 0;i < STATES_FONT_MAX;i++)
 	{
 		//位置情報設定
-		m_aVertex[i][0].pos = D3DXVECTOR3((float) 20.0f,(float)185.0f + FontScale * i + (FontClearance),0.0f);
-		m_aVertex[i][1].pos = D3DXVECTOR3((float)130.0f,(float)185.0f + FontScale * i + (FontClearance),0.0f);
-		m_aVertex[i][2].pos = D3DXVECTOR3((float) 20.0f,(float)185.0f + FontScale * i + (FontClearance) + FontScale,0.0f);
-		m_aVertex[i][3].pos = D3DXVECTOR3((float)130.0f,(float)185.0f + FontScale * i + (FontClearance) + FontScale,0.0f);
+		m_aVertex[i][0].pos = D3DXVECTOR3((float) 20.0f,(float) 90.0f + FontScale * i + (FontClearance),0.0f);
+		m_aVertex[i][1].pos = D3DXVECTOR3((float)150.0f,(float) 90.0f + FontScale * i + (FontClearance),0.0f);
+		m_aVertex[i][2].pos = D3DXVECTOR3((float) 20.0f,(float) 90.0f + FontScale * i + (FontClearance) + FontScale,0.0f);
+		m_aVertex[i][3].pos = D3DXVECTOR3((float)150.0f,(float) 90.0f + FontScale * i + (FontClearance) + FontScale,0.0f);
 
 		//パースペクティブ設定?
 		m_aVertex[i][0].rhw = 1.0f;

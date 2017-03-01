@@ -5,10 +5,17 @@
 class CStatesCharacter :
 	public C2DTexture
 {
-public:
+private:
+	//シングルトン
+	static CStatesCharacter* m_pStatesCharacter;
+
 	CStatesCharacter(void);		//コンストラクタ
 	~CStatesCharacter(void);		//デストラクタ
+public:
+	static void Create();					//実体作成
+	static void Delete();					//実体削除
+	static CStatesCharacter* GetPointer();	//実体のポインタを渡す
 
-	void Update(int nPlayerState);				//テクスチャデータの更新
+	void ChangeTexture(int nPlayerState);		//使用するテクスチャの交換
 };
 

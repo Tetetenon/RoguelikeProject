@@ -15,21 +15,11 @@
 
 
 //HP最大描画サイズ
-#define HP_MAX_WIDHT 210
+#define HP_MAX_WIDHT 250
 //---------------------------------------------------------------------------------------
 //静的メンバ実体定義
 //---------------------------------------------------------------------------------------
-LPD3DXFONT			CHPDraw::m_pFont;						//描画フォントの設定
-RECT				CHPDraw::m_FontDrawPos;					//フォントの描画位置を設定する
-
-char				CHPDraw::m_States[256];	//ステータス(HP情報)を格納する
-
-VERTEX_2D			CHPDraw::m_aVertex[NUM_VERTEX];			//テクスチャの描画位置
-
-int				CHPDraw::m_nHP;								//描画するユニットの現在の体力
-int				CHPDraw::m_nMaxHP;							//描画するユニットの最大HP
-
-
+CHPDraw* CHPDraw::m_pHPDraw = NULL;
 //---------------------------------------------------------------------------------------
 //コンストラクタ
 //---------------------------------------------------------------------------------------
@@ -37,6 +27,8 @@ CHPDraw::CHPDraw(void)
 {
 	//各種メンバ変数の初期化
 	m_pFont = NULL;
+	m_nHP = 0;
+	m_nMaxHP = 0;
 
 	//グラフィックデバイスの取得
 	LPDIRECT3DDEVICE9	pDevice = CGraphics::GetDevice();
@@ -51,7 +43,6 @@ CHPDraw::CHPDraw(void)
 	SetFontPos();
 }
 
-
 //---------------------------------------------------------------------------------------
 //デストラクタ
 //---------------------------------------------------------------------------------------
@@ -59,22 +50,38 @@ CHPDraw::~CHPDraw(void)
 {
 
 }
-
-
 //---------------------------------------------------------------------------------------
-//初期化
+//実体の作成
 //---------------------------------------------------------------------------------------
-void CHPDraw::Init()
+void CHPDraw::Create()
 {
-
+	//中身が存在していない場合作成
+	if (!m_pHPDraw)
+	{
+		m_pHPDraw = new CHPDraw;
+	}
 }
-
 //---------------------------------------------------------------------------------------
-//終了処理
+//実体の削除
 //---------------------------------------------------------------------------------------
-void CHPDraw::Fin()
+void CHPDraw::Delete()
 {
-
+	//中身の確認
+	if (m_pHPDraw)
+	{
+		//中身があれば削除
+		delete m_pHPDraw;
+		m_pHPDraw = NULL;
+	}
+}
+//---------------------------------------------------------------------------------------
+//実体のポインタを渡す
+//---------------------------------------------------------------------------------------
+CHPDraw* CHPDraw::GetPointer()
+{
+	//念のため作成
+	Create();
+	return m_pHPDraw;
 }
 //---------------------------------------------------------------------------------------
 //更新
@@ -115,10 +122,7 @@ void CHPDraw::Draw()
 void CHPDraw::SetVertex()
 {
 	//位置情報設定
-	m_aVertex[0].pos = D3DXVECTOR3((float)20.0f					,(float) 165.0f,0.0f);
-	m_aVertex[1].pos = D3DXVECTOR3((float)20.0f + HP_MAX_WIDHT	,(float) 165.0f,0.0f);
-	m_aVertex[2].pos = D3DXVECTOR3((float)20.0f					,(float) 185.0f,0.0f);
-	m_aVertex[3].pos = D3DXVECTOR3((float)20.0f + HP_MAX_WIDHT	,(float) 185.0f,0.0f);
+	SetPosition();
 
 	//パースペクティブ設定?
 	m_aVertex[0].rhw = 1.0f;
@@ -143,10 +147,10 @@ void CHPDraw::SetVertex()
 //---------------------------------------------------------------------------------------
 void CHPDraw::SetFontPos()
 {
-	m_FontDrawPos.left		= (LONG)125.0f;
-	m_FontDrawPos.top		= (LONG)130.0f;
-	m_FontDrawPos.right		= (LONG)230.0f;
-	m_FontDrawPos.bottom	= (LONG)150.0f;
+	m_FontDrawPos.left		= (LONG)240.0f;
+	m_FontDrawPos.top		= (LONG) 15.0f;
+	m_FontDrawPos.right		= (LONG)300.0f;
+	m_FontDrawPos.bottom	= (LONG) 45.0f;
 }
 //---------------------------------------------------------------------------------------
 //描画するHP数値をセット
@@ -175,8 +179,8 @@ void CHPDraw::SetPosition()
 	float nPercentage = ((float)m_nHP / (float)m_nMaxHP);
 
 	//位置情報設定
-	m_aVertex[0].pos = D3DXVECTOR3((float)20.0f								,(float)165.0f,0.0f);
-	m_aVertex[1].pos = D3DXVECTOR3((float)20.0f + nPercentage * HP_MAX_WIDHT,(float)165.0f,0.0f);
-	m_aVertex[2].pos = D3DXVECTOR3((float)20.0f								,(float)185.0f,0.0f);
-	m_aVertex[3].pos = D3DXVECTOR3((float)20.0f + nPercentage * HP_MAX_WIDHT,(float)185.0f,0.0f);
+	m_aVertex[0].pos = D3DXVECTOR3((float)300.0f								,(float)15.0f,0.0f);
+	m_aVertex[1].pos = D3DXVECTOR3((float)300.0f + nPercentage * HP_MAX_WIDHT	,(float)15.0f,0.0f);
+	m_aVertex[2].pos = D3DXVECTOR3((float)300.0f								,(float)45.0f,0.0f);
+	m_aVertex[3].pos = D3DXVECTOR3((float)300.0f + nPercentage * HP_MAX_WIDHT	,(float)45.0f,0.0f);
 }

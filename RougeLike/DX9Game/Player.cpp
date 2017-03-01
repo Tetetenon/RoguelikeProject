@@ -2,9 +2,16 @@
 #include "Player.h"
 #include "Input.h"
 #include "Enemy.h"
+
 #include "ItemCommandCursor.h"
 #include "ItemWindowCursor.h"
+
 #include "EquipmentCommandWindow.h"
+#include "EquipmentWindowCursor.h"
+#include "EquipmentCommandCursor.h"
+
+#include "StatesValue.h"
+#include "Fade.h"
 #include "EnemyGenerator.h"
 #include "MessageWindow.h"
 #include "ModelManager.h"
@@ -12,23 +19,12 @@
 #include "GameScene.h"
 #include "HPDraw.h"
 #include "MenuWindow.h"
-#include "EquipmentWindowCursor.h"
 #include "TextureManager.h"
 #include "MiniMap.h"
 #include "UnitManager.h"
 
 //回復する間隔
 #define RecoveryIntervalTime 3
-
-CInventoryCursor	CPlayer::m_InventoryCursor;	//アイテムウインドウのカーソルの位置を特定する
-CCommandCursor		CPlayer::m_CommandCursor;	//コマンドカーソルの位置を特定する
-
-LPD3DXFONT			CPlayer::m_pFont;			//描画フォントの設定
-RECT				CPlayer::m_FontDrawPos;		//フォントの描画位置を設定する
-
-CTurn::GameState	CPlayer::m_State_Cpy;					//外部からステートの変更を掛ける
-bool	CPlayer::m_bState_Change_Flg = false;;	//外部からのステート変更がかかったか
-
 #define PATH_DATA_PLAYER		("../data/txt/Player.txt")
 #define PATH_LEVEL_UP_PLAYER	("../data/txt/LevelUp_Player.txt")
 #define SPEED 0.0f
@@ -51,7 +47,7 @@ m_nEquipmentInterval(0)
 	LPDIRECT3DDEVICE9 pDevice = CGraphics::GetDevice();
 
 	//フォントへのポインタを取得する
-	D3DXCreateFont(pDevice,24,0,1,0,FALSE,SHIFTJIS_CHARSET,OUT_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH,NULL,&m_pFont);
+	D3DXCreateFont(pDevice,23,0,1,0,FALSE,SHIFTJIS_CHARSET,OUT_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH,NULL,&m_pFont);
 	//フォント描画位置を設定
 	SetFontPos();
 
@@ -137,8 +133,6 @@ m_nEquipmentInterval(0)
 	m_nMaxHP = PlayerData[STATES_MAX_HP];
 	m_nHP = PlayerData[STATES_HP];
 
-	//m_nHP = 1;
-
 	//攻撃力を設定
 	m_nAttack = PlayerData[STATES_AT];
 
@@ -162,20 +156,18 @@ m_nEquipmentInterval(0)
 	//生きている
 	m_bSurvival = true;
 
-	//位置情報の設定
-	SetPos();
+	//メンバ変数のポインタを取得する
+	MemberPointerGet();
+
 
 	//画面に描画してもらう最大HPを渡す
-	CHPDraw::SetMaxHP(m_nMaxHP);
+	m_pHPDraw->SetMaxHP(m_nMaxHP);
 
 	//画面に描画してもらうHPの数値を渡す
-	CHPDraw::SetHP(m_nHP);
+	m_pHPDraw->SetHP(m_nHP);
 
 	//ステートの設定
-	m_nStateNumber = m_State_Cpy = CTurn::GAME_STATE_STAND_BY;
-
-	//外部からのステート変更なし
-	m_bState_Change_Flg = false;
+	m_nStateNumber = CTurn::GAME_STATE_STAND_BY;
 
 	//装備コマンドウィンドウ描画時間を初期化
 	m_nEquipmentInterval = 0;
@@ -186,9 +178,9 @@ m_nEquipmentInterval(0)
 	m_bDirectionFlg[Forword] = true;
 
 	//シーン上にオブジェクトの追加
-	CUnitManager::Add(m_nUnitNumber, this);
+	m_pUnitManager->Add(m_nUnitNumber, this);
 	//プレイヤーのポインタをマネージャーに設定させる
-	CUnitManager::SetPlayerPointer();
+	m_pUnitManager->SetPlayerPointer();
 }
 
 //---------------------------------------------------------------------------------------
@@ -198,11 +190,6 @@ CPlayer::~CPlayer(void)
 {
 	//メッシュオブジェクトとしての終了処理
 	CMeshObj::Fin();
-	//アイテムインベントリの終了処理
-	m_pInventory ->Fin();
-
-	//装備インベントリの終了処理
-	m_pEquipment ->Fin();
 
 	//回復する間隔を初期化
 	m_nRecoveryInterval = 0;
@@ -212,10 +199,10 @@ CPlayer::~CPlayer(void)
 //---------------------------------------------------------------------------------------
 void CPlayer::SetFontPos()
 {
-	m_FontDrawPos.left		= (LONG)125.0f;
-	m_FontDrawPos.top		= (LONG) 70.0f;
-	m_FontDrawPos.right		= (LONG)230.0f;
-	m_FontDrawPos.bottom	= (LONG) 90.0f;
+	m_FontDrawPos.left		= (LONG)140.0f;
+	m_FontDrawPos.top		= (LONG) 15.0f;
+	m_FontDrawPos.right		= (LONG)240.0f;
+	m_FontDrawPos.bottom	= (LONG) 45.0f;
 }
 
 //---------------------------------------------------------------------------------------
@@ -223,37 +210,28 @@ void CPlayer::SetFontPos()
 //---------------------------------------------------------------------------------------
 void CPlayer::Update()
 {
-	//外部から変更したステートを確認し、違えば本来のステートも変更をかける
-	if(m_bState_Change_Flg)
-	{
-		m_nStateNumber = m_State_Cpy;
-		m_bState_Change_Flg = false;
-	}
-
-	//コピーを設定
-	m_State_Cpy = m_nStateNumber;
 	//ユニット本来の更新をかける
 	CUnit::Update();
 
 	//装備画面のコマンドを描画していて、決定ボタンを押していれば、装備アイテムをアイテム欄に戻す
-	if(CEquipmentCommandWindow::GetDrawFlg())
+	if(m_pEquipmentCommandWindow->GetDrawFlg())
 	{
 		//装備コマンドウィンドウの描画時間を加算
 		m_nEquipmentInterval++;
 
 		if((CInput::GetKeyTrigger(DIK_L) || CInput::GetJoyTrigger(0, 3)) && m_nEquipmentInterval > 30)
 		{
-			if(m_pInventory->SetItem(m_pEquipment->GetItem(CEquipmentInventoryCursor::GetItemNum())))
+			if(m_pInventory->SetItem(m_pEquipment->GetItem(m_pEquipmentInventoryCursor->GetItemNum())))
 			{
 				//メッセージ表記
 				TCHAR	str[256];
-				sprintf_s(str, _T("%sを戻した"),m_pEquipment->GetInventoryItemName(CEquipmentInventoryCursor::GetItemNum()));
+				sprintf_s(str, _T("%sを戻した"),m_pEquipment->GetInventoryItemName(m_pEquipmentInventoryCursor->GetItemNum()));
 	
 				//メッセージテスト
-				MessageWindow::SetMassege(str);
+				m_pMessageWindow->SetMassege(str);
 
 				//装備インベントリ側のアイテムの破棄
-				m_pEquipment->DelInventory(CEquipmentInventoryCursor::GetItemNum());
+				m_pEquipment->DelInventory(m_pEquipmentInventoryCursor->GetItemNum());
 
 				//コマンドウィンドウ描画時間を初期化
 				m_nEquipmentInterval= 0;
@@ -261,7 +239,7 @@ void CPlayer::Update()
 			else
 			{
 				//メッセージテスト
-				MessageWindow::SetMassege(_T("アイテムがいっぱいだった!"));
+				m_pMessageWindow->SetMassege(_T("アイテムがいっぱいだった!"));
 
 				//コマンドウィンドウ描画時間を初期化
 				m_nEquipmentInterval= 0;
@@ -271,11 +249,11 @@ void CPlayer::Update()
 
 	//-----ステータス描画のため、プレイヤーのステータスデータを渡す-----
 	//攻撃力(装備加算の分も描画)
-	CStatesValue::SetNumAttack(m_nAttack + m_pEquipment -> GetAttackTotalValue());
+	m_pStatesValue->SetNumAttack(m_nAttack + m_pEquipment -> GetAttackTotalValue());
 	//防御力(装備加算分も描画)
-	CStatesValue::SetNumDefence(m_nDefence + m_pEquipment ->GetDefenceTotalValue());
+	m_pStatesValue->SetNumDefence(m_nDefence + m_pEquipment ->GetDefenceTotalValue());
 	//経験値
-	CStatesValue::SetNumExp(m_nExp);
+	m_pStatesValue->SetNumExp(m_nExp);
 }
 
 //---------------------------------------------------------------------------------------
@@ -285,22 +263,6 @@ void CPlayer::Draw()
 {
 	//ユニットとしての描画処理
 	CUnit::Draw();
-}
-//---------------------------------------------------------------------------------------
-//外部からステートの変更をかける
-//---------------------------------------------------------------------------------------
-void CPlayer::SetState(CTurn::GameState nState)
-{
-	m_State_Cpy = nState;
-	m_bState_Change_Flg = true;
-}
-
-//---------------------------------------------------------------------------------------
-//現在のステート情報を渡す
-//---------------------------------------------------------------------------------------
-int CPlayer::GetState()	
-{
-	return m_State_Cpy;
 }
 //---------------------------------------------------------------------------------------
 //入力更新
@@ -328,7 +290,7 @@ void CPlayer::InputUpdate()
 			if (m_nHP > m_nMaxHP)
 				m_nHP = m_nMaxHP;
 			//UI側に表記するHPデータに変更をか ける
-			CHPDraw::SetHP(m_nHP);
+			m_pHPDraw->SetHP(m_nHP);
 
 			//回復間隔を初期化
 			m_nRecoveryInterval = 0;
@@ -341,8 +303,8 @@ void CPlayer::InputUpdate()
 	//旧ステート情報の確保
 	m_nOldStateNumber = m_nStateNumber;
 
-	//アイテムウインドウを描画していなければ更新
-	if(!m_pInventory->GetDrawFlg() && m_nStateNumber == CTurn::GetState())
+	//メニューウインドウを描画していなければ更新
+	if(!m_pMenuWindow->GetDrawFlg() && m_nStateNumber == CTurn::GetState())
 	{
 		//回転度数初期化
 		m_Angle = D3DXVECTOR3(0.0f,0.0f,0.0f);
@@ -353,13 +315,13 @@ void CPlayer::InputUpdate()
 		if (CInput::GetKeyTrigger(DIK_G))
 		{
 			//ゲームメインを終了
-			CFade::ChangeState(FADEMODE_OUT);
+			m_pFade->ChangeState(FADEMODE_OUT);
 
 			//ゲームクリア状態をゲームオーバーに
 			CGameScene::GameClearStateChange(GAME_OVER);
 
 			//エネミーの生成数のリセット
-			CEnemyGenerator::ResetMakeEnemyNum();
+			m_pEnemyGenerator->ResetMakeEnemyNum();
 
 			//フィールドアイテム生成数のリセット
 			CItemGenerator::ResetMakeItemNum();
@@ -380,7 +342,7 @@ void CPlayer::InputUpdate()
 				abs(CInput::GetJoyAxis(0, JOY_X)) > JoyMoveCap || abs(CInput::GetJoyAxis(0, JOY_Y)) > JoyMoveCap)
 			{
 				//メニューウィンドウが出ていなければ処理
-				if (!CMenuWindow::GetDrawFlg())
+				if (!m_pMenuWindow->GetDrawFlg())
 				{
 					//向きフラグ初期化
 					for (int i = 0; i < MaxDirection; i++)
@@ -523,16 +485,16 @@ void CPlayer::InputUpdate()
 					{
 
 						//移動先のマップ状況を取得する
-						int Situation = CMapData::Get_TerrainMapSituation(PosX, PosZ);
+						int Situation = m_pMapData->Get_TerrainMapSituation(PosX, PosZ);
 
 						//移動先にエネミーがほかのユニットがいないか確認する
-						int EnemySearch = CMapData::Get_UnitMapSituation(PosX, PosZ);
+						int EnemySearch = m_pMapData->Get_UnitMapSituation(PosX, PosZ);
 
 						//移動先が床(又は階段)ならば移動可能
 						if ((Situation == FLOOR || Situation == STAIRS || Situation == ROOT || Situation == ROOT_ENTRANCE) && EnemySearch == 0)
 						{
 							//マーキング消去
-							CMapData::Back_UnitMap(m_nUnit_Pos_X, m_nUnit_Pos_Z);
+							m_pMapData->Back_UnitMap(m_nUnit_Pos_X, m_nUnit_Pos_Z);
 
 							//目的地に到達していない
 							m_bDestination = false;
@@ -543,16 +505,16 @@ void CPlayer::InputUpdate()
 							m_nUnit_Pos_Z = PosZ;
 
 							//可視化
-							CMapData::SetVisibleProcess(PosX, PosZ);
+							m_pMapData->SetVisibleProcess(PosX, PosZ);
 
 
-							CMapData::SetDark(PosX, PosZ, TRUE);
+							m_pMapData->SetDark(PosX, PosZ, TRUE);
 
 							//マーキング
-							CMapData::Set_UnitMap(m_nUnit_Pos_X, m_nUnit_Pos_Z, m_nUnitNumber);
+							m_pMapData->Set_UnitMap(m_nUnit_Pos_X, m_nUnit_Pos_Z, m_nUnitNumber);
 
 							//ステートの遷移
-							m_nStateNumber = m_State_Cpy = CTurn::GAME_STATE_MOVE;
+							m_nStateNumber = CTurn::GAME_STATE_MOVE;
 
 
 							//足元が階段であれば上る
@@ -604,11 +566,11 @@ void CPlayer::InputUpdate()
 			if (CInput::GetKeyTrigger(DIK_L) || CInput::GetJoyTrigger(0, 3))
 			{
 				//メニューウィンドウが出ていなければ攻撃
-				if (!CMenuWindow::GetDrawFlg())
+				if (!m_pMenuWindow->GetDrawFlg())
 				{
 
 					//ステートの遷移
-					m_nStateNumber = m_State_Cpy = CTurn::GAME_STATE_ATTACK;
+					m_nStateNumber = CTurn::GAME_STATE_ATTACK;
 
 					//繰り出す技の番号を指定
 					m_nTrickNumber = TRICK_RANGE_FRONT;
@@ -646,7 +608,7 @@ void CPlayer::InputUpdate()
 			if (CInput::GetKeyTrigger(DIK_I) || CInput::GetJoyTrigger(0, 1))
 			{
 				//メニューウインドウ描画フラグを立てる
-				CMenuWindow::ChangDrawFlg();
+				m_pMenuWindow->ChangDrawFlg();
 			}
 		}
 
@@ -703,7 +665,7 @@ void CPlayer::MoveUpdate()
 			ChackFeetItem();
 
 			//ステートの遷移(ターンの終了)
-			m_nStateNumber =  m_State_Cpy = CTurn::GAME_STATE_TURN_END;
+			m_nStateNumber = CTurn::GAME_STATE_TURN_END;
 		}
 	}
 
@@ -757,10 +719,10 @@ void CPlayer::ActUpdate()
 {
 
 	//ステートの遷移(ターンの終了)
-	m_nStateNumber =  m_State_Cpy = CTurn::GAME_STATE_TURN_END;
+	m_nStateNumber = CTurn::GAME_STATE_TURN_END;
 
 	//メッセージテスト
-	MessageWindow::SetMassege(_T("行動した"));
+	m_pMessageWindow->SetMassege(_T("行動した"));
 }
 //---------------------------------------------------------------------------------------
 //ターン終了更新
@@ -768,7 +730,7 @@ void CPlayer::ActUpdate()
 void CPlayer::TurnEndUpdate()
 {
 	//ステートの遷移(ターンの終了)
-	m_nStateNumber =  m_State_Cpy = CTurn::GAME_STATE_STAND_BY;
+	m_nStateNumber = CTurn::GAME_STATE_STAND_BY;
 
 	//自身のターンが終了した。
 	m_bTurnEndFlg = true;
@@ -785,84 +747,84 @@ void CPlayer::TurnEndUpdate()
 void CPlayer::ItemUpdate()
 {
 	//選択されたコマンドによって処理を分岐させる
-	switch(m_CommandCursor.GetCommand())
+	switch(m_pCommandCursor->GetCommand())
 	{
 		//アイテムを使用した
 	case COMMAND_USE:
 
 		//メッセージテスト
-		MessageWindow::SetMassege(_T("アイテムを使った"));
+		m_pMessageWindow->SetMassege(_T("アイテムを使った"));
 
 		//アイテムの効果によって取得する値を変更する
-		switch(m_pInventory->GetEffect(m_InventoryCursor.GetItemNum()))
+		switch(m_pInventory->GetEffect(m_pInventoryCursor->GetItemNum()))
 		{
 			//効果なし
 		case EFFECT_NON:
 		case EFFECT_EQUIPMENT_ATTACK:
 		case EFFECT_EQUIPMENT_DEFENCE:
 			//メッセージテスト
-			MessageWindow::SetMassege(_T("おいしかった。"));
+			m_pMessageWindow->SetMassege(_T("おいしかった。"));
 			break;
 			//回復効果
 		case EFFECT_RECOVERY:
 
 			//アイテムの回復効果の回復量を取得する
-			RecoveryHP(m_pInventory->GetEffectValue(m_InventoryCursor.GetItemNum()));
+			RecoveryHP(m_pInventory->GetEffectValue(m_pInventoryCursor->GetItemNum()));
 
 			//メッセージテスト
-			MessageWindow::SetMassege(_T("体力を回復した!"));
+			m_pMessageWindow->SetMassege(_T("体力を回復した!"));
 		//画面に描画してもらうHPの数値を渡す
-		CHPDraw::SetHP(m_nHP);
+		m_pHPDraw->SetHP(m_nHP);
 			
 			break;
 
 			//デバッグ用
 		default:
 			//メッセージテスト
-			MessageWindow::SetMassege(_T("なんか間違ってね?"));
+			m_pMessageWindow->SetMassege(_T("なんか間違ってね?"));
 			break;
 		}
 
 		//使用アイテムの破棄
-		m_pInventory->DelInventory(m_InventoryCursor.GetItemNum());
+		m_pInventory->DelInventory(m_pInventoryCursor->GetItemNum());
 
 		break;
 		//アイテムを装備した
 	case COMMAND_EQUIPMENT:
 
 		//装備インベントリから、装備できるスペースがあるか探し、あれば装備インベントリに格納する
-		if(m_pEquipment->SetItem(m_pInventory->GetItem(m_InventoryCursor.GetItemNum())))
+		if(m_pEquipment->SetItem(m_pInventory->GetItem(m_pInventoryCursor->GetItemNum())))
 		{
 			//メッセージ表記
 			TCHAR	str[256];
-			sprintf_s(str, _T("%sは%sを装備した"),m_szName,m_pInventory->GetInventoryItemName(m_InventoryCursor.GetItemNum()));
+			sprintf_s(str, _T("%sは%sを装備した"),m_szName,m_pInventory->GetInventoryItemName(m_pInventoryCursor->GetItemNum()));
 	
 			//メッセージテスト
-			MessageWindow::SetMassege(str);
+			m_pMessageWindow->SetMassege(str);
 
 			//アイテムインベントリ側のアイテムの破棄
-			m_pInventory->DelInventory(m_InventoryCursor.GetItemNum());
+			m_pInventory->DelInventory(m_pInventoryCursor->GetItemNum());
 		}
 		else
 		{
 			//メッセージ表記
-			MessageWindow::SetMassege(_T("装備がいっぱいだった"));
+			m_pMessageWindow->SetMassege(_T("装備がいっぱいだった"));
 		}
 		break;
 		//アイテムを捨てた
 	case COMMAND_RELINQUISH:
 
 		//アイテムの破棄
-		m_pInventory->DelInventory(m_InventoryCursor.GetItemNum());
+		m_pInventory->DelInventory(m_pInventoryCursor->GetItemNum());
 
 		//メッセージテスト
-		MessageWindow::SetMassege(_T("アイテムを捨てた"));
+		m_pMessageWindow->SetMassege(_T("アイテムを捨てた"));
 
 		break;
 	}
 
 	//ステートの遷移(ターンの終了)
-	m_nStateNumber =  m_State_Cpy = CTurn::GAME_STATE_TURN_END;
+	m_nStateNumber = CTurn::GAME_STATE_TURN_END;
 }
 
 //---------------------------------------------------------------------------------------
@@ -870,15 +832,20 @@ void CPlayer::ItemUpdate()
 //---------------------------------------------------------------------------------------
 void CPlayer::SetPos()
 {
+	//配置する部屋の番号を設定
+	int SetRoomNumber = rand() % m_pMapData->GetMakeRoomNum();
+	//部屋のデータを取得
+	RECT RoomPos = m_pMapData->GetRoomFloorPlan(SetRoomNumber);
+
 	//位置情報を設定
-	m_nUnit_Pos_X = rand()%MAP_SIZE;
-	m_nUnit_Pos_Z = rand()%MAP_SIZE;
+	m_nUnit_Pos_X = rand() % (RoomPos.right - RoomPos.left) + RoomPos.left;
+	m_nUnit_Pos_Z = rand() % (RoomPos.bottom - RoomPos.top) + RoomPos.top;
 
 	//位置が設置不能ならば、再設定
-	while(!CMapData::CheckInTheRoom(m_nUnit_Pos_X,m_nUnit_Pos_Z))
+	while(m_pMapData->Get_TerrainMapSituation(m_nUnit_Pos_X,m_nUnit_Pos_Z) != FLOOR)
 	{
-		m_nUnit_Pos_X = rand()%MAP_SIZE;
-		m_nUnit_Pos_Z = rand()%MAP_SIZE;
+		m_nUnit_Pos_X = rand() % (RoomPos.right - RoomPos.left) + RoomPos.left;
+		m_nUnit_Pos_Z = rand() % (RoomPos.bottom - RoomPos.top) + RoomPos.top;
 	}
 
 	//ワールドマトリックスからローカル軸抽出、座標抽出
@@ -896,10 +863,10 @@ void CPlayer::SetPos()
 	SetWorld(world);
 
 	//マーキング
-	CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
+	m_pMapData->Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
 	
 	//ステートの遷移(ターンの終了)
-	m_nStateNumber =  m_State_Cpy = CTurn::GAME_STATE_STAND_BY;
+	m_nStateNumber = CTurn::GAME_STATE_STAND_BY;
 
 	//目的地初期化
 	m_Pos = D3DXVECTOR3(world._41,world._42,world._43);
@@ -911,31 +878,10 @@ void CPlayer::SetPos()
 	m_fTimer = 0.0f;
 	
 	// 可視化
-	CMapData::SetVisibleProcess(m_nUnit_Pos_X,m_nUnit_Pos_Z);
+	m_pMapData->SetVisibleProcess(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 
 	//目的地に到達している
 	m_bDestination = true;
-}
-//---------------------------------------------------------------------------------------
-//アイテムウィンドウの描画
-//---------------------------------------------------------------------------------------
-void CPlayer::DrawInventory()
-{
-	m_pInventory ->Draw();
-}
-//---------------------------------------------------------------------------------------
-//装備ウィンドウの描画
-//---------------------------------------------------------------------------------------
-void CPlayer::DrawEquipment()
-{
-	m_pEquipment ->Draw();
-}
-//---------------------------------------------------------------------------------------
-//技ウィンドウの描画
-//---------------------------------------------------------------------------------------
-void CPlayer::DrawTrick()
-{
-	m_pTrickWindow ->Draw();
 }
 //---------------------------------------------------------------------------------------
 //レベルの描画
@@ -946,4 +892,26 @@ void CPlayer::DrawLevel()
 	sprintf_s(Level, _T("Level:%d"), m_nLevel);
 	//数値(文字)描画
 	m_pFont ->DrawText(NULL,Level,-1,&m_FontDrawPos,DT_LEFT,D3DCOLOR_ARGB(0xff, 0x00, 0x00, 0x00));
+}
+//---------------------------------------------------------------------------------------
+//メンバ変数のポインタを取得する
+//---------------------------------------------------------------------------------------
+void CPlayer::MemberPointerGet()
+{
+	//HPバーへのポインタを設定する
+	m_pHPDraw = CHPDraw::GetPointer();
+	//アイテムコマンドカーソルのポインタを取得する
+	m_pCommandCursor = CItemCommandCursor::GetPointer();
+	//アイテムカーソルのポインタを取得する
+	m_pInventoryCursor = CItemWindowCursor::GetPointer();
+	//装備コマンドカーソルのポインタを取得
+	m_pEquipmentCommandWindow = CEquipmentCommandWindow::GetPointer();
+	//装備カーソルへのポインタを取得
+	m_pEquipmentInventoryCursor = CEquipmentWindowCursor::GetPointer();
+	//ステータス数値へのポインタを取得
+	m_pStatesValue = CStatesValue::GetPointer();
+	//フェードへのポインタを取得
+	m_pFade = CFade::GetPointer();
+	//メニューウィンドウへのポインタを取得する
+	m_pMenuWindow = CMenuWindow::GetPointer();
 }

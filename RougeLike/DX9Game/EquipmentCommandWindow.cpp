@@ -20,15 +20,7 @@
 //---------------------------------------------------------------------------------------
 //静的メンバ定義
 //---------------------------------------------------------------------------------------
-_TCHAR				CEquipmentCommandWindow::m_CommandName[EQUIPMENT_COMMAND_MAX][FONT_MAX];			//コマンド名
-LPD3DXFONT			CEquipmentCommandWindow::m_Font;											//描画用フォント
-RECT				CEquipmentCommandWindow::m_Pos[EQUIPMENT_COMMAND_MAX];								//ウィンドウ表示位置
-
-bool				CEquipmentCommandWindow::m_bDrawFlg;										//描画フラグ
-
-VERTEX_2D			CEquipmentCommandWindow::m_aVertex[EQUIPMENT_COMMAND_MAX][NUM_VERTEX];				//ポリゴン頂点情報格納用
-CTurn				CEquipmentCommandWindow::m_Turn;											//ステート変更
-CEquipmentInventory	CEquipmentCommandWindow::m_Inbentory;
+CEquipmentCommandWindow* CEquipmentCommandWindow::m_pEquipmentCommandWindow = NULL;
 //---------------------------------------------------------------------------------------
 //コンストラクタ
 //---------------------------------------------------------------------------------------
@@ -56,6 +48,9 @@ CEquipmentCommandWindow::CEquipmentCommandWindow(void)
 
 	//コマンド名の設定
 	SetCommand();
+
+	//ボタン入力経過時間を初期化
+	m_EnterInterval = 0;
 }
 
 
@@ -67,48 +62,64 @@ CEquipmentCommandWindow::~CEquipmentCommandWindow(void)
 }
 
 //---------------------------------------------------------------------------------------
-//初期化
+//実体の作成
 //---------------------------------------------------------------------------------------
-void CEquipmentCommandWindow::Init()
+void CEquipmentCommandWindow::Create()
 {
-	m_EnterInterval = 0;
+	//中身がなければ作成
+	if (!m_pEquipmentCommandWindow)
+	{
+		m_pEquipmentCommandWindow = new CEquipmentCommandWindow;
+	}
 }
 //---------------------------------------------------------------------------------------
-//終了処理
+//実体の削除
 //---------------------------------------------------------------------------------------
-void CEquipmentCommandWindow::Fin()
+void CEquipmentCommandWindow::Delete()
 {
-
+	//中身があれば削除
+	if (m_pEquipmentCommandWindow)
+	{
+		delete m_pEquipmentCommandWindow;
+		m_pEquipmentCommandWindow = NULL;
+	}
+}
+//---------------------------------------------------------------------------------------
+//実体のポインタを渡す
+//---------------------------------------------------------------------------------------
+CEquipmentCommandWindow* CEquipmentCommandWindow::GetPointer()
+{
+	//念のため作成関数を呼ぶ
+	Create();
+	return m_pEquipmentCommandWindow;
 }
 //---------------------------------------------------------------------------------------
 //更新
 //---------------------------------------------------------------------------------------
 void CEquipmentCommandWindow::UpDate()
 {
-	//使用法を選択している場合のみ更新
-	if(m_bDrawFlg)
+	m_EnterInterval ++;
+
+	//Lで決定
+	if((CInput::GetKeyTrigger(DIK_L) || CInput::GetJoyTrigger(0,3)) && m_EnterInterval > 30)
 	{
-		m_EnterInterval ++;
+		//自身のフラグを倒す
+		DrawFlgChange();
+		//アイテムウィンドウのフラグを倒す
+		m_pItemWindow->DrawFlgChange(false);
+		//メニューウィンドウの描画フラグを倒す
+		m_pMenuWindow->ChangDrawFlg();
+		m_EnterInterval = 0;
+	}
 
-		//Lで決定
-		if((CInput::GetKeyTrigger(DIK_L) || CInput::GetJoyTrigger(0,3)) && m_EnterInterval > 30)
-		{
-			//自身のフラグを倒す
-			DrawFlgChange();
-			//装備ウィンドウの描画フラグを倒す
-			CEquipmentInventory::DrawFlgChange();
-			//メニューウィンドウの描画フラグを倒す
-			CMenuWindow::ChangDrawFlg();
-			m_EnterInterval = 0;
-		}
-
-		//Kで戻る
-		if((CInput::GetKeyTrigger(DIK_K) || CInput::GetJoyTrigger(0,2)) && m_EnterInterval > 30)
-		{
-			//自身のフラグを倒す
-			DrawFlgChange();
-			m_EnterInterval = 0;
-		}
+	//Kで戻る
+	if((CInput::GetKeyTrigger(DIK_K) || CInput::GetJoyTrigger(0,2)) && m_EnterInterval > 30)
+	{
+		//自身のフラグを倒す
+		DrawFlgChange();
+		//アイテムウィンドウのフラグを倒す
+		m_pItemWindow->DrawFlgChange(false);
+		m_EnterInterval = 0;
 	}
 }
 //---------------------------------------------------------------------------------------
@@ -155,10 +166,10 @@ void CEquipmentCommandWindow::SetVertex()
 	for(int i = 0;i < EQUIPMENT_COMMAND_MAX;i++)
 	{
 		//位置情報設定
-		m_aVertex[i][0].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (i + 1)					,0.0f);
-		m_aVertex[i][1].pos = D3DXVECTOR3((float)SCREEN_WIDTH				,(float)WINDOW_HEIGHT * (i + 1)					,0.0f);
-		m_aVertex[i][2].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (i + 1) + WINDOW_HEIGHT	,0.0f);
-		m_aVertex[i][3].pos = D3DXVECTOR3((float)SCREEN_WIDTH				,(float)WINDOW_HEIGHT * (i + 1) + WINDOW_HEIGHT	,0.0f);
+		m_aVertex[i][0].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT - WINDOW_WIDHT	, (float)WINDOW_HEIGHT * (i + 1)				+ WINDOW_HEIGHT, 0.0f);
+		m_aVertex[i][1].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT				, (float)WINDOW_HEIGHT * (i + 1)				+ WINDOW_HEIGHT, 0.0f);
+		m_aVertex[i][2].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT - WINDOW_WIDHT	, (float)WINDOW_HEIGHT * (i + 1) + WINDOW_HEIGHT+ WINDOW_HEIGHT, 0.0f);
+		m_aVertex[i][3].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT				,(float)WINDOW_HEIGHT * (i + 1) + WINDOW_HEIGHT	+ WINDOW_HEIGHT,0.0f);
 
 		//パースペクティブ設定?
 		m_aVertex[i][0].rhw = 1.0f;
@@ -205,4 +216,15 @@ void CEquipmentCommandWindow::DrawFlgChange()
 void CEquipmentCommandWindow::SetCommand()
 {
 	lstrcpyn(m_CommandName[0],_T("戻す")	,sizeof(LPCTSTR) * FONT_MAX / 2);
+}
+
+//---------------------------------------------------------------------------------------
+//コマンド名の設定
+//---------------------------------------------------------------------------------------
+void CEquipmentCommandWindow::SetPointer()
+{
+	//ポインタの取得
+	m_pEquipmentWindow = CEquipmentWindow::GetPointer();
+	m_pMenuWindow = CMenuWindow::GetPointer();
+	m_pItemWindow = CItemWindow::GetPointer();
 }

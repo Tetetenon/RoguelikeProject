@@ -1,6 +1,7 @@
 #include "ItemCommandCursor.h"
 #include "Graphics.h"
 #include "Input.h"
+#include "ItemCommandWindow.h"
 
 #include "TextureManager.h"
 
@@ -16,56 +17,71 @@
 //---------------------------------------------------------------------------------------
 //静的メンバ定義
 //---------------------------------------------------------------------------------------
-int					CCommandCursor::m_Command = 0;			//選択中のコマンド
+CItemCommandCursor* CItemCommandCursor::m_pItemCommandCursor = NULL;
 
 //---------------------------------------------------------------------------------------
 //コンストラクタ
 //---------------------------------------------------------------------------------------
-CCommandCursor::CCommandCursor(void)
+CItemCommandCursor::CItemCommandCursor(void)
 {
-	//
-	int i = 10;
-	//デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CGraphics::GetDevice();
-
+	//選択中のアイテム番号初期化
+	m_Command = 0;
+	//ボタン入力経過時間を初期化
+	m_nInterval = 0;
 	//ポリゴン情報の設定
 	SetVertex();
 
 	//ポリゴン位置情報の設定
 	SetPos();
-
-	//ボタン入力経過時間を初期化
-	m_nInterval = 0;
 }
 
 //---------------------------------------------------------------------------------------
 //デストラクタ
 //---------------------------------------------------------------------------------------
-CCommandCursor::~CCommandCursor(void)
+CItemCommandCursor::~CItemCommandCursor(void)
 {
+	//選択中のアイテム番号初期化
+	m_Command = 0;
 	//ボタン入力経過時間を初期化
 	m_nInterval = 0;
 }
-
 //---------------------------------------------------------------------------------------
-//初期化
+//実体の作成
 //---------------------------------------------------------------------------------------
-void CCommandCursor::Init()
+void CItemCommandCursor::Create()
 {
-
+	//中身がない場合作成
+	if (!m_pItemCommandCursor)
+	{
+		m_pItemCommandCursor = new CItemCommandCursor;
+	}
 }
 //---------------------------------------------------------------------------------------
-//終了
+//実体の削除
 //---------------------------------------------------------------------------------------
-void CCommandCursor::Fin()
+void CItemCommandCursor::Delete()
 {
-
+	//中身の確認
+	if (m_pItemCommandCursor)
+	{
+		//中身があれば削除
+		delete m_pItemCommandCursor;
+		m_pItemCommandCursor = NULL;
+	}
 }
-
+//---------------------------------------------------------------------------------------
+//自身のポインタを渡す
+//---------------------------------------------------------------------------------------
+CItemCommandCursor* CItemCommandCursor::GetPointer()
+{
+	//念のため、作成
+	Create();
+	return m_pItemCommandCursor;
+}
 //---------------------------------------------------------------------------------------
 //描画
 //---------------------------------------------------------------------------------------
-void CCommandCursor::Draw()
+void CItemCommandCursor::Draw()
 {
 	//デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CGraphics::GetDevice();
@@ -94,13 +110,13 @@ void CCommandCursor::Draw()
 //---------------------------------------------------------------------------------------
 //更新
 //---------------------------------------------------------------------------------------
-void CCommandCursor::Update()
+void CItemCommandCursor::Update()
 {
 	//ボタン入力経過時間を加算
 	m_nInterval++;
 
 	//使用法を選択している場合のみ更新
-	if(CCommandWindow::GetDrawFlg())
+	if(m_pItemCommandWindow->GetDrawFlg())
 	{
 		if((CInput::GetKeyTrigger(DIK_W) || (CInput::GetJoyAxis(0,JOY_Y) <= -JoyMoveCap)) && m_nInterval >= ButtonIntervalTime)
 		{	
@@ -135,13 +151,13 @@ void CCommandCursor::Update()
 //---------------------------------------------------------------------------------------
 //ポリゴン情報設定
 //---------------------------------------------------------------------------------------
-void CCommandCursor::SetVertex ()
+void CItemCommandCursor::SetVertex ()
 {	
 	//位置情報設定
-	m_aVertex[0].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (m_Command + 1)					,0.0f);
-	m_aVertex[1].pos = D3DXVECTOR3((float)SCREEN_WIDTH				 ,(float)WINDOW_HEIGHT * (m_Command + 1)					,0.0f);
-	m_aVertex[2].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (m_Command + 1) + WINDOW_HEIGHT	,0.0f);
-	m_aVertex[3].pos = D3DXVECTOR3((float)SCREEN_WIDTH				 ,(float)WINDOW_HEIGHT * (m_Command + 1) + WINDOW_HEIGHT	,0.0f);
+	m_aVertex[0].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (m_Command + 1)				 + WINDOW_HEIGHT,0.0f);
+	m_aVertex[1].pos = D3DXVECTOR3((float)SCREEN_WIDTH				 ,(float)WINDOW_HEIGHT * (m_Command + 1)				 + WINDOW_HEIGHT,0.0f);
+	m_aVertex[2].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (m_Command + 1) + WINDOW_HEIGHT + WINDOW_HEIGHT,0.0f);
+	m_aVertex[3].pos = D3DXVECTOR3((float)SCREEN_WIDTH				 ,(float)WINDOW_HEIGHT * (m_Command + 1) + WINDOW_HEIGHT + WINDOW_HEIGHT,0.0f);
 
 	//パースペクティブ設定?
 	m_aVertex[0].rhw = 1.0f;
@@ -165,18 +181,28 @@ void CCommandCursor::SetVertex ()
 //---------------------------------------------------------------------------------------
 //ポリゴン位置設定
 //---------------------------------------------------------------------------------------
-void CCommandCursor::SetPos()
+void CItemCommandCursor::SetPos()
 {
 	//位置情報設定
-	m_aVertex[0].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (m_Command + 1)					,0.0f);
-	m_aVertex[1].pos = D3DXVECTOR3((float)SCREEN_WIDTH				 ,(float)WINDOW_HEIGHT * (m_Command + 1)					,0.0f);
-	m_aVertex[2].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (m_Command + 1) + WINDOW_HEIGHT	,0.0f);
-	m_aVertex[3].pos = D3DXVECTOR3((float)SCREEN_WIDTH				 ,(float)WINDOW_HEIGHT * (m_Command + 1) + WINDOW_HEIGHT	,0.0f);
+	m_aVertex[0].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (m_Command + 1)					 + WINDOW_HEIGHT,0.0f);
+	m_aVertex[1].pos = D3DXVECTOR3((float)SCREEN_WIDTH				 ,(float)WINDOW_HEIGHT * (m_Command + 1)					 + WINDOW_HEIGHT,0.0f);
+	m_aVertex[2].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (m_Command + 1) + WINDOW_HEIGHT	 + WINDOW_HEIGHT,0.0f);
+	m_aVertex[3].pos = D3DXVECTOR3((float)SCREEN_WIDTH				 ,(float)WINDOW_HEIGHT * (m_Command + 1) + WINDOW_HEIGHT	 + WINDOW_HEIGHT,0.0f);
 }
 //---------------------------------------------------------------------------------------
 //選択中のコマンド番号を返す
 //---------------------------------------------------------------------------------------
-int CCommandCursor::GetCommand()
+int CItemCommandCursor::GetCommand()
 {
 	return m_Command;
+}
+//---------------------------------------------------------------------------------------
+//メンバ変数のポインタを設定する
+//---------------------------------------------------------------------------------------
+void CItemCommandCursor::SetPointer()
+{
+	//ポインタを取得
+	m_pItemCommandWindow = CItemCommandWindow::GetPointer();
+	//デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CGraphics::GetDevice();
 }

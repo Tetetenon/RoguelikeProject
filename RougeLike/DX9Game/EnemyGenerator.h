@@ -1,33 +1,45 @@
 #pragma once
 #include "meshobj.h"
 
+class CMapData;
+class CUnit;
+
 class CEnemyGenerator :
 	public CMeshObj
 {
 private:
-	static int m_FieldEnemyCounter;			//フィールド上のエネミーの数をカウントする
+	//シングルトン
+	static CEnemyGenerator* m_pEnemyGenerator;
 
-	static int m_MaxFieldEnemy;				//フィールド上に生成する最大数を設定
+	CMapData*	m_pMapData;
+	CUnit*		m_pPlayer;
 
-	static bool m_bMakeFlg;					//そのターンでの生成フラグ
-public:
+	int m_FieldEnemyCounter;			//フィールド上のエネミーの数をカウントする
+	int m_MaxFieldEnemy;				//フィールド上に生成する最大数を設定
+	bool m_bMakeFlg;					//そのターンでの生成フラグ
+
 	CEnemyGenerator(CGameScene* pScene);	//コンストラクタ
 	~CEnemyGenerator(void);				//デストラクタ
+public:
 
-	void Init();						//初期化
-	void Fin();							//終了処理
+	static void Create(CGameScene *pScene);
+	static void Delete();
+	static CEnemyGenerator* GetPointer();
+
+	//メンバ変数のポインタを設定する
+	void SetPointer();
 
 	void Update();						//更新
 
 	//フィールド上に生成できる最大数を設定
-	static void SetMaxGenerator (int nMaxCount);
+	void SetMaxGenerator (int nMaxCount);
 
 	//エネミー生成数を減算
-	static void SumMakeEnemyNum();
+	void SumMakeEnemyNum();
 
 	//フィールド上にランダムに敵を配置する
 	void MakeEnemy();
 
 	//エネミーの生成数をリセット
-	static void  ResetMakeEnemyNum();
+	void  ResetMakeEnemyNum();
 };

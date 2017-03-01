@@ -5,8 +5,16 @@
 class COperation :
 	public C2DTexture
 {
-public:
+private:
+	//シングルトン
+	static COperation* m_pOperation;
+
 	COperation(void);		//コンストラクタ
 	~COperation(void);		//デストラクタ
+
+public:
+	static void Create();			//実体の生成
+	static void Delete();			//実体の削除
+	static COperation* GetPoiner();	//実体のポインタを渡す
 };
 

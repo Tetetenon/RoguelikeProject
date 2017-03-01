@@ -4,24 +4,24 @@
 #include "EnemyManager.h"
 
 
-//静的変数の初期化
-UNIT_MAP*		CUnitManager::m_pUnitManager = NULL;
-
-CUnit*	CUnitManager::m_pPlayer = NULL;			//プレイヤーポインター
-int		CUnitManager::m_nMakeNumber = OBJ_NUM_PLAYER;	//生成したユニットの数
-bool	CUnitManager::m_bMoveCanFlg;			//移動可能フラグ
-
-
+//静的変数定義
+CUnitManager*		CUnitManager::m_pManager = NULL;
 //---------------------------------------------------------------------------------------
 //コンストラクタ
 //---------------------------------------------------------------------------------------
 CUnitManager::CUnitManager()
 {
+	//リストの作成
+	m_pUnitManager = new UNIT_MAP();
+
+	//エネミーマネージャーの作成
+	CEnemyManager::Create();
 	//リストの初期化
 	m_pUnitManager->clear();
 
 	//生成したユニットの数初期化
 	m_nMakeNumber = OBJ_NUM_PLAYER;
+
 }
 
 //---------------------------------------------------------------------------------------
@@ -29,11 +29,20 @@ CUnitManager::CUnitManager()
 //---------------------------------------------------------------------------------------
 CUnitManager::~CUnitManager()
 {
+	//終了処理
+	Fin();
+
+	//エネミーマネージャーの削除
+	CEnemyManager::Destroy();
+
+	//削除
+	delete m_pUnitManager;
+
+	//中身をきれいに
+	m_pUnitManager = NULL;
+
 	//生成したユニットの数初期化
 	m_nMakeNumber = OBJ_NUM_PLAYER;
-
-	//リストの掃除
-	m_pUnitManager->clear();
 
 	m_pPlayer = NULL;
 }
@@ -44,30 +53,21 @@ CUnitManager::~CUnitManager()
 void CUnitManager::Create()
 {
 	//まだ作成をしていなかったらさくせいする
-	if (!m_pUnitManager)
+	if (!m_pManager)
 	{
-		m_pUnitManager = new UNIT_MAP();
-
-		//エネミーマネージャーの作成
-		CEnemyManager::Create();
+		m_pManager = new CUnitManager;
 	}
 }
 //---------------------------------------------------------------------------------------
 //マネージャーの削除
 //---------------------------------------------------------------------------------------
-void CUnitManager::Destroy()
+void CUnitManager::Delete()
 {
 	//NULLチェック
-	if (m_pUnitManager)
+	if (m_pManager)
 	{
-		//終了処理
-		Fin();
-		//エネミーマネージャーの削除
-		CEnemyManager::Destroy();
-		//削除
-		delete m_pUnitManager;
-		//中身をきれいに
-		m_pUnitManager = NULL;
+		delete m_pManager;
+		m_pManager = NULL;
 	}
 }
 //---------------------------------------------------------------------------------------
@@ -293,16 +293,16 @@ void CUnitManager::Fin()
 	}
 	//リストの掃除
 	m_pUnitManager->clear();
-
-	//エネミーマネージャーの終了処理
-	CEnemyManager::Fin();
+	//エネミーの削除
+	EnemyDelete();
 }
 //---------------------------------------------------------------------------------------
 //マネージャーのデバイスを渡す
 //---------------------------------------------------------------------------------------
-UNIT_MAP* CUnitManager::GetPointer()
+CUnitManager* CUnitManager::GetPointer()
 {
-	return m_pUnitManager;
+	Create();
+	return m_pManager;
 }
 //---------------------------------------------------------------------------------------
 //ユニット全ての行動可能フラグを変更する
@@ -367,4 +367,28 @@ int CUnitManager::GetPlayerPosZ()
 		//入っていない場合、0を返す
 		return 0;
 	}
+}
+//---------------------------------------------------------------------------------------
+//プレイヤーのポインタを渡す
+//---------------------------------------------------------------------------------------
+CUnit* CUnitManager::GetPlayerPointer()
+{
+	//プレイヤーのポインタが存在するか確認する
+	if (m_pPlayer)
+	{
+		return m_pPlayer;
+	}
+	else
+	{
+		//入っていない場合、0を返す
+		return 0;
+	}
+}
+//---------------------------------------------------------------------------------------
+//エネミーの削除
+//---------------------------------------------------------------------------------------
+void CUnitManager::EnemyDelete()
+{
+	//エネミーマネージャーの終了処理
+	CEnemyManager::Fin();
 }

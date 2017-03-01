@@ -7,13 +7,15 @@
 
 //クラス定義
 class CGameScene;
+class CEffectObjManager;
 
 class CEffectObj :
 	public CMeshObj
 {
 protected:
 	int m_nLifeTime;	//生存時間
-	int m_nEffectID;	//オブジェクト固有の番号			
+	int m_nEffectID;	//オブジェクト固有の番号
+	CEffectObjManager* m_pEffectObjManager;
 public:
 	CEffectObj(CGameScene *pScene);				//コンストラクタ
 	~CEffectObj(void);								//デストラクタ

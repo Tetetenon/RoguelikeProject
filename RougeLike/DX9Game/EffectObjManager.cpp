@@ -3,16 +3,18 @@
 
 
 //静的変数の初期化
-EFFECTOBJ_MAP*	CEffectObjManager::m_pEffectManager = NULL;
-int				CEffectObjManager::m_nEffectNumber = 0;
+CEffectObjManager*	CEffectObjManager::m_pEffectManager = NULL;
 
 //---------------------------------------------------------------------------------------
 //コンストラクタ
 //---------------------------------------------------------------------------------------
 CEffectObjManager::CEffectObjManager()
 {
+	//リストの作成
+	m_pEffectMap = new EFFECTOBJ_MAP();
+
 	//リストの初期化
-	m_pEffectManager->clear();
+	m_pEffectMap->clear();
 
 	//変数の初期化
 	m_nEffectNumber = 0;
@@ -23,9 +25,12 @@ CEffectObjManager::CEffectObjManager()
 //---------------------------------------------------------------------------------------
 CEffectObjManager::~CEffectObjManager()
 {
-	//リストの初期化
-	m_pEffectManager->clear();
-
+	//終了処理
+	Fin();
+	//削除
+	delete m_pEffectMap;
+	//中身をきれいに
+	m_pEffectMap = NULL;
 	//変数の初期化
 	m_nEffectNumber = 0;
 }
@@ -37,7 +42,7 @@ void CEffectObjManager::Create()
 	//まだ作成がされていない場合、作成する
 	if (!m_pEffectManager)
 	{
-		m_pEffectManager = new EFFECTOBJ_MAP();
+		m_pEffectManager = new CEffectObjManager;
 	}
 }
 
@@ -49,13 +54,19 @@ void CEffectObjManager::Delete()
 	//NULLチェック
 	if (m_pEffectManager)
 	{
-		//終了処理
-		Fin();
-		//削除
 		delete m_pEffectManager;
-		//中身をきれいに
 		m_pEffectManager = NULL;
 	}
+}
+
+//---------------------------------------------------------------------------------------
+//マネージャーのポインタを渡す
+//---------------------------------------------------------------------------------------
+CEffectObjManager* CEffectObjManager::GetPointer()
+{
+	//作成関数を呼ぶ
+	Create();
+	return m_pEffectManager;
 }
 //---------------------------------------------------------------------------------------
 //管理オブジェクトの追加
@@ -63,10 +74,10 @@ void CEffectObjManager::Delete()
 void CEffectObjManager::Add(int ID, CEffectObj* pAdd)
 {
 	//IDが既に登録がされているか確認を行う
-	auto EfectIterator = m_pEffectManager->find(ID);
+	auto EfectIterator = m_pEffectMap->find(ID);
 
 	//そのIDが既に登録されているか確認を行う
-	if (EfectIterator != m_pEffectManager->end())
+	if (EfectIterator != m_pEffectMap->end())
 	{
 		//既にIDが登録されているため、オブジェデータのみをその場所に登録する
 		EfectIterator->second.push_back(pAdd);
@@ -78,7 +89,7 @@ void CEffectObjManager::Add(int ID, CEffectObj* pAdd)
 		NewList.push_back(pAdd);
 
 		EFFECTOBJ_PAIR NewEffectPair(ID, NewList);
-		m_pEffectManager->insert(NewEffectPair);
+		m_pEffectMap->insert(NewEffectPair);
 	}
 }
 //---------------------------------------------------------------------------------------
@@ -87,10 +98,10 @@ void CEffectObjManager::Add(int ID, CEffectObj* pAdd)
 void CEffectObjManager::Del(int ID)
 {
 	//IDでオブジェクトの検索
-	auto EffectIterator = m_pEffectManager->find(ID);
+	auto EffectIterator = m_pEffectMap->find(ID);
 
 	//そのオブジェクトが存在している場合、削除
-	if (EffectIterator != m_pEffectManager->end())
+	if (EffectIterator != m_pEffectMap->end())
 	{
 		auto ListIterator = EffectIterator->second.begin();
 		(*ListIterator)->Fin();
@@ -104,10 +115,10 @@ void CEffectObjManager::Del(int ID)
 CEffectObj* CEffectObjManager::Find(int ID)
 {
 	//IDでオブジェクトの検索を行う
-	auto EffectIterator = m_pEffectManager->find(ID);
+	auto EffectIterator = m_pEffectMap->find(ID);
 
 	//その指定されたIDのデータが存在する場合、データを返す
-	if (EffectIterator != m_pEffectManager->end())
+	if (EffectIterator != m_pEffectMap->end())
 	{
 		return EffectIterator->second[0];
 	}
@@ -122,9 +133,9 @@ CEffectObj* CEffectObjManager::Find(int ID)
 void CEffectObjManager::Init()
 {
 	//リストの先頭を取得
-	auto EffectIterator = m_pEffectManager->begin();
+	auto EffectIterator = m_pEffectMap->begin();
 
-	for (; EffectIterator != m_pEffectManager->end(); ++EffectIterator)
+	for (; EffectIterator != m_pEffectMap->end(); ++EffectIterator)
 	{
 		for (auto ListIterator = EffectIterator->second.begin(); ListIterator != EffectIterator->second.end(); ++ListIterator)
 		{
@@ -138,9 +149,9 @@ void CEffectObjManager::Init()
 void CEffectObjManager::Update()
 {
 	//リストの先頭を取得
-	auto EffectIterator = m_pEffectManager->begin();
+	auto EffectIterator = m_pEffectMap->begin();
 
-	for (; EffectIterator != m_pEffectManager->end(); ++EffectIterator)
+	for (; EffectIterator != m_pEffectMap->end(); ++EffectIterator)
 	{
 		for (auto ListIterator = EffectIterator->second.begin(); ListIterator != EffectIterator->second.end();)
 		{
@@ -170,9 +181,9 @@ void CEffectObjManager::Update()
 void CEffectObjManager::Draw()
 {
 	//リストの先頭を取得
-	auto EffectIterator = m_pEffectManager->begin();
+	auto EffectIterator = m_pEffectMap->begin();
 
-	for (; EffectIterator != m_pEffectManager->end(); ++EffectIterator)
+	for (; EffectIterator != m_pEffectMap->end(); ++EffectIterator)
 	{
 		for (auto ListIterator = EffectIterator->second.begin(); ListIterator != EffectIterator->second.end(); ++ListIterator)
 		{
@@ -186,9 +197,9 @@ void CEffectObjManager::Draw()
 void CEffectObjManager::Fin()
 {
 	//リストの先頭を取得
-	auto EffectIterator = m_pEffectManager->begin();
+	auto EffectIterator = m_pEffectMap->begin();
 
-	for (; EffectIterator != m_pEffectManager->end(); ++EffectIterator)
+	for (; EffectIterator != m_pEffectMap->end(); ++EffectIterator)
 	{
 		for (auto ListIterator = EffectIterator->second.begin(); ListIterator != EffectIterator->second.end();)
 		{
@@ -199,5 +210,5 @@ void CEffectObjManager::Fin()
 		}
 	}
 	//リストの掃除
-	m_pEffectManager->clear();
+	m_pEffectMap->clear();
 }

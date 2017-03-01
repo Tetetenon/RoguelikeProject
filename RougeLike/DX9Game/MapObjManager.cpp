@@ -2,18 +2,16 @@
 
 #include"FieldObj.h"
 
-FIELDOBJ_MAP* CMapObjManager::m_pMapObjManager = NULL;
-
-bool			CMapObjManager::m_bDeleteFlg = false;		//全オブジェクト削除フラグ
-int				CMapObjManager::m_nNextObjNumber = 0;	//次に生成されたオブジェクトにつける番号
+CMapObjManager* CMapObjManager::m_pMapObjManager = NULL;
 
 //---------------------------------------------------------------------------------------
 //コンストラクタ
 //---------------------------------------------------------------------------------------
 CMapObjManager::CMapObjManager()
 {
+	m_pMapObjMap = new FIELDOBJ_MAP();
 	//初期化
-	m_pMapObjManager->clear();
+	m_pMapObjMap->clear();
 	m_bDeleteFlg = false;
 	m_nNextObjNumber = 0;
 }
@@ -23,14 +21,18 @@ CMapObjManager::CMapObjManager()
 //---------------------------------------------------------------------------------------
 CMapObjManager::~CMapObjManager()
 {
+	//終了処理
+	Fin();
+	//削除
+	delete m_pMapObjMap;
+	//中身の掃除
+	m_pMapObjMap = NULL;
+
 	//変数の初期化
 	m_bDeleteFlg = false;
 
 	//プレイヤーポインタの開放
 	m_nNextObjNumber = 0;
-
-	//中身の掃除
-	m_pMapObjManager->clear();
 }
 
 //---------------------------------------------------------------------------------------
@@ -41,7 +43,7 @@ void CMapObjManager::Create()
 	//マネージャーが作成されてなければ作成
 	if (!m_pMapObjManager)
 	{
-		m_pMapObjManager = new FIELDOBJ_MAP();
+		m_pMapObjManager = new CMapObjManager;
 	}
 }
 
@@ -53,11 +55,7 @@ void CMapObjManager::Delete()
 	//NULLチェック
 	if (m_pMapObjManager)
 	{
-		//終了処理
-		Fin();
-		//削除
 		delete m_pMapObjManager;
-		//中身の掃除
 		m_pMapObjManager = NULL;
 	}
 }
@@ -67,10 +65,10 @@ void CMapObjManager::Delete()
 void CMapObjManager::Add(int ObjID,CFieldObj* pAddObj)
 {
 	//IDでオブジェクトの検索
-	auto ObjIterator = m_pMapObjManager->find(ObjID);
+	auto ObjIterator = m_pMapObjMap->find(ObjID);
 
 	//そのIDのオブジェクトが既に登録されているか確認する
-	if (ObjIterator != m_pMapObjManager->end())
+	if (ObjIterator != m_pMapObjMap->end())
 	{
 		//登録されているため、オブジェデータのみ挿入
 		ObjIterator->second.push_back(pAddObj);
@@ -83,7 +81,7 @@ void CMapObjManager::Add(int ObjID,CFieldObj* pAddObj)
 
 
 		FIELDOBJ_PAIR NewObjPair(ObjID,NewObjList);
-		m_pMapObjManager->insert(NewObjPair);
+		m_pMapObjMap->insert(NewObjPair);
 	}
 }
 //---------------------------------------------------------------------------------------
@@ -92,16 +90,15 @@ void CMapObjManager::Add(int ObjID,CFieldObj* pAddObj)
 void CMapObjManager::Del(int ObjID)
 {
 	//IDでオブジェクトの検索
-	auto ObjIterator = m_pMapObjManager->find(ObjID);
+	auto ObjIterator = m_pMapObjMap->find(ObjID);
 
 	//そのオブジェクトのIDが存在してる場合、削除
-	if (ObjIterator != m_pMapObjManager->end())
+	if (ObjIterator != m_pMapObjMap->end())
 	{
 		auto ListIterator = ObjIterator->second.begin();
 		(*ListIterator)->Fin();
 		delete (*ListIterator);
 		ObjIterator->second.erase(ListIterator);
-		//m_pMapObjManager->erase(ObjIterator);
 	}
 }
 //---------------------------------------------------------------------------------------
@@ -110,10 +107,10 @@ void CMapObjManager::Del(int ObjID)
 CFieldObj* CMapObjManager::Find(int ObjID)
 {
 	//IDでオブジェクトの検索
-	auto ObjIterator = m_pMapObjManager->find(ObjID);
+	auto ObjIterator = m_pMapObjMap->find(ObjID);
 
 	//そのオブジェクトのIDが存在してる場合、データを返す
-	if (ObjIterator != m_pMapObjManager->end())
+	if (ObjIterator != m_pMapObjMap->end())
 	{
 		return ObjIterator->second[0];
 	}
@@ -128,9 +125,9 @@ CFieldObj* CMapObjManager::Find(int ObjID)
 void CMapObjManager::Init()
 {
 	//リストの先頭を取得
-	auto MapIterator = m_pMapObjManager->begin();
+	auto MapIterator = m_pMapObjMap->begin();
 
-	for (; MapIterator != m_pMapObjManager->end(); ++MapIterator)
+	for (; MapIterator != m_pMapObjMap->end(); ++MapIterator)
 	{
 		for (auto ListIterator = MapIterator->second.begin(); ListIterator != MapIterator->second.end(); ++ListIterator)
 		{
@@ -144,9 +141,9 @@ void CMapObjManager::Init()
 void CMapObjManager::Update()
 {
 	//リストの先頭を取得
-	auto MapIterator = m_pMapObjManager->begin();
+	auto MapIterator = m_pMapObjMap->begin();
 
-	for (; MapIterator != m_pMapObjManager->end(); ++MapIterator)
+	for (; MapIterator != m_pMapObjMap->end(); ++MapIterator)
 	{
 		for (auto ListIterator = MapIterator->second.begin(); ListIterator != MapIterator->second.end();)
 		{
@@ -173,10 +170,10 @@ void CMapObjManager::Update()
 void CMapObjManager::Draw(bool Alpha)//Alpha:半透明描画をするか
 {
 	//リストの先頭を取得する
-	auto MapIterator = m_pMapObjManager->begin();
+	auto MapIterator = m_pMapObjMap->begin();
 
 	//リスト上のフィールドオブジェクト全ての描画処理を行う
-	for (; MapIterator != m_pMapObjManager->end(); ++MapIterator)
+	for (; MapIterator != m_pMapObjMap->end(); ++MapIterator)
 	{
 		for (auto ListIterator = MapIterator->second.begin(); ListIterator != MapIterator->second.end(); ++ListIterator)
 		{
@@ -201,9 +198,9 @@ void CMapObjManager::Draw(bool Alpha)//Alpha:半透明描画をするか
 void CMapObjManager::Fin()
 {
 	//リストの先頭を取得
-	auto MapIterator = m_pMapObjManager->begin();
+	auto MapIterator = m_pMapObjMap->begin();
 
-	for (; MapIterator != m_pMapObjManager->end();++MapIterator)
+	for (; MapIterator != m_pMapObjMap->end();++MapIterator)
 	{
 		for (auto ListIterator = MapIterator->second.begin(); ListIterator != MapIterator->second.end();)
 		{
@@ -216,12 +213,12 @@ void CMapObjManager::Fin()
 	}
 
 	//リストを掃除
-	m_pMapObjManager->clear();
+	m_pMapObjMap->clear();
 }
 //---------------------------------------------------------------------------------------
 //マネージャーのデバイスを渡す
 //---------------------------------------------------------------------------------------
-FIELDOBJ_MAP* CMapObjManager::GetPointer()
+CMapObjManager* CMapObjManager::GetPointer()
 {
 	return m_pMapObjManager;
 }

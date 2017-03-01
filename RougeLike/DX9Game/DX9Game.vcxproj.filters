@@ -291,6 +291,21 @@
     <Filter Include="システム\マネージャー\BillBoardManager">
       <UniqueIdentifier>{6afc099c-0333-441f-bdcb-e1b5070ccba1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="システム\マネージャー\UIManager">
+      <UniqueIdentifier>{dfc64700-40bc-4414-9f5f-39e1c8c4811b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="アイテム\Inventory">
+      <UniqueIdentifier>{d89049b7-1693-46bb-a152-88de5adec5b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="装備">
+      <UniqueIdentifier>{44d5e6d0-de8d-41dc-a274-de598f916236}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="装備\Equipment">
+      <UniqueIdentifier>{9ec06062-63d8-4786-a131-a4a600fb5b31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI関連\ステータス\MenuStatesWindow">
+      <UniqueIdentifier>{61021283-e659-42f9-a50f-d0c1016a0c0c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameWnd.cpp">
@@ -520,6 +535,18 @@
     </ClCompile>
     <ClCompile Include="DamageBillBoardManager.cpp">
       <Filter>システム\マネージャー\BillBoardManager</Filter>
+    </ClCompile>
+    <ClCompile Include="UIManager.cpp">
+      <Filter>システム\マネージャー\UIManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Inventory.cpp">
+      <Filter>アイテム\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="Equipment.cpp">
+      <Filter>装備\Equipment</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuStatesWindow.cpp">
+      <Filter>UI関連\ステータス\MenuStatesWindow</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -753,6 +780,18 @@
     </ClInclude>
     <ClInclude Include="DamageBillBoardManager.h">
       <Filter>システム\マネージャー\BillBoardManager</Filter>
+    </ClInclude>
+    <ClInclude Include="UIManager.h">
+      <Filter>システム\マネージャー\UIManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Inventory.h">
+      <Filter>アイテム\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="Equipment.h">
+      <Filter>装備\Equipment</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuStatesWindow.h">
+      <Filter>UI関連\ステータス\MenuStatesWindow</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

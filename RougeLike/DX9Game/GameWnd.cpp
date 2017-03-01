@@ -30,21 +30,15 @@ bool CGameWindow::InitInstance()
 	if (!CWindow::InitInstance()) return false;
 
 	//ウインドウのフルスクリーン成否
-	m_bWindow = false;
-
-	//
-	int nID = MessageBox(_T("ウィンドウモードで実行しますか？"), _T("画面モード"), MB_YESNOCANCEL);
-	if (nID == IDCANCEL) 
-		return false;
-	if (nID == IDYES) 
-		m_bWindow = true;
+	m_bWindow = true;
 
 	::timeBeginPeriod(1);	// タイマの分解能を最小にセット
 
 	// グラフィックデバイス初期化
 	m_pGraph = CGraphics::Create(GetHwnd(), SCREEN_WIDTH, SCREEN_HEIGHT, m_bWindow);
 
-	if (!m_pGraph) return false;
+	if (!m_pGraph)
+		return false;
 
 	//タイトルシーン作成
 	m_pTitleScene = CTitleScene::Create(m_pGraph);
@@ -250,7 +244,7 @@ bool CGameWindow::OnSetCursor(HWND hwnd, UINT nHitTest, UINT uMouseMsg)
 	// 全画面モードか、マウスカーソル座標がクライアント領域内なら
 	if (!m_bWindow || nHitTest == HTCLIENT) {
 		// マウスカーソル消去
-		//::SetCursor(NULL);
+		::SetCursor(NULL);
 		return true;
 	}
 	return false;

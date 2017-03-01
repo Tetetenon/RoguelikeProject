@@ -5,7 +5,7 @@
 #include "define.h"
 #include "FieldItem.h"
 #include "Circle.h"
-#include "ItemWindow.h"
+#include "Inventory.h"
 #include "EquipmentWindow.h"
 #include "TrickWindow.h"
 #include "LevelUp.h"
@@ -16,6 +16,14 @@
 #include<sstream>
 
 #include"Turn.h"
+class CHPDraw;
+class CFade;
+class CMapData;
+class CMessageWindow;
+class CUnitManager;
+class CItemManager;
+class CTrickWindowCursor;
+class CEquipment;
 
 //行動にかかる時間
 #define ACTION_TIME	0.5f
@@ -28,6 +36,8 @@
 
 //装備できる最大数
 #define EQUIPMENTMAX 5
+
+#define BOSSNUMBER 999
 
 //健康状態列挙
 enum UNIT_STATE
@@ -112,6 +122,7 @@ enum UNIT_UP_STATES
 #define STATE_TURN_WINCE  1 //怯みの継続時間は1ターン
 
 class CGameScene;
+class CEnemyGenerator;
 
 class CUnit :
 	public CMeshObj
@@ -174,12 +185,24 @@ protected:
 	
 
 	//-----インベントリ-----
+	CHPDraw*				m_pHPDraw;
+	CFade*					m_pFade;
+	CMapData*				m_pMapData;
+	CMessageWindow*			m_pMessageWindow;
+	CUnitManager*			m_pUnitManager;
+	CItemManager*			m_pItemManager;
+	CTrickWindowCursor*		m_pTrickWindowCursor;
+
 	CInventory*				m_pInventory;					//アイテムインベントリ
-	CEquipmentInventory*	m_pEquipment;					//装備インベントリ
+	CEquipment*				m_pEquipment;					//装備インベントリ
 
 	CTrickWindow*			m_pTrickWindow;					//技
 
 	CLevelUp*				m_pLevelUp;						//レベルアップテクスチャ
+
+	CEnemyGenerator* m_pEnemyGenerator;
+	//移動先にいるエネミーデータ
+	CUnit*				m_pMovePosUnitData;
 public:
 	CUnit(CGameScene* pScene);								//コンストラクタ
 	~CUnit(void);											//デストラクタ
@@ -229,8 +252,6 @@ public:
 	bool SlightLeft();				//斜め左の敵に攻撃
 	bool SlightRightBack();			//斜め右後ろの敵に攻撃
 	bool SlightLeftBack();			//斜め左後ろの敵に攻撃
-
-	//bool Attack(int CorrectionPosX,int CorrectionPosY);	//指定した補正値の場所へ攻撃を行う
 
 	bool FindEnemy(int,int);		//指定した位置に敵がいるか
 
@@ -302,4 +323,27 @@ public:
 
 	//位置を移動させる
 	void MovePos(int PosX, int PosY);
+
+	//移動先のエネミーデータを取得する
+	CUnit* GetMoveUnitData()
+	{
+		return m_pMovePosUnitData;
+	}
+
+	//外部からステートの変更をかける
+	void SetState(CTurn::GameState State)
+	{
+		m_nStateNumber = State;
+	}
+
+	//自身の持ち物へのポインタを渡す
+	CInventory* GetInventory()
+	{
+		return m_pInventory;
+	}
+	//自身の装備アイテムへのポインタを渡す
+	CEquipment* GetEquipment()
+	{
+		return m_pEquipment;
+	}
 };

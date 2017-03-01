@@ -16,6 +16,8 @@
 #include "MiniMap.h"
 #include "UnitManager.h"
 #include"ItemManager.h"
+#include "HPDraw.h"
+#include "Fade.h"
 
 #define JUMP_INTERVAL 30	//ジャンプしてから次のジャンプまでの間隔
 
@@ -44,6 +46,23 @@ CMeshObj(pScene),
 m_bTurn(false),
 m_pLevelUp(NULL)
 {
+	//エネミージェネレーターポインタの取得
+	m_pEnemyGenerator = CEnemyGenerator::GetPointer();
+	//HP描画データへのポインタ取得
+	m_pHPDraw = CHPDraw::GetPointer();
+	//フェードクラスの実体のポインタを取得
+	m_pFade = CFade::GetPointer();
+	//マップデータへのポインタを取得
+	m_pMapData = CMapData::GetPointer();
+	//メッセージウィンドウのポインタを取得
+	m_pMessageWindow = CMessageWindow::GetPointer();
+	//ユニットマネージャーへのポインタを取得
+	m_pUnitManager = CUnitManager::GetPointer();
+	//アイテムマネージャーへのポインタを取得
+	m_pItemManager = CItemManager::GetPointer();
+	//技カーソルへのポインタを取得
+	m_pTrickWindowCursor = CTrickWindowCursor::GetPointer();
+
 	//状態の初期化
 	m_nState = UNIT_STATE_HEALTH;	//健康
 	m_nState_Turn = 0;
@@ -73,10 +92,10 @@ m_pLevelUp(NULL)
 	//アイテムインベントリポインタを取得
 	m_pInventory = new CInventory();
 	//装備インベントリポインタを取得
-	m_pEquipment = new CEquipmentInventory();
+	m_pEquipment = new CEquipment();
 
 	//技ウィンドウポインタを取得
-	m_pTrickWindow = new CTrickWindow();
+	m_pTrickWindow = CTrickWindow::GetPointer();
 
 	//レベルアップポインタの初期化
 	m_pLevelUp = NULL;
@@ -94,6 +113,8 @@ m_pLevelUp(NULL)
 	{
 		m_bDirectionFlg[i] = false;
 	}
+	//ユニットのポインタを初期化
+	m_pMovePosUnitData = NULL;
 }
 
 //---------------------------------------------------------------------------------------
@@ -107,9 +128,6 @@ CUnit::~CUnit(void)
 	//装備インベントリのポインタを削除
 	delete m_pEquipment;
 
-	//技ウィンドウポインタの削除
-	delete m_pTrickWindow;
-
 	//レベルアップポインタの中身があれば、削除
 	if(m_pLevelUp)
 	{
@@ -121,6 +139,8 @@ CUnit::~CUnit(void)
 	m_pBattleUnit = NULL;
 	m_pBattleNext = NULL;
 	m_pBattleBack = NULL;
+	//ユニットのポインタを初期化
+	m_pMovePosUnitData = NULL;
 }
 
 	
@@ -129,11 +149,6 @@ CUnit::~CUnit(void)
 //---------------------------------------------------------------------------------------
 void CUnit::Init()
 {
-	//アイテムインベントリの初期化
-	m_pInventory ->Init();
-	//装備インベントリの初期化
-	m_pEquipment->Init();
-
 	//技インベントリの初期化
 	m_pTrickWindow->Init();
 }
@@ -144,7 +159,7 @@ void CUnit::Init()
 void CUnit::Fin()
 {
 	//マーキング消去
-	CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
+	m_pMapData->Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 }
 
 //---------------------------------------------------------------------------------------
@@ -249,21 +264,6 @@ void CUnit::TurnUpdate()
 		TurnEndUpdate();
 		break;
 	}
-	
-	//アイテムウィンドウを描画していたら
-	if (CInventory::GetDrawFlg())
-		//アイテムインベントリの更新
-		m_pInventory->UpDate();
-
-	//装備ウィンドウを描画していたら
-	if (CEquipmentInventory::GetDrawFlg())
-		//装備インベントリの更新
-		m_pEquipment->UpDate();
-
-	//技ウィンドウを描画していたら
-	if (CTrickWindow::GetDrawFlg())
-		//技ウィンドウの更新
-		m_pTrickWindow->UpDate();
 }
 //---------------------------------------------------------------------------------------
 //描画
@@ -410,13 +410,13 @@ void CUnit::DamegeHP (int Damage)
 		_stprintf_s(str,sizeof(str), _T("%sは倒れた!"),m_szName);
 	
 		//メッセージテスト
-		MessageWindow::SetMassege(str);
+		m_pMessageWindow->SetMassege(str);
 	}
 	//プレイヤーのHPが減った場合、画面のHP表示を変更
 	if(m_uID == ID_PLAYER)
 	{
 		//画面に描画してもらうHPの数値を渡す
-		CHPDraw::SetHP(m_nHP);
+		m_pHPDraw->SetHP(m_nHP);
 	}
 }
 
@@ -435,13 +435,13 @@ void CUnit::RecoveryHP (int Recovery)
 	TCHAR	str[256];
 	_stprintf_s(str,sizeof(str),_T("%d回復した!"),Recovery);
 	//メッセージ出力
-	MessageWindow::SetMassege(str);
+	m_pMessageWindow->SetMassege(str);
 
 	//プレイヤーのHPが減った場合、画面のHP表示を変更
 	if(m_uID == ID_PLAYER)
 	{
 		//画面に描画してもらうHPの数値を渡す
-		CHPDraw::SetHP(m_nHP);
+		m_pHPDraw->SetHP(m_nHP);
 	}
 }
 
@@ -451,7 +451,7 @@ void CUnit::RecoveryHP (int Recovery)
 void CUnit::Delete()
 {
 	//マーキング消去
-	CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
+	m_pMapData->Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 
 	m_bSurvival = false;
 
@@ -459,13 +459,28 @@ void CUnit::Delete()
 	if(m_nUnitNumber == OBJ_NUM_PLAYER)
 	{
 		//ゲームメインを終了
-		CFade::ChangeState(FADEMODE_OUT);
+		m_pFade->ChangeState(FADEMODE_OUT);
 
 		//ゲームクリア状態をゲームオーバーに
 		CGameScene::GameClearStateChange(GAME_OVER);
 
 		//エネミーの生成数のリセット
-		CEnemyGenerator::ResetMakeEnemyNum();
+		m_pEnemyGenerator->ResetMakeEnemyNum();
+
+		//フィールドアイテム生成数のリセット
+		CItemGenerator::ResetMakeItemNum();
+	}
+
+	if (m_nUnitNumber == BOSSNUMBER)
+	{
+		//ゲームメインを終了
+		m_pFade->ChangeState(FADEMODE_OUT);
+
+		//ゲームクリア状態をゲームオーバーに
+		CGameScene::GameClearStateChange(GAME_CLEAR);
+
+		//エネミーの生成数のリセット
+		m_pEnemyGenerator->ResetMakeEnemyNum();
 
 		//フィールドアイテム生成数のリセット
 		CItemGenerator::ResetMakeItemNum();
@@ -475,7 +490,7 @@ void CUnit::Delete()
 	if(m_nUnitNumber != OBJ_NUM_PLAYER)
 	{
 		//リスト上からオブジェクトの削除
-		CUnitManager::Del(m_nUnitNumber);
+		m_pUnitManager->Del(m_nUnitNumber);
 	}
 }
 //---------------------------------------------------------------------------------------
@@ -623,7 +638,7 @@ void CUnit::BattleReturn()
 		if(m_nTrickNumber > TRICK_NAME_MAX)
 		{
 			//技のIDを取得する
-			m_nTrickNumber = m_pTrickWindow->GetRange(CTrickWindowCursor::GetTrickNum());
+			m_nTrickNumber = m_pTrickWindow->GetRange(m_pTrickWindowCursor->GetTrickNum());
 		}
 		//戦闘ステートを進める
 		CTurn::BattleState_Advance(CTurn::BATTLE_STATE_SEARCH);
@@ -655,7 +670,7 @@ void CUnit::AttackSwitch()
 
 		//自身に効果を及ぼす
 	case TRICK_RANGE_ME:
-		switch(m_pTrickWindow->GetEffect(CTrickWindowCursor::GetTrickNum()))
+		switch(m_pTrickWindow->GetEffect(m_pTrickWindowCursor->GetTrickNum()))
 		{
 		case TRICK_EFFECT_STATES_UP:
 
@@ -663,7 +678,7 @@ void CUnit::AttackSwitch()
 			m_nAttack ++;
 			m_nDefence ++;
 
-			MessageWindow::SetMassege(_T("ステータスが上昇した!"));
+			m_pMessageWindow->SetMassege(_T("ステータスが上昇した!"));
 			break;
 		case TRICK_EFFECT_RECOVERY:
 
@@ -696,7 +711,7 @@ void CUnit::BattleCalculation(CUnit *BattleUnit)
 		nAttack = static_cast<int>(nAttack*1.5f);
 		
 		//メッセージ表記
-		MessageWindow::SetMassege( _T("急所に当たった!"));
+		m_pMessageWindow->SetMassege( _T("急所に当たった!"));
 	}
 
 	//ダメージ計算(装備の値も計算に入れる)
@@ -711,7 +726,7 @@ bool CUnit::FindEnemy(int PosX,int PosZ)
 	//マップの情報を取得する
 	int MapSituation;
 	//攻撃している位置の状態取得
-	MapSituation = CMapData::Get_UnitMapSituation(PosX,PosZ);
+	MapSituation = m_pMapData->Get_UnitMapSituation(PosX,PosZ);
 
 	//攻撃位置にエネミーがいるか確認する
 	//戦闘を行うユニットの情報の所得を行う
@@ -721,7 +736,7 @@ bool CUnit::FindEnemy(int PosX,int PosZ)
 		CUnit *BattleUnit = NULL;
 
 		//戦闘するユニットの検索
-		BattleUnit = CUnitManager::Find(MapSituation);
+		BattleUnit = m_pUnitManager->Find(MapSituation);
 
 		//戦闘ダメージの計算を行う
 		BattleCalculation(BattleUnit);
@@ -1089,7 +1104,7 @@ void CUnit::AttackFront()
 		_stprintf_s(str, _T("%sの攻撃は外れた"),m_szName);
 		
 		//メッセージテスト
-		MessageWindow::SetMassege(str);
+		m_pMessageWindow->SetMassege(str);
 
 		//ステートを進める
 		CTurn::BattleState_Advance(CTurn::BATTLE_STATE_END);
@@ -1123,7 +1138,7 @@ void CUnit::AttackWide()
 		_stprintf_s(str, _T("%sの攻撃は外れた"),m_szName);
 		
 		//メッセージテスト
-		MessageWindow::SetMassege(str);
+		m_pMessageWindow->SetMassege(str);
 
 		//ステートを進める
 		CTurn::BattleState_Advance(CTurn::BATTLE_STATE_END);
@@ -1142,13 +1157,13 @@ void CUnit::AttackAll()
 	bool bHitFlg = false;
 
 	//自身がいる部屋番号を取得する
-	int nMyRoomNumber = CMapData::GetRoomNumber(m_nUnit_Pos_X,m_nUnit_Pos_Z);
+	int nMyRoomNumber = m_pMapData->GetRoomNumber(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 
 	//自身が部屋にいる場合、部屋の中の敵の探索を行う
 	if(!(nMyRoomNumber >= ROOM_MAX_NUM))
 	{
 		//部屋の間取りを受け取る
-		RECT MyRoomData = CMapData::GetRoomFloorPlan(nMyRoomNumber);
+		RECT MyRoomData = m_pMapData->GetRoomFloorPlan(nMyRoomNumber);
 
 		//間取りの分だけ、敵の探索を行う
 		for(int i = MyRoomData.top;i < MyRoomData.bottom;i++)
@@ -1177,7 +1192,7 @@ void CUnit::AttackAll()
 			_stprintf_s(str, _T("%sの攻撃は外れた"),m_szName);
 		
 			//メッセージテスト
-			MessageWindow::SetMassege(str);
+			m_pMessageWindow->SetMassege(str);
 
 			//ステートを進める
 			CTurn::BattleState_Advance(CTurn::BATTLE_STATE_END);
@@ -1228,7 +1243,7 @@ void CUnit::AttackAll()
 			_stprintf_s(str, _T("%sの攻撃は外れた"),m_szName);
 		
 			//メッセージテスト
-			MessageWindow::SetMassege(str);
+			m_pMessageWindow->SetMassege(str);
 	
 			//ステートを進める
 			CTurn::BattleState_Advance(CTurn::BATTLE_STATE_END);
@@ -1348,7 +1363,7 @@ void CUnit::BattleWindow()
 		pszName = pNowUnit->GetName(pszName);
 
 		//メッセージ表記
-		MessageWindow::SetMassege(_T("%sに%dのダメージ!"),pszName,g_Damage);
+		m_pMessageWindow->SetMassege(_T("%sに%dのダメージ!"),pszName,g_Damage);
 
 		//次のユニットへうつる
 		pNowUnit = pNowUnit->m_pBattleNext;
@@ -1405,7 +1420,7 @@ void CUnit::BattleDamage()
 				//レベルアップメッセージを出す
 				_stprintf_s(str, _T("%sはレベルが上がった!"),m_szName);
 				//メッセージ出力
-				MessageWindow::SetMassege(str);
+				m_pMessageWindow->SetMassege(str);
 
 				//レベルを加算
 				m_nLevel ++;
@@ -1417,28 +1432,28 @@ void CUnit::BattleDamage()
 				//ステータス値をメッセージとして出す
 				_stprintf_s(str, _T("HPが%d上がった!"),m_nHPUpNum);
 				//メッセージ出力
-				MessageWindow::SetMassege(str);
+				m_pMessageWindow->SetMassege(str);
 
 				//攻撃
 				m_nAttack += m_nAttackUpNum;
 				//ステータス値をメッセージとして出す
 				_stprintf_s(str, _T("攻撃が%d上がった!"),m_nAttackUpNum);
 				//メッセージ出力
-				MessageWindow::SetMassege(str);
+				m_pMessageWindow->SetMassege(str);
 
 				//防御
 				m_nDefence += m_nDefenceUpNum;
 				//ステータス値をメッセージとして出す
 				_stprintf_s(str, _T("防御が%d上がった!"),m_nDefenceUpNum);
 				//メッセージ出力
-				MessageWindow::SetMassege(str);
+				m_pMessageWindow->SetMassege(str);
 
 				//経験値を最大経験値分引く
 				m_nExp -= MAX_EXP;
 
 				if (m_nUnitNumber == OBJ_NUM_PLAYER)
 				{
-					CHPDraw::SetMaxHP(m_nMaxHP);
+					m_pHPDraw->SetMaxHP(m_nMaxHP);
 				}
 			};
 		}
@@ -1602,37 +1617,37 @@ void CUnit::SetStateAbnormal(int nStateNum)
 		//メッセージ表記
 		_stprintf_s(str, _T("毒状態になった!"));
 		//メッセージ出力
-		MessageWindow::SetMassege( _T("毒状態になった!"));
+		m_pMessageWindow->SetMassege( _T("毒状態になった!"));
 		break;
 	case UNIT_STATE_PARALYSIS:
 		//メッセージ表記
 		_stprintf_s(str, _T("麻痺状態になった!"));
 		//メッセージ出力
-		MessageWindow::SetMassege( _T("麻痺状態になった!"));
+		m_pMessageWindow->SetMassege( _T("麻痺状態になった!"));
 		break;
 	case UNIT_STATE_CONFUSION:
 		//メッセージ表記
 		_stprintf_s(str, _T("混乱した!"));
 		//メッセージ出力
-		MessageWindow::SetMassege( _T("混乱した!"));
+		m_pMessageWindow->SetMassege( _T("混乱した!"));
 		break;
 	case UNIT_STATE_SLEEP:
 		//メッセージ表記
 		_stprintf_s(str, _T("眠ってしまった!"));
 		//メッセージ出力
-		MessageWindow::SetMassege( _T("眠ってしまった!"));
+		m_pMessageWindow->SetMassege( _T("眠ってしまった!"));
 		break;
 	case UNIT_STATE_WINCE:
 		//メッセージ表記
 		_stprintf_s(str, _T("ひるんでいる!"));
 		//メッセージ出力
-		MessageWindow::SetMassege( _T("ひるんでいる!"));
+		m_pMessageWindow->SetMassege( _T("ひるんでいる!"));
 		break;
 	default:
 		//メッセージ表記
 		_stprintf_s(str, _T("バグった!"));
 		//メッセージ出力
-		MessageWindow::SetMassege( _T("バグった!"));
+		m_pMessageWindow->SetMassege( _T("バグった!"));
 		break;
 	}
 }
@@ -1653,12 +1668,12 @@ void CUnit::TurnStartStateProcessing()
 		DamegeHP(5);
 
 		//画面に描画してもらうHPの数値を渡す
-		CHPDraw::SetHP(m_nHP);
+		m_pHPDraw->SetHP(m_nHP);
 		//メッセージ格納
 		_stprintf_s(str, _T("毒で%sに%dのダメージ"),m_szName,PoisonDamage);
 
 		//メッセージ出力
-		MessageWindow::SetMassege(str);
+		m_pMessageWindow->SetMassege(str);
 		break;
 
 		//麻痺状態の場合
@@ -1670,7 +1685,7 @@ void CUnit::TurnStartStateProcessing()
 			_stprintf_s(str, _T("%sは痺れて動けない"),m_szName);
 			
 			//メッセージ出力
-			MessageWindow::SetMassege(str);
+			m_pMessageWindow->SetMassege(str);
 
 			//自身のステートの設定
 			m_nStateNumber = CTurn::GAME_STATE_TURN_END;
@@ -1683,7 +1698,7 @@ void CUnit::TurnStartStateProcessing()
 		_stprintf_s(str, _T("%sは眠っている"),m_szName);
 		
 		//メッセージ出力
-		MessageWindow::SetMassege(str);
+		m_pMessageWindow->SetMassege(str);
 
 		//自身のステートの設定
 		m_nStateNumber = CTurn::GAME_STATE_TURN_END;
@@ -1695,7 +1710,7 @@ void CUnit::TurnStartStateProcessing()
 		_stprintf_s(str, _T("%sはひるんでいる!"),m_szName);
 		
 		//メッセージ出力
-		MessageWindow::SetMassege(str);
+		m_pMessageWindow->SetMassege(str);
 
 		//自身のステートの設定
 		m_nStateNumber = CTurn::GAME_STATE_TURN_END;
@@ -1709,7 +1724,7 @@ void CUnit::TurnStartStateProcessing()
 	if(m_nState_Turn == 0)
 	{
 		//メッセージ出力
-		MessageWindow::SetMassege(_T("状態が元に戻った!"));
+		m_pMessageWindow->SetMassege(_T("状態が元に戻った!"));
 
 		m_nState = UNIT_STATE_HEALTH;
 	}
@@ -1735,12 +1750,12 @@ int CUnit::GetEquipmentDefenceNum()
 void CUnit::ChackFeetItem()
 {
 	//足元のアイテムの情報を取得
-	int ItemSearch = CMapData::Get_ItemMapSituation(m_nUnit_Pos_X,m_nUnit_Pos_Z);
+	int ItemSearch = m_pMapData->Get_ItemMapSituation(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 													
 	//足元のアイテムの検索
 	if(ItemSearch != 0)
 	{
-		m_pFootItem = CItemManager::Find(ItemSearch);
+		m_pFootItem = m_pItemManager->Find(ItemSearch);
 
 		//アイテムデータの取得
 		CItem ItemData = m_pFootItem->GetItemData();
@@ -1757,10 +1772,10 @@ void CUnit::ChackFeetItem()
 			_stprintf_s(str, _T("%sは%sを拾った"),m_szName,ItemName);
 	
 			//メッセージテスト
-			MessageWindow::SetMassege(str);
+			m_pMessageWindow->SetMassege(str);
 	
 			//マップ上から現在の位置のアイテム反応消去
-			CMapData::Back_ItemMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
+			m_pMapData->Back_ItemMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 	
 			//拾ったアイテムは削除
 			m_pFootItem->Delete();
@@ -1768,7 +1783,7 @@ void CUnit::ChackFeetItem()
 		else 
 		{
 			//メッセージ描画
-			MessageWindow::SetMassege(_T("アイテムを拾えなかった!"));
+			m_pMessageWindow->SetMassege(_T("アイテムを拾えなかった!"));
 		}
 	}
 }
@@ -1795,13 +1810,13 @@ bool CUnit::GetUnitProc()
 void CUnit::MovePos(int PosX, int PosY)
 {
 	//マーキング消去
-	CMapData::Back_UnitMap(m_nUnit_Pos_X, m_nUnit_Pos_Z);
+	m_pMapData->Back_UnitMap(m_nUnit_Pos_X, m_nUnit_Pos_Z);
 
 	m_nUnit_Pos_X = PosX;
 	m_nUnit_Pos_Z = PosY;
 
 	//マーキング
-	CMapData::Set_UnitMap(m_nUnit_Pos_X, m_nUnit_Pos_Z, m_nUnitNumber);
+	m_pMapData->Set_UnitMap(m_nUnit_Pos_X, m_nUnit_Pos_Z, m_nUnitNumber);
 
 	//ワールドマトリックスからローカル軸抽出、座標抽出
 	D3DXMATRIX world = GetWorld();
@@ -1819,12 +1834,7 @@ void CUnit::MovePos(int PosX, int PosY)
 	m_Pos.x = (m_nUnit_Pos_X - (MAP_SIZE / 2)) * GRIDSIZE + GRIDSIZE / 2;
 	m_Pos.z = -((m_nUnit_Pos_Z)-(MAP_SIZE / 2)) * GRIDSIZE - GRIDSIZE / 2;
 
-	vP = vP + (m_Pos - vP) * (m_fTimer / (float)ACTION_TIME);
-
-	if (vP == m_Pos)
-	{
-		m_bDestination = true;
-	}
+	vP = vP + (m_Pos - vP);
 
 	//回転行列の作成
 	D3DXMATRIX rot_X, rot_Y, rot_Z;
@@ -1844,4 +1854,7 @@ void CUnit::MovePos(int PosX, int PosY)
 
 	//ワールドマトリックスを設定
 	SetWorld(world);
+
+	//自身のステートの設定
+	m_nStateNumber = CTurn::GAME_STATE_TURN_END;
 }

@@ -4,8 +4,9 @@
 #include "Turn.h"
 #include "ItemWindow.h"
 #include "TextureManager.h"
-#include "Player.h"
+#include "Unit.h"
 #include "MenuWindow.h"
+#include "UnitManager.h"
 
 //---------------------------------------------------------------------------------------
 //マクロ定義
@@ -19,19 +20,11 @@
 //---------------------------------------------------------------------------------------
 //静的メンバ定義
 //---------------------------------------------------------------------------------------
-_TCHAR				CCommandWindow::m_CommandName[COMMAND_MAX][FONT_MAX];			//コマンド名
-LPD3DXFONT			CCommandWindow::m_Font;											//描画用フォント
-RECT				CCommandWindow::m_Pos[COMMAND_MAX];								//ウィンドウ表示位置
-
-bool				CCommandWindow::m_bDrawFlg;										//描画フラグ
-
-VERTEX_2D			CCommandWindow::m_aVertex[COMMAND_MAX][NUM_VERTEX];				//ポリゴン頂点情報格納用
-CTurn				CCommandWindow::m_Turn;											//ステート変更
-CInventory			CCommandWindow::m_Inbentory;
+CItemCommandWindow* CItemCommandWindow::m_pItemCommandWindow = NULL;
 //---------------------------------------------------------------------------------------
 //コンストラクタ
 //---------------------------------------------------------------------------------------
-CCommandWindow::CCommandWindow(void)
+CItemCommandWindow::CItemCommandWindow(void)
 {
 	//メンバ初期化
 	m_bDrawFlg = false;
@@ -55,72 +48,91 @@ CCommandWindow::CCommandWindow(void)
 
 	//コマンド名の設定
 	SetCommand();
-}
 
+	//キー入力を行ってからの経過時間を初期化
+	m_EnterInterval = 0;
+}
 
 //---------------------------------------------------------------------------------------
 //デストラクタ
 //---------------------------------------------------------------------------------------
-CCommandWindow::~CCommandWindow(void)
+CItemCommandWindow::~CItemCommandWindow(void)
 {
 }
-
 //---------------------------------------------------------------------------------------
-//初期化
+//実体の生成
 //---------------------------------------------------------------------------------------
-void CCommandWindow::Init()
+void CItemCommandWindow::Create()
 {
-	m_EnterInterval = 0;
+	//実体が存在していない場合、作成
+	if (!m_pItemCommandWindow)
+	{
+		m_pItemCommandWindow = new CItemCommandWindow;
+	}
 }
 //---------------------------------------------------------------------------------------
-//終了処理
+//実体の削除
 //---------------------------------------------------------------------------------------
-void CCommandWindow::Fin()
+void CItemCommandWindow::Delete()
 {
-
+	//実体の有無の確認
+	if (m_pItemCommandWindow)
+	{
+		//中身があれば削除
+		delete m_pItemCommandWindow;
+		m_pItemCommandWindow = NULL;
+	}
+}
+//---------------------------------------------------------------------------------------
+//自身のポインタを渡す
+//---------------------------------------------------------------------------------------
+CItemCommandWindow* CItemCommandWindow::GetPointer()
+{
+	//念のため、作成
+	Create();
+	return m_pItemCommandWindow;
 }
 //---------------------------------------------------------------------------------------
 //更新
 //---------------------------------------------------------------------------------------
-void CCommandWindow::UpDate()
+void CItemCommandWindow::UpDate()
 {
-	//使用法を選択している場合のみ更新
-	if(m_bDrawFlg)
+	m_EnterInterval ++;
+
+	//Lで決定
+	if((CInput::GetKeyTrigger(DIK_L) || CInput::GetJoyTrigger(0,3)) && m_EnterInterval > 30)
 	{
-		m_EnterInterval ++;
 
-		//Lで決定
-		if((CInput::GetKeyTrigger(DIK_L) || CInput::GetJoyTrigger(0,3)) && m_EnterInterval > 30)
-		{
+		//アイテムを使用
+		m_pPlayer->SetState(CTurn::GAME_STATE_ITEM_USE);
+		
+		//自身のフラグを倒す
+		DrawFlgChange();
 
-			//アイテムを使用
-			CPlayer::SetState(CTurn::GAME_STATE_ITEM_USE);
-			
-			//自身のフラグを倒す
-			DrawFlgChange();
-
-			//アイテムウインドウの描画フラグを倒す
-			CInventory::DrawFlgChange();
-			//メニューウィンドウの描画フラグを倒す
-			CMenuWindow::ChangDrawFlg();
-			m_EnterInterval = 0;
-		}
-
-		//Kで戻る
-		if((CInput::GetKeyTrigger(DIK_K) || CInput::GetJoyTrigger(0,2)) && m_EnterInterval > 30)
-		{
-			//自身のフラグを倒す
-			DrawFlgChange();
-			m_EnterInterval = 0;
-		}
+		//アイテムウインドウの描画フラグを倒す
+		m_pItemWindow->DrawFlgChange(false);
+		//メニューウィンドウの描画フラグを倒す
+		m_pMenuWindow->ChangDrawFlg();
+		m_EnterInterval = 0;
 	}
+
+	//Kで戻る
+	if((CInput::GetKeyTrigger(DIK_K) || CInput::GetJoyTrigger(0,2)) && m_EnterInterval > 30)
+	{
+		//自身のフラグを倒す
+		DrawFlgChange();
+
+		//アイテムウインドウの描画フラグを倒す
+		m_pItemWindow->DrawFlgChange(false);
+		m_EnterInterval = 0;
+	}
+	
 }
 //---------------------------------------------------------------------------------------
 //描画
 //---------------------------------------------------------------------------------------
-void CCommandWindow::Draw()
+void CItemCommandWindow::Draw()
 {
-
 	//デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CGraphics::GetDevice();
 	
@@ -154,15 +166,15 @@ void CCommandWindow::Draw()
 //---------------------------------------------------------------------------------------
 //ポリゴン情報を埋める
 //---------------------------------------------------------------------------------------
-void CCommandWindow::SetVertex()
+void CItemCommandWindow::SetVertex()
 {
 	for(int i = 0;i < COMMAND_MAX;i++)
 	{
 		//位置情報設定
-		m_aVertex[i][0].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (i + 1)					,0.0f);
-		m_aVertex[i][1].pos = D3DXVECTOR3((float)SCREEN_WIDTH				,(float)WINDOW_HEIGHT * (i + 1)					,0.0f);
-		m_aVertex[i][2].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (i + 1) + WINDOW_HEIGHT	,0.0f);
-		m_aVertex[i][3].pos = D3DXVECTOR3((float)SCREEN_WIDTH				,(float)WINDOW_HEIGHT * (i + 1) + WINDOW_HEIGHT	,0.0f);
+		m_aVertex[i][0].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (i + 1)					+ WINDOW_HEIGHT,0.0f);
+		m_aVertex[i][1].pos = D3DXVECTOR3((float)SCREEN_WIDTH				,(float)WINDOW_HEIGHT * (i + 1)					+ WINDOW_HEIGHT,0.0f);
+		m_aVertex[i][2].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (i + 1) + WINDOW_HEIGHT	+ WINDOW_HEIGHT,0.0f);
+		m_aVertex[i][3].pos = D3DXVECTOR3((float)SCREEN_WIDTH				,(float)WINDOW_HEIGHT * (i + 1) + WINDOW_HEIGHT	+ WINDOW_HEIGHT,0.0f);
 
 		//パースペクティブ設定?
 		m_aVertex[i][0].rhw = 1.0f;
@@ -186,7 +198,7 @@ void CCommandWindow::SetVertex()
 //---------------------------------------------------------------------------------------
 //フォント情報の設定
 //---------------------------------------------------------------------------------------
-void CCommandWindow::SetFontPos()
+void CItemCommandWindow::SetFontPos()
 {
 	for(int i = 0;i < COMMAND_MAX;i++)
 	{
@@ -199,16 +211,32 @@ void CCommandWindow::SetFontPos()
 //---------------------------------------------------------------------------------------
 //描画フラグを外部からON/OFFする
 //---------------------------------------------------------------------------------------
-void CCommandWindow::DrawFlgChange()
+void CItemCommandWindow::DrawFlgChange()
 {
 	m_bDrawFlg = !m_bDrawFlg;
 }
 //---------------------------------------------------------------------------------------
 //コマンド名の設定
 //---------------------------------------------------------------------------------------
-void CCommandWindow::SetCommand()
+void CItemCommandWindow::SetCommand()
 {
 	lstrcpyn(m_CommandName[0],_T("使う")	,sizeof(LPCTSTR) * FONT_MAX / 2);
 	lstrcpyn(m_CommandName[1],_T("装備")	,sizeof(LPCTSTR) * FONT_MAX / 2);
 	lstrcpyn(m_CommandName[2],_T("捨てる")	,sizeof(LPCTSTR) * FONT_MAX / 2);
+}
+
+//---------------------------------------------------------------------------------------
+//メンバ変数のポインタを設定する
+//---------------------------------------------------------------------------------------
+void CItemCommandWindow::SetPointer()
+{
+
+	//ユニットマネージャーのポインタを取得
+	CUnitManager* pUnitManager = CUnitManager::GetPointer();
+	//プレイヤーのポインタを取得
+	m_pPlayer = pUnitManager->GetPlayerPointer();
+	//メニューウィンドウへのポインタを取得
+	m_pMenuWindow = CMenuWindow::GetPointer();
+	//アイテムウィンドウのポインタを取得
+	m_pItemWindow = CItemWindow::GetPointer();
 }

@@ -37,6 +37,7 @@ using namespace std;
 CEnemy::CEnemy(CGameScene* pScene):
 CUnit(pScene)
 {
+
 	//オブジェクトIDの設定
 	m_uID = ID_ENEMY;
 
@@ -57,17 +58,11 @@ CEnemy::~CEnemy(void)
 		//プレイヤーを発見していない状態
 		m_bPlayerFindFlg = false;
 
-		//アイテムインベントリの終了処理
-		m_pInventory ->Fin();
-
-		//装備インベントリの終了処理
-		m_pEquipment ->Fin();
-
 		//マーキング消去
-		CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
+		m_pMapData->Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 
 		//ジェネレーターの生成数を減算
-		CEnemyGenerator::SumMakeEnemyNum();
+		m_pEnemyGenerator->SumMakeEnemyNum();
 	}
 }
 //---------------------------------------------------------------------------------------
@@ -79,11 +74,11 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 	if(!pGenerator)
 		return;
 
-	//現在の階層が、最終階層ならば、種類をドラゴンに設定する
-	int nHierarchy = CMapData::GetHierarchieNum();
-
 	//エネミーを追加
 	CEnemy* pEnemy = new CEnemy(pGenerator ->GetScene());
+
+	//現在の階層が、最終階層ならば、種類をドラゴンに設定する
+	int nHierarchy = pEnemy->m_pMapData->GetHierarchieNum();
 
 	//ユニットとして親クラスの初期化処理を行う
 	pEnemy -> CUnit::Init();
@@ -409,13 +404,18 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 	//ユニットの番号を設定
 	pEnemy -> m_nUnitNumber = OBJ_NUM_ENEMY + m_nMakeNumber;
 
+	if (pEnemy->m_nEnemyType == TYPE_BOSS)
+	{
+		pEnemy->m_nUnitNumber = BOSSNUMBER;
+	}
+
 	//生きている
 	pEnemy -> m_bSurvival = true;
 	
 	//-----ステータスの設定-----
 
 	//レベルを設定
-	pEnemy -> m_nLevel = CUnitManager::GetPlayerLevel() + (rand() % 6 - 3);
+	pEnemy -> m_nLevel = pEnemy->m_pUnitManager->GetPlayerLevel() + (rand() % 6 - 3);
 
 	//値が0以下にならない様に設定する
 	if(pEnemy ->m_nLevel <= 0)
@@ -442,9 +442,9 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 	pEnemy -> m_nDefenceUpNum = m_nLevelUpData[UPSTATES_DF];
 
 	//どの部屋に配置するか決定する
-	int MakeRoomNumber = rand() % CMapData::GetMakeRoomNum();
+	int MakeRoomNumber = rand() % pEnemy->m_pMapData->GetMakeRoomNum();
 	//部屋のデータを取得する
-	RECT RoomPos = CMapData::GetRoomFloorPlan(MakeRoomNumber);
+	RECT RoomPos = pEnemy->m_pMapData->GetRoomFloorPlan(MakeRoomNumber);
 
 	//位置情報を仮的に設定
 	int PosX = rand() % (RoomPos.right - RoomPos.left) + RoomPos.left;
@@ -464,8 +464,8 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 		}
 
 		//接地可能か確認
-		if (FLOOR == CMapData::Get_TerrainMapSituation(PosX, PosZ) &&
-			0 == CMapData::Get_UnitMapSituation(PosX, PosZ))
+		if (FLOOR == pEnemy->m_pMapData->Get_TerrainMapSituation(PosX, PosZ) &&
+			0 == pEnemy->m_pMapData->Get_UnitMapSituation(PosX, PosZ))
 			break;
 
 		//不可能だった場合、再設定する。
@@ -504,7 +504,7 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 	pEnemy->SetWorld(world);
 
 	//マーキング
-	CMapData::Set_UnitMap(pEnemy -> m_nUnit_Pos_X,pEnemy -> m_nUnit_Pos_Z,pEnemy ->m_nUnitNumber);
+	pEnemy->m_pMapData->Set_UnitMap(pEnemy -> m_nUnit_Pos_X,pEnemy -> m_nUnit_Pos_Z,pEnemy ->m_nUnitNumber);
 
 	//目的地初期化
 	pEnemy -> m_Pos = D3DXVECTOR3(world._41,world._42,world._43);
@@ -531,7 +531,7 @@ void CEnemy::Generation(CMeshObj *pGenerator)
 	pEnemy->TergetPositionSet();
 
 	//シーン上にオブジェクトの追加
-	CUnitManager::Add(pEnemy->m_nUnitNumber, pEnemy);
+	pEnemy->m_pUnitManager->Add(pEnemy->m_nUnitNumber, pEnemy);
 }
 //---------------------------------------------------------------------------------------
 //更新
@@ -561,10 +561,13 @@ void CEnemy::InputUpdate()
 		//最大数値を超えない様に
 		if (m_nHP > m_nMaxHP)
 			m_nHP = m_nMaxHP;
+
+		//移動先ユニットデータを初期化
+		m_pMovePosUnitData = NULL;
 	}
 	//プレイヤーの位置情報を取得
-	int PlayerPos_X = CUnitManager::GetPlayerPosX();
-	int PlayerPos_Z = CUnitManager::GetPlayerPosZ();
+	int PlayerPos_X = m_pUnitManager->GetPlayerPosX();
+	int PlayerPos_Z = m_pUnitManager->GetPlayerPosZ();
 
 	//差を計算
 	int Distance_X = PlayerPos_X - m_nUnit_Pos_X;
@@ -574,9 +577,9 @@ void CEnemy::InputUpdate()
 	{
 		//プレイヤーと同じ部屋にいる、もしくはプレイヤーとの距離が一定値以下になった場合、発見状態に移行する
 		//プレイヤーの現在いる部屋を取得
-		int nPlayerExistenceRoomNumber = CMapData::GetRoomNumber(PlayerPos_X, PlayerPos_X);
+		int nPlayerExistenceRoomNumber = m_pMapData->GetRoomNumber(PlayerPos_X, PlayerPos_X);
 		//現在自分がいる部屋の番号を取得
-		int nExistenceRoomNumber = CMapData::GetRoomNumber(m_nUnit_Pos_X, m_nUnit_Pos_Z);
+		int nExistenceRoomNumber = m_pMapData->GetRoomNumber(m_nUnit_Pos_X, m_nUnit_Pos_Z);
 
 		//プレイヤーと自身の距離を計算する(斜めを考慮)
 		float Distance = (float)pow((PlayerPos_X - m_nUnit_Pos_X)*(PlayerPos_X - m_nUnit_Pos_X) + (PlayerPos_Z - m_nUnit_Pos_Z)*(PlayerPos_Z - m_nUnit_Pos_Z),0.5);
@@ -603,6 +606,7 @@ void CEnemy::InputUpdate()
 	//A*による移動
 	MoveCompletion = A_StarMove();
 
+	//移動ができなかった場合。
 	if(!MoveCompletion)
 	{
 		//攻撃判定(もしプレイヤーがそばに居たら攻撃をする)
@@ -803,7 +807,7 @@ void CEnemy::MoveUpdate()
 void CEnemy::ActUpdate()
 {	
 	//メッセージテスト
-	MessageWindow::SetMassege(("行動した"));
+	m_pMessageWindow->SetMassege(("行動した"));
 
 	//ステートの遷移(ターンの終了)
 	m_nStateNumber = CTurn::GAME_STATE_TURN_END;
@@ -816,7 +820,7 @@ void CEnemy::ItemUpdate()
 {
 
 	//メッセージテスト
-	MessageWindow::SetMassege(("アイテム使った"));
+	m_pMessageWindow->SetMassege(("アイテム使った"));
 
 	//ステートの遷移(ターンの終了)
 	m_nStateNumber = CTurn::GAME_STATE_TURN_END;
@@ -844,7 +848,7 @@ void CEnemy::TurnEndUpdate()
 bool CEnemy::A_StarMove()
 {
 	//A*で用いるデータ群の初期化
-	CMapData::InitAStarData();
+	m_pMapData->InitAStarData();
 
 	//探索を行う場所
 	int SearchPositionX = m_nUnit_Pos_X;
@@ -856,8 +860,8 @@ bool CEnemy::A_StarMove()
 	{
 		//プレイヤーを見つけていた場合
 		//プレイヤーの位置情報
-		m_TergetPositionX = CUnitManager::GetPlayerPosX();
-		m_TergetPositionZ = CUnitManager::GetPlayerPosZ();
+		m_TergetPositionX = m_pUnitManager->GetPlayerPosX();
+		m_TergetPositionZ = m_pUnitManager->GetPlayerPosZ();
 	}
 	else
 	{
@@ -873,19 +877,19 @@ bool CEnemy::A_StarMove()
 
 	}
 	//探索した位置をクローズ化
-	CMapData::CompleteCellCal(SearchPositionX,SearchPositionZ,2);
+	m_pMapData->CompleteCellCal(SearchPositionX,SearchPositionZ,2);
 
 	//探索を行う位置がプレイヤーの位置、又は異常値が返ってくるまで処理を行う
 	while((SearchPositionX != m_TergetPositionX || SearchPositionZ != m_TergetPositionZ) && (SearchPositionX != -99 && SearchPositionZ != -99))
 	{
 		//周囲を探索する
-		CMapData::SearchPosition(SearchPositionX,SearchPositionZ,m_nUnit_Pos_X,m_nUnit_Pos_Z,m_TergetPositionX,m_TergetPositionZ);
+		m_pMapData->SearchPosition(SearchPositionX,SearchPositionZ,m_nUnit_Pos_X,m_nUnit_Pos_Z,m_TergetPositionX,m_TergetPositionZ);
 
 		//最もスコアの小さい位置を取得
-		CMapData::SearchMinScoreData(&SearchPositionX,&SearchPositionZ);
+		m_pMapData->SearchMinScoreData(&SearchPositionX,&SearchPositionZ);
 		
 		//探索した位置をクローズ化
-		CMapData::CompleteCellCal(SearchPositionX,SearchPositionZ,2);
+		m_pMapData->CompleteCellCal(SearchPositionX,SearchPositionZ,2);
 	}
 
 	//探索終了
@@ -897,7 +901,7 @@ bool CEnemy::A_StarMove()
 		m_nStateNumber = CTurn::GAME_STATE_TURN_END;
 
 		//A*で用いるデータ群の初期化
-		CMapData::InitAStarData();
+		m_pMapData->InitAStarData();
 		return false;
 	}
 	//プレイヤーのもとにたどり着いた場合
@@ -912,23 +916,21 @@ bool CEnemy::A_StarMove()
 		SearchPositionX = ParentPosX;
 		SearchPositionZ = ParentPosZ;
 
-		CMapData::GetParentPos(SearchPositionX,SearchPositionZ,&ParentPosX,&ParentPosZ);
+		m_pMapData->GetParentPos(SearchPositionX,SearchPositionZ,&ParentPosX,&ParentPosZ);
 	}
 
 	//その位置にユニットがいる場合、移動しない
-	int UnitMapSituation = CMapData::Get_UnitMapSituation(SearchPositionX,SearchPositionZ);
-	if(UnitMapSituation < OBJ_NUM_ENEMY)
+	int UnitMapSituation = m_pMapData->Get_UnitMapSituation(SearchPositionX,SearchPositionZ);
+	if(UnitMapSituation < OBJ_NUM_ENEMY && UnitMapSituation != 0)
 	{
 		//自身のステートの設定
 		m_nStateNumber = CTurn::GAME_STATE_TURN_END;
 
 		//A*で用いるデータ群の初期化
-		CMapData::InitAStarData();
+		m_pMapData->InitAStarData();
 		return false;
 	}
 	//その位置に移動
-	//マーキング消去
-	CMapData::Back_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z);
 
 	//向きフラグ設定
 
@@ -1052,18 +1054,48 @@ bool CEnemy::A_StarMove()
 	m_bDestination = false;
 	m_fTimer = 0.0f;
 
+	//マーキング消去
+	m_pMapData->Back_UnitMap(m_nUnit_Pos_X, m_nUnit_Pos_Z);
+
+	//移動先にエネミーがいる場合、そのデータを保存しておく
+	if (UnitMapSituation >= OBJ_NUM_ENEMY)
+	{
+		m_pMovePosUnitData = m_pUnitManager->Find(UnitMapSituation);
+	
+		//もし、移動先のユニットの移動先にいるユニットが自身の場合、場所を入れ替える
+		if (m_pMovePosUnitData->GetMoveUnitData() == this)
+		{
+			m_pMovePosUnitData->MovePos(m_nUnit_Pos_X, m_nUnit_Pos_Z);
+		}
+		else
+		{
+			//そうでない場合、移動不可として、停止
+			//自身のステートの設定
+			m_nStateNumber = CTurn::GAME_STATE_TURN_END;
+	
+			//A*で用いるデータ群の初期化
+			m_pMapData->InitAStarData();
+
+			//マーキング
+			m_pMapData->Set_UnitMap(m_nUnit_Pos_X, m_nUnit_Pos_Z, m_nUnitNumber);
+
+			return false;
+		}
+	
+	}
+
 	//配列上を移動
 	m_nUnit_Pos_X = SearchPositionX;
 	m_nUnit_Pos_Z = SearchPositionZ;
 	
 	//マーキング
-	CMapData::Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
+	m_pMapData->Set_UnitMap(m_nUnit_Pos_X,m_nUnit_Pos_Z,m_nUnitNumber);
 
 	//自身のステートの設定
 	m_nStateNumber = CTurn::GAME_STATE_MOVE;
 
 	//A*で用いるデータ群の初期化
-	CMapData::InitAStarData();
+	m_pMapData->InitAStarData();
 
 	return true;
 }
@@ -1074,15 +1106,15 @@ bool CEnemy::A_StarMove()
 void CEnemy::TergetPositionSet()
 {
 	//移動目標となる部屋を設定する
-	int MoveTergetRoomNumber = rand() % CMapData::GetMakeRoomNum();
+	int MoveTergetRoomNumber = rand() % m_pMapData->GetMakeRoomNum();
 
 	//部屋のデータを取得
-	RECT RoomData = CMapData::GetRoomFloorPlan(MoveTergetRoomNumber);
+	RECT RoomData = m_pMapData->GetRoomFloorPlan(MoveTergetRoomNumber);
 
 	//目標地点を決定
 	do
 	{
 		m_TergetPositionX = rand() % (RoomData.right - RoomData.left) + RoomData.left;
 		m_TergetPositionZ = rand() % (RoomData.bottom - RoomData.top) + RoomData.top;
-	} while (FLOOR != CMapData::Get_TerrainMapSituation(m_TergetPositionX,m_TergetPositionZ));
+	} while (FLOOR != m_pMapData->Get_TerrainMapSituation(m_TergetPositionX,m_TergetPositionZ));
 }

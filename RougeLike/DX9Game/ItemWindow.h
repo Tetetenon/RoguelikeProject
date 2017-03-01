@@ -1,64 +1,53 @@
 #pragma once
 
 #include "2DWindow.h"
-#include "Item.h"
-#include "ItemDescriptionFrame.h"
+#include "Inventory.h"
 
-class CCommandWindow;
-class CInventoryCursor;
+class CItemCommandWindow;
+class CItemWindowCursor;
+class CItemDescriptionFrame;
 
-
-//所持できる最大アイテム量
-#define ITEM_NUM_MAX 10
-
-class CInventory:
-	public CItem,
+class CItemWindow:
 	public C2DWindow
 {
 private:
-	CItem				m_Item[ITEM_NUM_MAX];	//アイテムデータ(アイテムの持てる数)
+	//シングルトン
+	static CItemWindow* m_pItemWindow;
 	LPD3DXFONT			m_Font;					//描画用フォント
 	RECT				m_Pos[ITEM_NUM_MAX];	//ウィンドウ表示位置
-	static bool			m_bDrawFlg;				//描画フラグ
+	bool				m_bDrawFlg;				//描画フラグ
+	bool				m_bUpdateFlg;				//更新フラグ
 
 	VERTEX_2D	m_aVertex[ITEM_NUM_MAX][NUM_VERTEX];	//ポリゴン頂点情報格納用
 
-	static CCommandWindow		m_CommandWindow;		//コマンドウインドウの描画フラグ変更用
-	static CInventoryCursor	m_InventoryCursor;		//選択しているアイテムウインドウの取得
+	CItemCommandWindow*		m_pCommandWindow;	//コマンドウインドウの描画フラグ変更用
+	CItemWindowCursor*		m_pIItemWindowCursor;	//選択しているアイテムウインドウの取得
+	CItemDescriptionFrame*	m_pDescription;		//アイテム説明文
+	CInventory*				m_pPlayerInventory;	//プレイヤーの所持アイテムポインタ
 
-	static CItemDescriptionFrame m_Description;		//アイテム説明文
+	int						m_nInterval;		//入力経過時間
+
+	CItemWindow(void);							//コンストラクタ
+	~CItemWindow(void);							//デストラクタ
 public:
-	CInventory(void);							//コンストラクタ
-	~CInventory(void);							//デストラクタ
-
-	void Init();								//初期化
-	void Fin();									//終了処理
+	static void Create();						//実体を作成
+	static void Delete();						//実体の削除
+	static CItemWindow*	GetPointer();			//ポインタを渡す
 
 	void UpDate();								//更新部
 	void Draw();								//描画
 
-	static void DrawFlgChange();				//描画フラグをON/OFFする
+	void DrawFlgChange(bool);				//描画フラグをON/OFFする
+	void UpdateFlgChange(bool);					//更新フラグのON/OFF
 
 	void SetVertex();							//ポリゴン情報を埋める
 	void SetFontPos();							//フォント描画位置設定
 
 	//描画のフラグ状況を取得
-	static bool GetDrawFlg()	{return m_bDrawFlg;}
+	bool GetDrawFlg()	{return m_bDrawFlg;}
+	bool GetUpdateFlg() { return m_bUpdateFlg; }
 
-	bool SetItem(CItem Item);		//ストレージにアイテムをセット
-
-	//指定されたアイテムデータを渡す
-	CItem GetItem (int Coefficient)	{return m_Item[Coefficient];}
-
-	//指定されたアイテムの名前を返す
-	_TCHAR* GetInventoryItemName(int Coefficient){return m_Item[Coefficient].GetName();}
-
-	void DelInventory(int Receipt);				//指定した番号のアイテムを消去
-
-	int GetEffect(int Receipt);					//指定されたアイテムの効果ジャンルを返却
-
-	int GetEffectValue(int Receipt);			//指定されたアイテムの効能を返却する
-
-	void FindName	(int nID,int Receipt);		//IDから名前を検索する
+	//メンバ変数のポインタを設定する
+	void SetPoiner();
 };
 

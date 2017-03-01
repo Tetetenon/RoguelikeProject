@@ -1,6 +1,8 @@
 #include "ItemWindowCursor.h"
 #include "Graphics.h"
 #include "Input.h"
+#include "ItemWindow.h"
+#include "ItemCommandWindow.h"
 
 #include "TextureManager.h"
 //---------------------------------------------------------------------------------------
@@ -12,14 +14,18 @@
 #define WINDOW_WIDHT  300
 #define WINDOW_HEIGHT  30
 
-int CInventoryCursor::m_Number = 0;				//現在選択しているアイテムが何番目の物かを管理する
-int CInventoryCursor::m_nInterval = 0;			//ボタン入力を行ってからの経過時間
+CItemWindowCursor* CItemWindowCursor::m_pItemWindowCursor = NULL;
 
 //---------------------------------------------------------------------------------------
 //コンストラクタ
 //---------------------------------------------------------------------------------------
-CInventoryCursor::CInventoryCursor(void)
+CItemWindowCursor::CItemWindowCursor(void)
 {
+	//ボタン入力経過時間を初期化する
+	m_nInterval = 0;
+	//選択中のカーソル番号を初期化する
+	m_nNumber = 0;
+
 	//デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CGraphics::GetDevice();
 
@@ -28,40 +34,56 @@ CInventoryCursor::CInventoryCursor(void)
 
 	//ポリゴン位置情報の設定
 	SetPos();
-
-	//ボタン入力経過時間を初期化する
-	m_nInterval = 0;
 }
 
 
 //---------------------------------------------------------------------------------------
 //デストラクタ
 //---------------------------------------------------------------------------------------
-CInventoryCursor::~CInventoryCursor(void)
+CItemWindowCursor::~CItemWindowCursor(void)
 {
 	//ボタン入力経過時間を初期化する
 	m_nInterval =  0;
-}
-
-//---------------------------------------------------------------------------------------
-//初期化
-//---------------------------------------------------------------------------------------
-void CInventoryCursor::Init()
-{
-	m_Number = 0;
+	//選択中のカーソル番号を初期化する
+	m_nNumber = 0;
 }
 //---------------------------------------------------------------------------------------
-//終了
+//自身の実態の作成
 //---------------------------------------------------------------------------------------
-void CInventoryCursor::Fin()
+void CItemWindowCursor::Create()
 {
-
+	//実体がまだ存在していない場合、作成を行う
+	if (!m_pItemWindowCursor)
+	{
+		m_pItemWindowCursor = new CItemWindowCursor;
+	}
+}//---------------------------------------------------------------------------------------
+//自身の実態の削除
+//---------------------------------------------------------------------------------------
+void CItemWindowCursor::Delete()
+{
+	//自身の実態の確認
+	if (m_pItemWindowCursor)
+	{
+		//実体があれば、削除
+		delete m_pItemWindowCursor;
+		//中身をきれいに
+		m_pItemWindowCursor = NULL;
+	}
+}//---------------------------------------------------------------------------------------
+//自身のポインタを渡す
+//---------------------------------------------------------------------------------------
+CItemWindowCursor* CItemWindowCursor::GetPointer()
+{
+	//念のためポインタを作成
+	Create();
+	return m_pItemWindowCursor;
 }
 
 //---------------------------------------------------------------------------------------
 //描画
 //---------------------------------------------------------------------------------------
-void CInventoryCursor::Draw()
+void CItemWindowCursor::Draw()
 {
 	//デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CGraphics::GetDevice();
@@ -90,56 +112,60 @@ void CInventoryCursor::Draw()
 //---------------------------------------------------------------------------------------
 //更新
 //---------------------------------------------------------------------------------------
-void CInventoryCursor::Update()
+void CItemWindowCursor::Update()
 {
 	//ボタン入力からの経過時間を加算
 	m_nInterval++;
-
-	//アイテム選択中のみ操作可能
-	if(CInventory::GetDrawFlg() && !CCommandWindow::GetDrawFlg())
+	if((CInput::GetKeyTrigger(DIK_W) || (CInput::GetJoyAxis(0, JOY_Y) <= -JoyMoveCap)) && m_nInterval >= ButtonIntervalTime)
 	{
-		if((CInput::GetKeyTrigger(DIK_W) || (CInput::GetJoyAxis(0, JOY_Y) <= -JoyMoveCap)) && m_nInterval >= ButtonIntervalTime)
-		{
-			//上に移動
-			m_Number --;
+		//上に移動
+		m_nNumber --;
 
-			//ループ
-			if(m_Number < 0)
-				m_Number = ITEM_NUM_MAX - 1;
-			//位置情報再設定
-			SetPos();
+		//ループ
+		if(m_nNumber < 0)
+			m_nNumber = ITEM_NUM_MAX - 1;
+		//位置情報再設定
+		SetPos();
 
-			//ボタン入力経過時間を0に
-			m_nInterval = 0;
-		}
-
-		if((CInput::GetKeyTrigger(DIK_S) || (CInput::GetJoyAxis(0,JOY_Y) >= JoyMoveCap)) && m_nInterval >= ButtonIntervalTime)
-		{
-			//下に移動
-			m_Number ++;
-
-			//ループ
-			m_Number%= ITEM_NUM_MAX;
-
-			//位置情報を再設定
-			SetPos();
-
-			//ボタン入力経過時間を0に
-			m_nInterval = 0;
-		}
+		//ボタン入力経過時間を0に
+		m_nInterval = 0;
 	}
+
+	if((CInput::GetKeyTrigger(DIK_S) || (CInput::GetJoyAxis(0,JOY_Y) >= JoyMoveCap)) && m_nInterval >= ButtonIntervalTime)
+	{
+		//下に移動
+		m_nNumber ++;
+
+		//ループ
+		m_nNumber%= ITEM_NUM_MAX;
+
+		//位置情報を再設定
+		SetPos();
+
+		//ボタン入力経過時間を0に
+		m_nInterval = 0;
+	}
+	//横を選択した場合、アイテムウィンドウのほうへカーソル更新を移す
+	if((CInput::GetKeyTrigger(DIK_D) || CInput::GetKeyTrigger(DIK_A) || abs(CInput::GetJoyAxis(0, JOY_X)) >= JoyMoveCap) && m_nInterval >= ButtonIntervalTime)
+	{
+		//装備アイテムウィンドウの更新
+		m_pItemWindow->UpdateFlgChange(false);
+		//ボタン入力経過時間を0に
+		m_nInterval = 0;
+	}
+	
 }
 
 //---------------------------------------------------------------------------------------
 //ポリゴン情報設定
 //---------------------------------------------------------------------------------------
-void CInventoryCursor::SetVertex ()
+void CItemWindowCursor::SetVertex ()
 {	
 	//位置情報設定
-	m_aVertex[0].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (m_Number + 1)					,0.0f);
-	m_aVertex[1].pos = D3DXVECTOR3((float)SCREEN_WIDTH				,(float)WINDOW_HEIGHT * (m_Number + 1)					,0.0f);
-	m_aVertex[2].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (m_Number + 1) + WINDOW_HEIGHT	,0.0f);
-	m_aVertex[3].pos = D3DXVECTOR3((float)SCREEN_WIDTH				,(float)WINDOW_HEIGHT * (m_Number + 1) + WINDOW_HEIGHT	,0.0f);
+	m_aVertex[0].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (m_nNumber + 1)				+ WINDOW_HEIGHT,0.0f);
+	m_aVertex[1].pos = D3DXVECTOR3((float)SCREEN_WIDTH				 ,(float)WINDOW_HEIGHT * (m_nNumber + 1)					+ WINDOW_HEIGHT,0.0f);
+	m_aVertex[2].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (m_nNumber + 1) + WINDOW_HEIGHT+ WINDOW_HEIGHT,0.0f);
+	m_aVertex[3].pos = D3DXVECTOR3((float)SCREEN_WIDTH				 ,(float)WINDOW_HEIGHT * (m_nNumber + 1) + WINDOW_HEIGHT	+ WINDOW_HEIGHT,0.0f);
 
 	//パースペクティブ設定?
 	m_aVertex[0].rhw = 1.0f;
@@ -163,18 +189,28 @@ void CInventoryCursor::SetVertex ()
 //---------------------------------------------------------------------------------------
 //ポリゴン位置設定
 //---------------------------------------------------------------------------------------
-void CInventoryCursor::SetPos()
+void CItemWindowCursor::SetPos()
 {
 	//位置情報設定
-	m_aVertex[0].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (m_Number + 1)					,0.0f);
-	m_aVertex[1].pos = D3DXVECTOR3((float)SCREEN_WIDTH				,(float)WINDOW_HEIGHT * (m_Number + 1)					,0.0f);
-	m_aVertex[2].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (m_Number + 1) + WINDOW_HEIGHT	,0.0f);
-	m_aVertex[3].pos = D3DXVECTOR3((float)SCREEN_WIDTH				,(float)WINDOW_HEIGHT * (m_Number + 1) + WINDOW_HEIGHT	,0.0f);
+	m_aVertex[0].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (m_nNumber + 1)				 + WINDOW_HEIGHT,0.0f);
+	m_aVertex[1].pos = D3DXVECTOR3((float)SCREEN_WIDTH				,(float)WINDOW_HEIGHT * (m_nNumber + 1)					 + WINDOW_HEIGHT,0.0f);
+	m_aVertex[2].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (m_nNumber + 1) + WINDOW_HEIGHT + WINDOW_HEIGHT,0.0f);
+	m_aVertex[3].pos = D3DXVECTOR3((float)SCREEN_WIDTH				,(float)WINDOW_HEIGHT * (m_nNumber + 1) + WINDOW_HEIGHT	 + WINDOW_HEIGHT,0.0f);
 }
 //---------------------------------------------------------------------------------------
 //選択中のアイテム番号を返す
 //---------------------------------------------------------------------------------------
-int CInventoryCursor::GetItemNum()
+int CItemWindowCursor::GetItemNum()
 {
-	return m_Number;
+	return m_nNumber;
+}
+
+//---------------------------------------------------------------------------------------
+//メンバ変数のポインタを設定する
+//---------------------------------------------------------------------------------------
+void CItemWindowCursor::SetPointer()
+{
+	//ポインタの取得
+	m_pItemCommandWindow = CItemCommandWindow::GetPointer();
+	m_pItemWindow = CItemWindow::GetPointer();
 }

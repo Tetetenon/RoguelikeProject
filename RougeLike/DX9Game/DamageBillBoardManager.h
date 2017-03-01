@@ -38,10 +38,10 @@ public:
 
 	//マネージャーの作成、削除
 	static void Create();
-	static void Destory();
+	static void Delete();
 
 	//ポインタを渡す
-	static CDamageBillBoardManager* GetManager();
+	static CDamageBillBoardManager* GetPointer();
 
 	//次に割り振る番号の取得
 	int GetNextNumber()

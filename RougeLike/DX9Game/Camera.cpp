@@ -118,7 +118,10 @@ void CCamera::Init ()
 	m_pSky = CSky::GetPointer();
 
 	//プレイヤーオブジェクトの探索、設定
-	m_pPlayer = CUnitManager::Find(OBJ_NUM_PLAYER);
+	CUnitManager* pUnitManager = CUnitManager::GetPointer();
+
+
+	m_pPlayer = pUnitManager->Find(OBJ_NUM_PLAYER);
 }
 //---------------------------------------------------------------------------------------
 //更新

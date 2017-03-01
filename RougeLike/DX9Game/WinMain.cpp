@@ -36,7 +36,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPTSTR lpCmdLine,
   ::_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF);
 #endif
 
-  //_CrtSetBreakAlloc(38011);
+  //_CrtSetBreakAlloc(112);
 
 	return appWinMain(hInstance,hPrevInst,lpCmdLine,iCmdShow);
 }

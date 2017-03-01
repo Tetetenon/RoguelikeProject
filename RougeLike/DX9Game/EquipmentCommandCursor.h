@@ -6,20 +6,25 @@
 
 //コマンド選択画面のカーソル
 
+class CEquipmentCommandWindow;
+
 class CEquipmentCommandCursor:
 	public C2DWindow
 {
 private:
-	static int					m_Command;				//何番目のコマンドを選択しているかを格納する
+	//シングルトン
+	static CEquipmentCommandCursor* m_pEquipmentCommandCursor;
 
-	static int					m_nInterval;			//ボタン入力のインターバル
-	CTurn						m_Turn;					//ターンステート変更用
-public:
+	int		m_Command;				//何番目のコマンドを選択しているかを格納する
+	int		m_nInterval;			//ボタン入力のインターバル
+	CEquipmentCommandWindow* m_pEquipmentCommandWindow;
+
 	CEquipmentCommandCursor(void);								//コンストラクタ
 	virtual ~CEquipmentCommandCursor(void);						//デストラクタ
-
-	void Init();										//初期化
-	void Fin();											//終了処理
+public:
+	static void Create();								//実体の作成
+	static void Delete();								//実体の削除
+	static CEquipmentCommandCursor* GetPointer();		//実体のポインタを渡す
 
 	void Draw();										//描画
 	void Update();										//更新
@@ -27,6 +32,9 @@ public:
 	void SetVertex();									//ポリゴン情報を埋める
 	void SetPos();										//ポリゴンの位置情報を設定する
 
-	static int  GetCommand();									//選択したコマンドを返す 
+	int  GetCommand();									//選択したコマンドを返す 
+
+	//メンバ変数のポインタの設定
+	void SetPointer();
 };
 

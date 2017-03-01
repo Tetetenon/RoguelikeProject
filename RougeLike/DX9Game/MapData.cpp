@@ -2,7 +2,7 @@
 #include "Graphics.h"
 #include "TextureManager.h"
 #include "GameScene.h"
-#include "MessageWindow.h"
+#include "Fade.h"
 #include"UnitManager.h"
 #include <stdlib.h>
 #include <tchar.h>
@@ -13,67 +13,15 @@
 
 
 //静的メンバ実体定義
-Map						CMapData::m_MapData[MAP_SIZE][MAP_SIZE];				// 新しいマップ情報
-
-LPDIRECT3DVERTEXBUFFER9 CMapData::m_pD3DVtxBuff;								//頂点バッファインタフェースへのポインタ
-LPDIRECT3DINDEXBUFFER9	CMapData::m_pD3DIdxBuff;								//インデックスバッファ
-D3DXMATRIX				CMapData::m_mtxWorld;									//ワールドマトリックス
-
-int						CMapData::m_NumVertexIndex;								//インデックス数
-int						CMapData::m_NumVertex;									//総頂点数
-int						CMapData::m_NumPolygon;									//ポリゴン数
-RECT					CMapData::m_Section[ROOM_MAX_NUM];						//区画
-RECT					CMapData::m_Room[ROOM_MAX_NUM];							//部屋
-
-int						CMapData::m_CountMakeRoom;								//実際に生成した部屋の数
-int						CMapData::m_nHierarchyNum;								//階層数
-
-
-LPD3DXFONT				CMapData::m_pFont;										//描画フォントの設定
-RECT					CMapData::m_FontDrawPos;								//フォントの描画位置を設定する
-int						CMapData::m_nDividPattern;								//生成するマップパターン
-
-AStar					CMapData::m_AStarData[MAP_SIZE][MAP_SIZE];				//A*アルゴリズムに使用する構造体
-AStarList*				CMapData::m_pAstarList;									//A*アルゴリズムで次の探索候補のデータを保存する
+CMapData* CMapData::m_pMapData = NULL;
 //---------------------------------------------------------------------------------------
 //　コンストラクタ
 //---------------------------------------------------------------------------------------
 CMapData::CMapData(void)
 {
-	int nFloorCounter = 0;
+	//メンバ変数の初期化
 	m_nHierarchyNum = 0;
-
-	//マップを生成
-	MapGeneration();
-
-	//マップの床数を数える
-	for(int i = 0;i < MAP_SIZE;i++)
-	{
-		for(int j = 0;j < MAP_SIZE;j++)
-		{
-			//マップ情報が床なら加算
-			if(CMapData::Get_TerrainMapSituation(i,j) == FLOOR)
-				nFloorCounter ++;
-		}
-	}
-
-	//ユニットの最大設置可能数を設定
-	CEnemyGenerator::SetMaxGenerator((int)(nFloorCounter / 5));
-
-	//アイテムの最大生成数を設定
-	CItemGenerator::SetMaxItem((int)(nFloorCounter / 20));
-
-	//アイテムマップ初期化
-	for(int i = 0;i < MAP_SIZE;i++)
-	{
-		for(int j = 0;j < MAP_SIZE;j++)
-		{
-			m_MapData[i][j].m_item = 0;
-			m_MapData[i][j].m_unit = (ObjectNumber)0;
-			m_MapData[i][j].m_isVisible = FALSE;
-	}
-			
-	}
+	m_pAstarList = NULL;
 
 	//デバイス格納
 	LPDIRECT3DDEVICE9 pDevice = CGraphics::GetDevice();
@@ -186,7 +134,7 @@ CMapData::CMapData(void)
 	m_pD3DIdxBuff->Unlock();
 
 	//階層数を初期化
-	m_nHierarchyNum = 1;
+	m_nHierarchyNum = 0;
 	
 	//フォントへのポインタを取得する
 	D3DXCreateFont(pDevice,24,0,1,0,FALSE,SHIFTJIS_CHARSET,OUT_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH,NULL,&m_pFont);
@@ -207,7 +155,39 @@ CMapData::~CMapData(void)
 	//インデックスバッファの開放
 	SAFE_RELEASE(m_pD3DIdxBuff);
 }
+//---------------------------------------------------------------------------------------
+// 実体の作成
+//---------------------------------------------------------------------------------------
+void CMapData::Create()
+{
+	//中身がなければ作成
+	if (!m_pMapData)
+	{
+		m_pMapData = new CMapData;
+	}
+}
+//---------------------------------------------------------------------------------------
+// 実体の削除
+//---------------------------------------------------------------------------------------
+void CMapData::Delete()
+{
+	//実体があれば削除
+	if (m_pMapData)
+	{
+		delete m_pMapData;
+		m_pMapData = NULL;
+	}
+}
 
+//---------------------------------------------------------------------------------------
+// 実体のポインタを渡す
+//---------------------------------------------------------------------------------------
+CMapData* CMapData::GetPointer()
+{
+	//念のため作成関数を呼ぶ
+	Create();
+	return m_pMapData;
+}
 //---------------------------------------------------------------------------------------
 // 初期化
 //---------------------------------------------------------------------------------------
@@ -219,10 +199,10 @@ void CMapData::Init()
 //---------------------------------------------------------------------------------------
 void CMapData::SetFontPos()
 {
-	m_FontDrawPos.left		= (LONG)125.0f;
-	m_FontDrawPos.top		= (LONG)100.0f;
-	m_FontDrawPos.right		= (LONG)230.0f;
-	m_FontDrawPos.bottom	= (LONG)120.0f;
+	m_FontDrawPos.left		= (LONG) 90.0f;
+	m_FontDrawPos.top		= (LONG) 15.0f;
+	m_FontDrawPos.right		= (LONG)140.0f;
+	m_FontDrawPos.bottom	= (LONG) 45.0f;
 }
 //---------------------------------------------------------------------------------------
 // 更新
@@ -465,8 +445,8 @@ void CMapData::AllInitMapData()
 //---------------------------------------------------------------------------------------
 void CMapData::MapGeneration()
 {
-	//メッセージウィンドウのデータを初期化
-	MessageWindow::InitFontData();
+	//階層数加算
+	m_nHierarchyNum++;
 
 	//マップデータの初期化
 	AllInitMapData();
@@ -479,21 +459,54 @@ void CMapData::MapGeneration()
 
 	//部屋から部屋への通路を作成する
 	MakeRoot();
-	//階段をどこかの部屋の中に設定する
-	StairsSet();
 
+	//最終階層以外ならば階段を作成
+	if (m_nHierarchyNum != GameClearNum)
+	{
+		//階段をどこかの部屋の中に設定する
+		StairsSet();
+	}
 	//フィールド上にオブジェクトを設置する
 	SetFieldObj();
 
-	//階層数加算
-	m_nHierarchyNum ++;
-
 	//フェードの状態をフェードインに設定
-	CFade::ChangeState(FADEMODE_IN);
+	m_pFade->ChangeState(FADEMODE_IN);
 	//ユニットを一時行動不能状態に設定
-	CUnitManager::ChangeMoveCanFlg(false);
+	m_pUnitManager->ChangeMoveCanFlg(false);
 
 	// 一部分可視化
+
+	//床の数
+	int nFloorCounter = 0;
+	
+	//マップの床数を数える
+	for (int i = 0; i < MAP_SIZE; i++)
+	{
+		for (int j = 0; j < MAP_SIZE; j++)
+		{
+			//マップ情報が床なら加算
+			if (CMapData::Get_TerrainMapSituation(i, j) == FLOOR)
+				nFloorCounter++;
+		}
+	}
+
+	//ユニットの最大設置可能数を設定
+	m_pEnemyGerenator->SetMaxGenerator((int)(nFloorCounter / 20));
+
+	//アイテムの最大生成数を設定
+	CItemGenerator::SetMaxItem((int)(nFloorCounter / 30));
+
+	//アイテムマップ初期化
+	for (int i = 0; i < MAP_SIZE; i++)
+	{
+		for (int j = 0; j < MAP_SIZE; j++)
+		{
+			m_MapData[i][j].m_item = 0;
+			m_MapData[i][j].m_unit = (ObjectNumber)0;
+			m_MapData[i][j].m_isVisible = FALSE;
+		}
+
+	}
 	
 	
 	//10階層移動したら、シーンをゲームクリアに遷移させる
@@ -503,10 +516,10 @@ void CMapData::MapGeneration()
 		CGameScene::GameClearStateChange(GAME_CLEAR);
 
 		//ゲームメインを終了
-		CFade::ChangeState(FADEMODE_OUT);
+		m_pFade->ChangeState(FADEMODE_OUT);
 
 		//エネミーの生成数のリセット
-		CEnemyGenerator::ResetMakeEnemyNum();
+		m_pEnemyGerenator->ResetMakeEnemyNum();
 		//フィールドアイテム生成数のリセット
 		CItemGenerator::ResetMakeItemNum();
 	}
@@ -532,7 +545,7 @@ void CMapData::DivideMap()
 
 	//３パターンの中から、ランダムに選択し、区画を分ける
 	m_nDividPattern = rand()%4;
-	if (m_nHierarchyNum == GameClearNum - 1)
+	if (m_nHierarchyNum == GameClearNum)
 	{
 		m_nDividPattern = 3;
 	}
@@ -867,18 +880,14 @@ void CMapData::StairsSet()
 	int StairsPos_X;		//階段建設予定地
 	int StairsPos_Y;		//階段建設予定地
 
+	//作成する部屋の番号を設定
+	int nRoomNumber = rand() % m_CountMakeRoom;
+	//作成する部屋の情報を取得
+	RECT RoomData = m_Room[nRoomNumber];
 
 	//階段の位置をランダムに設定
-	StairsPos_X = rand()%MAP_SIZE;
-	StairsPos_Y = rand()%MAP_SIZE;
-
-	//仮に設定した位置が部屋の中ならば、設置
-	while(!CheckInTheRoom(StairsPos_X,StairsPos_Y))
-	{
-		//部屋の中でなければ再設定を行う
-		StairsPos_X = rand()%MAP_SIZE;
-		StairsPos_Y = rand()%MAP_SIZE;
-	}
+	StairsPos_X = rand()%(RoomData.right - RoomData.left) + RoomData.left;
+	StairsPos_Y = rand()%(RoomData.bottom - RoomData.top) + RoomData.top;
 
 	//階段を設置する!
 	m_MapData[StairsPos_Y][StairsPos_X].m_terrain = STAIRS;
@@ -975,9 +984,6 @@ void CMapData::DrawHierarchyNum()
 	//数値(文字)描画
 	m_pFont ->DrawText(NULL,Hierarchy,-1,&m_FontDrawPos,DT_LEFT,D3DCOLOR_ARGB(0xff, 0x00, 0x00, 0x00));
 }
-
-
-
 //---------------------------------------------------------------------------------------
 //A*アルゴリズムの情報を設定する
 //---------------------------------------------------------------------------------------
@@ -1039,8 +1045,6 @@ void CMapData::InitAStarData()
 
 	m_pAstarList = NULL;
 }
-
-
 //---------------------------------------------------------------------------------------
 //指定された位置周囲の移動可能な場所を検索しリストに追加
 //---------------------------------------------------------------------------------------
@@ -1313,4 +1317,17 @@ void CMapData::SetFieldObj()
 			break;
 		}
 	}
+}
+
+//---------------------------------------------------------------------------------------
+//メンバ変数のポインタを設定する
+//---------------------------------------------------------------------------------------
+void CMapData::SetPointer()
+{
+	//フェードのポインタを取得
+	m_pFade = CFade::GetPointer();
+	//ユニットマネージャーのポインタを取得
+	m_pUnitManager = CUnitManager::GetPointer();
+	//エネミージェネレーターのポインタを取得
+	m_pEnemyGerenator = CEnemyGenerator::GetPointer();
 }

@@ -6,11 +6,10 @@
 #include "EquipmentWindow.h"
 #include "TrickWindow.h"
 
-int	 CMenuSelect::m_nSelectNumber = 0;		//現在選択しているメニュー番号格納用変数
-bool CMenuSelect::m_bOperationFlg = false;	//メニューウィンドウ操作フラグ
-int	 CMenuSelect::m_nInterval = 0;			//ボタン入力のインターバル	
-
-
+//---------------------------------------------------------------------------------------
+//静的メンバ変数
+//---------------------------------------------------------------------------------------
+CMenuSelect* CMenuSelect::m_pMenuSelect = NULL;
 
 //---------------------------------------------------------------------------------------
 //コンストラクタ
@@ -23,14 +22,17 @@ CMenuSelect::CMenuSelect(void)
 	//選択中コマンドの設定
 	m_nSelectNumber = 0;
 
+	//ボタン入力経過時間を初期化
+	m_nInterval = 0;
+
 	//操作フラグの初期化
 	m_bOperationFlg = false;
 
 	//位置情報の設定
 	m_aVertex[0].pos = D3DXVECTOR3(SCREEN_WIDTH - 240.0f , 50.0f ,0.0f);
 	m_aVertex[1].pos = D3DXVECTOR3(SCREEN_WIDTH -  10.0f , 50.0f ,0.0f);
-	m_aVertex[2].pos = D3DXVECTOR3(SCREEN_WIDTH - 240.0f ,127.5f ,0.0f);
-	m_aVertex[3].pos = D3DXVECTOR3(SCREEN_WIDTH -  10.0f ,127.5f ,0.0f);
+	m_aVertex[2].pos = D3DXVECTOR3(SCREEN_WIDTH - 240.0f ,205.0f ,0.0f);
+	m_aVertex[3].pos = D3DXVECTOR3(SCREEN_WIDTH -  10.0f ,205.0f ,0.0f);
 }
 
 //---------------------------------------------------------------------------------------
@@ -40,17 +42,49 @@ CMenuSelect::~CMenuSelect(void)
 {
 	//操作フラグの初期化
 	m_bOperationFlg = false;
+
+	//ボタン入力経過時間を初期化
+	m_nInterval = 0;
 }
-
-
+//---------------------------------------------------------------------------------------
+//実体の生成
+//---------------------------------------------------------------------------------------
+void CMenuSelect::Create()
+{
+	//中身がなければ作成
+	if (!m_pMenuSelect)
+	{
+		m_pMenuSelect = new CMenuSelect;
+	}
+}
+//---------------------------------------------------------------------------------------
+//実体の削除
+//---------------------------------------------------------------------------------------
+void CMenuSelect::Delete()
+{
+	//実体があれば削除
+	if (m_pMenuSelect)
+	{
+		delete m_pMenuSelect;
+		m_pMenuSelect = NULL;
+	}
+}
+//---------------------------------------------------------------------------------------
+//実体のポインタを渡す
+//---------------------------------------------------------------------------------------
+CMenuSelect* CMenuSelect::GetPointer()
+{
+	//念のため作成関数を呼び出す
+	Create();
+	return m_pMenuSelect;
+}
 //---------------------------------------------------------------------------------------
 //更新
 //---------------------------------------------------------------------------------------
 void CMenuSelect::Update(void)
 {
 	m_nInterval ++;
-	//アイテムウィンドウも、装備ウィンドウも、技ウィンドウも描画していない
-	if(!CInventory::GetDrawFlg() && !CEquipmentInventory::GetDrawFlg()&&!CTrickWindow::GetDrawFlg())
+	if(!m_pItemWindow->GetDrawFlg() && !m_pEquipmentWindow->GetDrawFlg() && !m_pTrickWindow->GetDrawFlg())
 	{
 		//上キーを押している
 		if((CInput::GetKeyTrigger(DIK_W) || CInput::GetJoyAxis(0,JOY_Y) <= -JoyMoveCap) && m_nInterval >= ButtonIntervalTime)
@@ -87,21 +121,11 @@ void CMenuSelect::Update(void)
 				//アイテム
 			case MENU_ITEM:
 				//アイテムウインドウを描画するフラグを立てる
-				CInventory::DrawFlgChange();
-				break;
-				//装備
-			case MENU_EQUIPMENT:
-				//装備ウィンドウを描画するフラグを立てる
-				CEquipmentInventory::DrawFlgChange();
-				break;
-				//ステータス
-			case MENU_STATES:
-				//ステータスウィンドウの描画フラグを立てる
-				CStatesWindow::ChangeDrawFlg();
+				m_pItemWindow->DrawFlgChange(true);
 				break;
 			case MENU_TRICK:
 				//技ウィンドウの描画フラグを立てる
-				CTrickWindow::DrawFlgChange();
+				m_pTrickWindow->DrawFlgChange();
 				break;
 			}
 
@@ -111,8 +135,19 @@ void CMenuSelect::Update(void)
 	}
 
 	//位置情報の設定
-	m_aVertex[0].pos = D3DXVECTOR3(SCREEN_WIDTH - 235.0f , 50.0f + (m_nSelectNumber * 77.5f) ,0.0f);
-	m_aVertex[1].pos = D3DXVECTOR3(SCREEN_WIDTH -  20.0f , 50.0f + (m_nSelectNumber * 77.5f) ,0.0f);
-	m_aVertex[2].pos = D3DXVECTOR3(SCREEN_WIDTH - 235.0f ,127.5f + (m_nSelectNumber * 77.5f) ,0.0f);
-	m_aVertex[3].pos = D3DXVECTOR3(SCREEN_WIDTH -  20.0f ,127.5f + (m_nSelectNumber * 77.5f) ,0.0f);
+	m_aVertex[0].pos = D3DXVECTOR3(SCREEN_WIDTH - 235.0f , 50.0f + (m_nSelectNumber * 155.0f) ,0.0f);
+	m_aVertex[1].pos = D3DXVECTOR3(SCREEN_WIDTH -  20.0f , 50.0f + (m_nSelectNumber * 155.0f) ,0.0f);
+	m_aVertex[2].pos = D3DXVECTOR3(SCREEN_WIDTH - 235.0f ,205.0f + (m_nSelectNumber * 155.0f) ,0.0f);
+	m_aVertex[3].pos = D3DXVECTOR3(SCREEN_WIDTH -  20.0f ,205.0f + (m_nSelectNumber * 155.0f) ,0.0f);
+}
+//---------------------------------------------------------------------------------------
+//メンバ変数のポインタを設定
+//---------------------------------------------------------------------------------------
+void CMenuSelect::SetPointer()
+{
+	//ステータスウィンドウのポインタを取得
+	m_pStatesWindow = CStatesWindow::GetPointer();
+	m_pItemWindow = CItemWindow::GetPointer();
+	m_pTrickWindow = CTrickWindow::GetPointer();
+	m_pEquipmentWindow = CEquipmentWindow::GetPointer();
 }

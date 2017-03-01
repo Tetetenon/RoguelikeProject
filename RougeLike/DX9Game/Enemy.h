@@ -37,6 +37,7 @@ private:
 	int					m_nEnemyType;					//エネミーのタイプ(はち、クマ、…)
 	bool				m_bPlayerFindFlg;				//プレイヤーを見つけた状態か
 
+
 	//移動目標地点を保存する
 	int					m_TergetPositionX;
 	int					m_TergetPositionZ;

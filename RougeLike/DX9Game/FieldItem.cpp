@@ -15,13 +15,14 @@ int CFieldItem::n_Debug = 0;
 CFieldItem::CFieldItem(CGameScene *pScene):
 CMeshObj(pScene)
 {
+	//ポインタの取得
+	m_pItemManager = CItemManager::GetPointer();
+	m_pMapData = CMapData::GetPointer();
+
 	m_uID = ID_ITEM;
 
 	//使用するモデルの番号
 	m_nMeshNumber = MODEL_TREASUREBOX;
-
-	//リストの初期化
-	m_pNextFieldItem = m_pBackFieldItem = NULL;
 }
 
 
@@ -65,7 +66,7 @@ void CFieldItem::Delete		()
 	m_ItemDelete = false;
 	CMeshObj::Fin();
 	//マネージャー上から自身を削除する
-	CItemManager::Del(m_FieldID);
+	m_pItemManager->Del(m_FieldID);
 }
 
 //---------------------------------------------------------------------------------------
@@ -81,10 +82,10 @@ void CFieldItem::Generation(CMeshObj *pGeneration)
 	CFieldItem* pFieldItem = new CFieldItem(pGeneration ->GetScene());
 
 	//アイテムの番号を設定する
-	pFieldItem ->m_FieldID = CItemManager::GetNextItemID();
+	pFieldItem ->m_FieldID = pFieldItem->m_pItemManager->GetNextItemID();
 
 	//アイテムの生成カウントを加算
-	CItemManager::NextItemID(pFieldItem->m_FieldID + 1);
+	pFieldItem->m_pItemManager->NextItemID(pFieldItem->m_FieldID + 1);
 
 	//IDの設定
 	pFieldItem ->m_Item.SetID(1 + rand()%ITEM_SHIELD);
@@ -123,23 +124,28 @@ void CFieldItem::Generation(CMeshObj *pGeneration)
 
 
 	//-----位置情報の設定-----
+	int RoomNumber = rand() % pFieldItem->m_pMapData->GetMakeRoomNum();
+
+	//部屋の間取りの取得
+	RECT Pos = pFieldItem->m_pMapData->GetRoomFloorPlan(RoomNumber);
+
 	//アイテムの位置情報の設定
-	pFieldItem ->m_Pos.x = (float)(rand()%MAP_SIZE);
-	pFieldItem ->m_Pos.y = (float)(rand()%MAP_SIZE);
+	pFieldItem ->m_Pos.x = (float)(rand()%(Pos.right - Pos.left) + Pos.left);
+	pFieldItem ->m_Pos.y = (float)(rand()%(Pos.bottom - Pos.top) + Pos.top);
 
 	//アイテム設置予定場所が部屋の中かつ階段の上以外、アイテムがおいていない
-	while(!CMapData::CheckInTheRoom((int)pFieldItem ->m_Pos.x,(int)pFieldItem ->m_Pos.y)
-		|| CMapData::CheckStairs((int)pFieldItem ->m_Pos.x,(int)pFieldItem ->m_Pos.y)
-		|| CMapData::Get_ItemMapSituation((int)pFieldItem ->m_Pos.x,(int)pFieldItem ->m_Pos.y) != 0)
+	while(!pFieldItem ->m_pMapData->CheckInTheRoom((int)pFieldItem ->m_Pos.x,(int)pFieldItem ->m_Pos.y)
+		|| pFieldItem ->m_pMapData->CheckStairs((int)pFieldItem ->m_Pos.x,(int)pFieldItem ->m_Pos.y)
+		|| pFieldItem ->m_pMapData->Get_ItemMapSituation((int)pFieldItem ->m_Pos.x,(int)pFieldItem ->m_Pos.y) != 0)
 	{
 
 		//アイテムの位置情報の再設定
-		pFieldItem ->m_Pos.x = (float)(rand()%MAP_SIZE);
-		pFieldItem ->m_Pos.y = (float)(rand()%MAP_SIZE);
+		pFieldItem->m_Pos.x = (float)(rand() % (Pos.right - Pos.left) + Pos.left);
+		pFieldItem->m_Pos.y = (float)(rand() % (Pos.bottom - Pos.top) + Pos.top);
 	}
 
 	//マップデータ上に自身の存在を設定
-	CMapData::Set_ItemMap((int)pFieldItem ->m_Pos.x,(int)pFieldItem ->m_Pos.y,pFieldItem ->m_FieldID);
+	pFieldItem->m_pMapData->Set_ItemMap((int)pFieldItem ->m_Pos.x,(int)pFieldItem ->m_Pos.y,pFieldItem ->m_FieldID);
 
 	//ワールドマトリックスからローカル座標抽出
 	D3DXMATRIX world = pGeneration ->GetWorld();
@@ -178,5 +184,5 @@ void CFieldItem::Generation(CMeshObj *pGeneration)
 	pFieldItem ->m_Circle.SetPos(D3DXVECTOR3(world._41,world._42,world._43));
 
 	//マネージャーにオブジェクトを追加する
-	CItemManager::Add(pFieldItem->m_FieldID, pFieldItem);
+	pFieldItem->m_pItemManager->Add(pFieldItem->m_FieldID, pFieldItem);
 }

@@ -2,12 +2,10 @@
 #include "Graphics.h"
 #include "TextureManager.h"
 
-
-//各ステータスデータの格納
-int CStatesValue::m_nStatesValue[STATES_FONT_MAX];
-//ポリゴン情報
-VERTEX_2D	CStatesValue::m_aVertex[STATES_FONT_MAX * 2][NUM_VERTEX];
-
+//---------------------------------------------------------------------------------------
+//静的変数宣言
+//---------------------------------------------------------------------------------------
+CStatesValue* CStatesValue::m_pStatesvalue = NULL;
 //---------------------------------------------------------------------------------------
 //コンストラクタ
 //---------------------------------------------------------------------------------------
@@ -22,6 +20,38 @@ CStatesValue::CStatesValue(void)
 //---------------------------------------------------------------------------------------
 CStatesValue::~CStatesValue(void)
 {
+}
+//---------------------------------------------------------------------------------------
+//実体の作成
+//---------------------------------------------------------------------------------------
+void CStatesValue::Create()
+{
+	//実体がまだ存在していない場合作成
+	if (!m_pStatesvalue)
+	{
+		m_pStatesvalue = new CStatesValue;
+	}
+}
+//---------------------------------------------------------------------------------------
+//実体の削除
+//---------------------------------------------------------------------------------------
+void CStatesValue::Delete()
+{
+	//実体が存在していたら削除
+	if (m_pStatesvalue)
+	{
+		delete m_pStatesvalue;
+		m_pStatesvalue = NULL;
+	}
+}
+//---------------------------------------------------------------------------------------
+//実体のポインタを渡す
+//---------------------------------------------------------------------------------------
+CStatesValue* CStatesValue::GetPointer()
+{
+	//念のため作成関数を呼ぶ
+	Create();
+	return m_pStatesvalue;
 }
 //---------------------------------------------------------------------------------------
 //描画
@@ -118,15 +148,15 @@ void CStatesValue::SetVertex()
 	for(int i = 0;i < STATES_FONT_MAX * 2;i += 2)
 	{
 		//位置情報設定
-		m_aVertex[i][0].pos		= D3DXVECTOR3((float)130.0f,(float)185.0f + FontScale * (i / 2) + (FontClearance),0.0f);
-		m_aVertex[i][1].pos		= D3DXVECTOR3((float)180.0f,(float)185.0f + FontScale * (i / 2) + (FontClearance),0.0f);
-		m_aVertex[i][2].pos		= D3DXVECTOR3((float)130.0f,(float)185.0f + FontScale * (i / 2) + (FontClearance) + FontScale,0.0f);
-		m_aVertex[i][3].pos		= D3DXVECTOR3((float)180.0f,(float)185.0f + FontScale * (i / 2) + (FontClearance) + FontScale,0.0f);
+		m_aVertex[i][0].pos		= D3DXVECTOR3((float)150.0f,(float) 90.0f + FontScale * (i / 2) + (FontClearance),0.0f);
+		m_aVertex[i][1].pos		= D3DXVECTOR3((float)215.0f,(float) 90.0f + FontScale * (i / 2) + (FontClearance),0.0f);
+		m_aVertex[i][2].pos		= D3DXVECTOR3((float)150.0f,(float) 90.0f + FontScale * (i / 2) + (FontClearance) + FontScale,0.0f);
+		m_aVertex[i][3].pos		= D3DXVECTOR3((float)215.0f,(float) 90.0f + FontScale * (i / 2) + (FontClearance) + FontScale,0.0f);
 		//位置情報設定
-		m_aVertex[i + 1][0].pos = D3DXVECTOR3((float)180.0f,(float)185.0f + FontScale * (i / 2) + (FontClearance),0.0f);
-		m_aVertex[i + 1][1].pos = D3DXVECTOR3((float)230.0f,(float)185.0f + FontScale * (i / 2) + (FontClearance),0.0f);
-		m_aVertex[i + 1][2].pos = D3DXVECTOR3((float)180.0f,(float)185.0f + FontScale * (i / 2) + (FontClearance) + FontScale,0.0f);
-		m_aVertex[i + 1][3].pos = D3DXVECTOR3((float)230.0f,(float)185.0f + FontScale * (i / 2) + (FontClearance) + FontScale,0.0f);
+		m_aVertex[i + 1][0].pos = D3DXVECTOR3((float)215.0f,(float) 90.0f + FontScale * (i / 2) + (FontClearance),0.0f);
+		m_aVertex[i + 1][1].pos = D3DXVECTOR3((float)280.0f,(float) 90.0f + FontScale * (i / 2) + (FontClearance),0.0f);
+		m_aVertex[i + 1][2].pos = D3DXVECTOR3((float)215.0f,(float) 90.0f + FontScale * (i / 2) + (FontClearance) + FontScale,0.0f);
+		m_aVertex[i + 1][3].pos = D3DXVECTOR3((float)280.0f,(float) 90.0f + FontScale * (i / 2) + (FontClearance) + FontScale,0.0f);
 		
 		//パースペクティブ設定?
 		m_aVertex[i][0].rhw = 1.0f;

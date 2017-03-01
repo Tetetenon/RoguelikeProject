@@ -8,6 +8,8 @@
 #include "Circle.h"
 
 class CGameScene;				//シーンクラスを仮定義
+class CMapData;
+class CItemManager;
 
 class CFieldItem :
 	public CMeshObj,
@@ -22,12 +24,8 @@ private:
 	bool			m_ItemDelete;			//自身のデリートフラグ
 
 	CCircle			m_Circle;				//アイテムサークル
-
-
-	//-----リスト構造用-----
-	CFieldItem*		m_pNextFieldItem;		//次のポインタ
-	CFieldItem*		m_pBackFieldItem;		//前のポインタ
-
+	CMapData*		m_pMapData;
+	CItemManager*	m_pItemManager;
 public:
 	CFieldItem(CGameScene* pScene);				//コンストラクタ
 	~CFieldItem(void);						//デストラクタ
@@ -42,13 +40,4 @@ public:
 	CItem	GetItemData()	{return m_Item;}
 
 	void	Delete();			//自身の削除
-
-	//-----リスト構造関連-----
-	CFieldItem* GetNextFieldItem ()							{return m_pNextFieldItem;}	//次のポインタを取得
-
-	void		SetNextFieldItem (CFieldItem *pNext)		{m_pNextFieldItem = pNext;}	//次のポインタを設定する
-
-	CFieldItem* GetBackFieldItem ()							{return m_pBackFieldItem;}	//前のポインタを取得
-
-	void		SetBackFieldItem (CFieldItem *pBack)		{m_pBackFieldItem = pBack;}	//前のポインタを設定
 };

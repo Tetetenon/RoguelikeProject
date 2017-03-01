@@ -66,7 +66,7 @@ CDamageNotation::CDamageNotation(int Damage,D3DXVECTOR3 Pos)
 	}
 
 	//マネージャーのポインタの取得
-	m_pManager = CDamageBillBoardManager::GetManager();
+	m_pManager = CDamageBillBoardManager::GetPointer();
 
 	//生存時間の設定
 	m_LifeTime = LifeTime;

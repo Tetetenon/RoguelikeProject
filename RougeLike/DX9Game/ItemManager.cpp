@@ -2,18 +2,17 @@
 #include "FieldItem.h"
 
 //静的変数の初期化
-ITEM_MAP*	CItemManager::m_pItemManager = NULL;
-
-int			CItemManager::m_MakeItemNum = 1;
-bool		CItemManager::m_Delete = false;
+CItemManager*	CItemManager::m_pItemManager = NULL;
 
 //---------------------------------------------------------------------------------------
 //コンストラクタ
 //---------------------------------------------------------------------------------------
 CItemManager::CItemManager()
 {
+	//リストを作成
+	m_pItemMap = new ITEM_MAP();
 	//リストの初期化
-	m_pItemManager->clear();
+	m_pItemMap->clear();
 
 	//変数の初期化
 	m_Delete = false;
@@ -26,9 +25,15 @@ CItemManager::CItemManager()
 //---------------------------------------------------------------------------------------
 CItemManager::~CItemManager()
 {
-	//リストの初期化
-	m_pItemManager->clear();
+	//終了処理
+	Fin();
+	//削除
+	delete m_pItemMap;
+	//中身をきれいにする
+	m_pItemMap = NULL;
+
 	m_Delete = false;
+
 	m_MakeItemNum = 1;
 }
 
@@ -40,7 +45,7 @@ void CItemManager::Create()
 	//アイテムマネージャが作成されていなければ、作成を行う
 	if (!m_pItemManager)
 	{
-		m_pItemManager = new ITEM_MAP();
+		m_pItemManager = new CItemManager;
 	}
 }
 
@@ -52,11 +57,7 @@ void CItemManager::Delete()
 	//NULLチェック
 	if (m_pItemManager)
 	{
-		//終了処理
-		Fin();
-		//削除
 		delete m_pItemManager;
-		//中身をきれいにする
 		m_pItemManager = NULL;
 	}
 }
@@ -67,10 +68,10 @@ void CItemManager::Delete()
 void CItemManager::Add(int ItemID,CFieldItem* pAddItem)
 {
 	//IDでオブジェクトが登録されているか確認を行う
-	auto ItemItewrator = m_pItemManager->find(ItemID);
+	auto ItemItewrator = m_pItemMap->find(ItemID);
 
 	//IDが既にリスト上に登録されているか確認を行う
-	if (ItemItewrator != m_pItemManager->end())
+	if (ItemItewrator != m_pItemMap->end())
 	{
 		//既に登録が行われているため、オブジェデータのみを書き込む
 		ItemItewrator->second.push_back(pAddItem);
@@ -82,7 +83,7 @@ void CItemManager::Add(int ItemID,CFieldItem* pAddItem)
 		NewItemList.push_back(pAddItem);
 
 		ITEM_PAIR NewItemPair(ItemID, NewItemList);
-		m_pItemManager->insert(NewItemPair);
+		m_pItemMap->insert(NewItemPair);
 	}
 }
 //---------------------------------------------------------------------------------------
@@ -91,10 +92,10 @@ void CItemManager::Add(int ItemID,CFieldItem* pAddItem)
 void CItemManager::Del(int ItemID)
 {
 	//IDにてデータの検索
-	auto ItemIterator = m_pItemManager->find(ItemID);
+	auto ItemIterator = m_pItemMap->find(ItemID);
 
 	//そのIDのオブジェクトが存在していた場合、削除を行う
-	if (ItemIterator != m_pItemManager->end())
+	if (ItemIterator != m_pItemMap->end())
 	{
 		auto ListIterator = ItemIterator->second.begin();
 		(*ListIterator)->Fin();
@@ -109,10 +110,10 @@ void CItemManager::Del(int ItemID)
 CFieldItem* CItemManager::Find(int ItemID)
 {
 	//IDでオブジェクトを検索
-	auto ItemIterator = m_pItemManager->find(ItemID);
+	auto ItemIterator = m_pItemMap->find(ItemID);
 
 	//そのオブジェクトデータが存在する場合、そのデータを返す
-	if (ItemIterator != m_pItemManager->end())
+	if (ItemIterator != m_pItemMap->end())
 		return ItemIterator->second[0];
 	//無ければ、NULLを返す
 	else
@@ -124,9 +125,9 @@ CFieldItem* CItemManager::Find(int ItemID)
 void CItemManager::Init()
 {
 	//リストの先頭を取得
-	auto ItemIterator = m_pItemManager->begin();
+	auto ItemIterator = m_pItemMap->begin();
 
-	for (; ItemIterator != m_pItemManager->end(); ++ItemIterator)
+	for (; ItemIterator != m_pItemMap->end(); ++ItemIterator)
 	{
 		for (auto ListIterator = ItemIterator->second.begin(); ListIterator != ItemIterator->second.end(); ++ListIterator)
 		{
@@ -140,9 +141,9 @@ void CItemManager::Init()
 void CItemManager::Update()
 {
 	//リストの先頭を取得
-	auto ItemIterator = m_pItemManager->begin();
+	auto ItemIterator = m_pItemMap->begin();
 
-	for (; ItemIterator != m_pItemManager->end(); ++ItemIterator)
+	for (; ItemIterator != m_pItemMap->end(); ++ItemIterator)
 	{
 		for (auto ListIterator = ItemIterator->second.begin(); ListIterator != ItemIterator->second.end();)
 		{
@@ -167,9 +168,9 @@ void CItemManager::Update()
 void CItemManager::Draw()
 {
 	//リスト構造の先頭を取得する
-	auto ItemIterator = m_pItemManager->begin();
+	auto ItemIterator = m_pItemMap->begin();
 
-	for (; ItemIterator != m_pItemManager->end(); ++ItemIterator)
+	for (; ItemIterator != m_pItemMap->end(); ++ItemIterator)
 	{
 		for (auto ListIterator = ItemIterator->second.begin(); ListIterator != ItemIterator->second.end(); ++ListIterator)
 		{
@@ -183,9 +184,9 @@ void CItemManager::Draw()
 void CItemManager::Fin()
 {
 	//リストの先頭を取得
-	auto ItemIterator = m_pItemManager->begin();
+	auto ItemIterator = m_pItemMap->begin();
 
-	for (; ItemIterator != m_pItemManager->end();++ItemIterator)
+	for (; ItemIterator != m_pItemMap->end();++ItemIterator)
 	{
 		for (auto ListIterator = ItemIterator->second.begin(); ListIterator != ItemIterator->second.end();)
 		{
@@ -200,12 +201,12 @@ void CItemManager::Fin()
 	m_MakeItemNum = 1;
 
 	//リストを掃除
-	m_pItemManager->clear();
+	m_pItemMap->clear();
 }
 //---------------------------------------------------------------------------------------
 //マネージャーデバイスのポインタを渡す
 //---------------------------------------------------------------------------------------
-ITEM_MAP* CItemManager::GetPointer()
+CItemManager* CItemManager::GetPointer()
 {
 	return m_pItemManager;
 }

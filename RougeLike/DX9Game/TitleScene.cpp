@@ -12,10 +12,13 @@ bool CTitleScene::m_bCreate = false;		//生成成功フラグ
 CTitleScene::CTitleScene(void):
 m_pGraphics(NULL)
 {
+	//フェードの実態を作成
+	CFade::Create();
+
 	//タイトルテクスチャ描画クラスの実体を作成
 	m_pTitle = new CTitle();
 	//フェードインクラス作成
-	m_pFade = new CFade();
+	m_pFade = CFade::GetPointer();
 	//プレススペース作成
 	m_pPress = new CPressSpace();
 	//生成成功
@@ -31,10 +34,11 @@ CTitleScene::~CTitleScene(void)
 	//生成に成功していたら削除開放
 	if(m_bCreate)
 	{
+		//フェードの実態を削除
+		CFade::Delete();
+
 		//タイトルポインタの中身削除、解放
 		delete m_pTitle;
-		//フェードインクラス削除
-		delete m_pFade;
 		//プレススペースクラスの中身の開放
 		delete m_pPress;
 
@@ -110,7 +114,7 @@ void CTitleScene::Update()
 	if(CInput::GetKeyTrigger(DIK_SPACE) || CInput::GetJoyTrigger(0,3))
 	{
 		//フェードイン開始フラグを立てる
-		CFade::ChangeState(FADEMODE_OUT);
+		m_pFade->ChangeState(FADEMODE_OUT);
 	}
 	//フェードインの更新
 	m_pFade ->Update();

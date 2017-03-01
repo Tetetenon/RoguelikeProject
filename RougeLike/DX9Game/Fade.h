@@ -18,18 +18,24 @@ class CFade :
 	public C2DTexture
 {
 private:
-	static int		m_nFadeTime;		//フェードイン、アウトの時間を格納する
-	static int		m_nFadeState;		//フェードアウト、フェードイン、しないを設定する。
-public:
+	//シングルトン
+	static CFade*	m_pFade;
+	int		m_nFadeTime;		//フェードイン、アウトの時間を格納する
+	int		m_nFadeState;		//フェードアウト、フェードイン、しないを設定する。
+
 	CFade(void);			//コンストラクタ
 	~CFade(void);			//デストラクタ
+public:
+	static void Create();		//実体の作成
+	static void Delete();		//実体の削除
+	static CFade* GetPointer();	//実体のポインタを渡す
 
 	void Update();			//更新
 	void Draw();			//描画
 
-	static void ChangeState(int State);		//フラグを変更する
+	void ChangeState(int State);		//フラグを変更する
 
-	static int GetFadeAlpha()	{return m_nFadeTime;}	//現在のアルファ値を取得
-	static int GetFadeState()	{return m_nFadeState;}	//現在のフェード状態を取得
+	int GetFadeAlpha()	{return m_nFadeTime;}	//現在のアルファ値を取得
+	int GetFadeState()	{return m_nFadeState;}	//現在のフェード状態を取得
 };
 

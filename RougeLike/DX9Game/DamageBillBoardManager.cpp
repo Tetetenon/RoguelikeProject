@@ -46,7 +46,7 @@ void CDamageBillBoardManager::Create()
 //---------------------------------------------------------------------------------------
 //マネージャーの削除
 //---------------------------------------------------------------------------------------
-void CDamageBillBoardManager::Destory()
+void CDamageBillBoardManager::Delete()
 {
 	//中身が存在しているか、チェックを行う
 	if (m_pManager)
@@ -59,7 +59,7 @@ void CDamageBillBoardManager::Destory()
 //---------------------------------------------------------------------------------------
 //マネージャーのポインタを渡す
 //---------------------------------------------------------------------------------------
-CDamageBillBoardManager* CDamageBillBoardManager::GetManager()
+CDamageBillBoardManager* CDamageBillBoardManager::GetPointer()
 {
 	//マネージャーの作成
 	Create();

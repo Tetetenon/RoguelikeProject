@@ -1,11 +1,14 @@
 #include "ItemWindow.h"
 #include "Graphics.h"
 #include "Input.h"
+#include"Unit.h"
+#include "UnitManager.h"
 #include <tchar.h>
 #include "ItemCommandWindow.h"
 #include "ItemWindowCursor.h"
 #include "Turn.h"
 #include "TextureManager.h"
+#include "ItemDescriptionFrame.h"
 //---------------------------------------------------------------------------------------
 //マクロ定義
 //---------------------------------------------------------------------------------------
@@ -17,17 +20,16 @@
 //---------------------------------------------------------------------------------------
 //静的メンバ定義
 //---------------------------------------------------------------------------------------
-bool					CInventory::m_bDrawFlg;				//描画フラグ
-CCommandWindow			CInventory::m_CommandWindow;		//コマンドウインドウの描画フラグ変更用
-CInventoryCursor		CInventory::m_InventoryCursor;		//選択しているアイテムウインドウの取得
-CItemDescriptionFrame	CInventory::m_Description;			//アイテム説明文
+CItemWindow* CItemWindow::m_pItemWindow = NULL;
 //---------------------------------------------------------------------------------------
 //コンストラクタ
 //---------------------------------------------------------------------------------------
-CInventory::CInventory(void)
+CItemWindow::CItemWindow(void)
 {
 	//メンバ初期化
 	m_bDrawFlg = false;
+	m_bUpdateFlg = true;
+	m_nInterval = 0;
 
 	//デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CGraphics::GetDevice();
@@ -50,111 +52,142 @@ CInventory::CInventory(void)
 //---------------------------------------------------------------------------------------
 //デストラクタ
 //---------------------------------------------------------------------------------------
-CInventory::~CInventory(void)
+CItemWindow::~CItemWindow(void)
 {
+	//入力経過時間を初期化
+	m_nInterval = 0;
 }
 
 //---------------------------------------------------------------------------------------
-//初期化
+//実体の作成
 //---------------------------------------------------------------------------------------
-void CInventory::Init()
+void CItemWindow::Create()
 {
-	//説明文の初期化
-	m_Description.Init();
+	//実体がなければ作成
+	if (!m_pItemWindow)
+	{
+		m_pItemWindow = new CItemWindow;
+	}
 }
 //---------------------------------------------------------------------------------------
-//終了処理
+//実体の削除
 //---------------------------------------------------------------------------------------
-void CInventory::Fin()
+void CItemWindow::Delete()
 {
+	//実体があれば削除
+	if (m_pItemWindow)
+	{
+		delete m_pItemWindow;
+		m_pItemWindow = NULL;
+	}
+}
+//---------------------------------------------------------------------------------------
+//実体のポインタを渡す
+//---------------------------------------------------------------------------------------
+CItemWindow* CItemWindow::GetPointer()
+{
+	//念のため作成関数を呼ぶ
+	Create();
+	return m_pItemWindow;
+}
 
-}
 //---------------------------------------------------------------------------------------
 //更新
 //---------------------------------------------------------------------------------------
-void CInventory::UpDate()
+void CItemWindow::UpDate()
 {
-	//アイテム選択中のみ操作可能
-	if(m_bDrawFlg && !CCommandWindow::GetDrawFlg())
-	{
-		//Lで決定
-		//選択したアイテムウインドウにアイテムが存在しているか確認する
-		if((CInput::GetKeyTrigger(DIK_L) || CInput::GetJoyTrigger(0, 3)) && m_Item[m_InventoryCursor.GetItemNum()].GetID())
-		{
-			//コマンドウインドウ描画フラグを立てる
-			m_CommandWindow.DrawFlgChange();
-		}
+	m_nInterval++;
 
-		//KとIキーで戻る
-		if(CInput::GetKeyTrigger(DIK_K) || CInput::GetJoyTrigger(0, 2))
-		{
-			//自身のフラグを倒す
-			DrawFlgChange();
-		}
+	if (m_nInterval < ButtonIntervalTime)
+		return;
+
+	//Lで決定
+	//選択したアイテムウインドウにアイテムが存在しているか確認する
+	if((CInput::GetKeyTrigger(DIK_L) || CInput::GetJoyTrigger(0, 3)))
+	{
+		CItem pItemData = m_pPlayerInventory->GetItem(m_pIItemWindowCursor->GetItemNum());
+		if (pItemData.GetID() == 0)
+			return;
+		//コマンドウインドウ描画フラグを立てる
+		m_pCommandWindow->DrawFlgChange();
+
+		m_nInterval = 0;
 	}
+
+	//KとIキーで戻る
+	if(CInput::GetKeyTrigger(DIK_K) || CInput::GetJoyTrigger(0, 2))
+	{
+		//自身のフラグを倒す
+		DrawFlgChange(false);
+
+		m_nInterval = 0;
+	}
+	
 }
 //---------------------------------------------------------------------------------------
 //描画
 //---------------------------------------------------------------------------------------
-void CInventory::Draw()
+void CItemWindow::Draw()
 {
-		_TCHAR* ItemName;		//描画用に文字を格納する
-		int		ItemID;			//描画の可否をIDで判別する
+	_TCHAR* ItemName;		//描画用に文字を格納する
+	int		ItemID;			//描画の可否をIDで判別する
 
-		//デバイスの取得
-		LPDIRECT3DDEVICE9 pDevice = CGraphics::GetDevice();
-		
-		// アルファ・ブレンディングを行う
-		pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-		// 透過処理を行う
-		pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	//デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CGraphics::GetDevice();
+	
+	// アルファ・ブレンディングを行う
+	pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	// 透過処理を行う
+	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
-		//頂点フォーマットの設定
-		pDevice ->SetFVF(FVF_VERTEX_2D);
+	//頂点フォーマットの設定
+	pDevice ->SetFVF(FVF_VERTEX_2D);
 
-		//アイテムウインドウ分描画
-		for(int i = 0;i < ITEM_NUM_MAX;i++)
-		{
-			ItemName = m_Item[i].GetName();
-			ItemID	= m_Item[i].GetID();
+	//アイテムウインドウ分描画
+	for(int i = 0;i < ITEM_NUM_MAX;i++)
+	{
+		CItem ItemData = m_pPlayerInventory->GetItem(i);
+		ItemName = ItemData.GetName();
+		ItemID	= ItemData.GetID();
 
-			//テクスチャセット
-			pDevice ->SetTexture(0,*CTextureManager::GetTexture(TEXTURE_WINDOW));
+		//テクスチャセット
+		pDevice ->SetTexture(0,*CTextureManager::GetTexture(TEXTURE_WINDOW));
 
-			//ポリゴンの描画
-			//頂点情報を外部が持っている場合Up
-			//そのほかはprimitive
-			pDevice -> DrawPrimitiveUP(
-				D3DPT_TRIANGLESTRIP,          //プリミティブの種類List（三角形描く）Strip(つなげて作る)
-				NUM_POLYGON,                 //ポリゴン数
-				m_aVertex[i],            //配列の先頭アドレス
-				sizeof(VERTEX_2D)            //データの大きさ
-				);
+		//ポリゴンの描画
+		//頂点情報を外部が持っている場合Up
+		//そのほかはprimitive
+		pDevice -> DrawPrimitiveUP(
+			D3DPT_TRIANGLESTRIP,          //プリミティブの種類List（三角形描く）Strip(つなげて作る)
+			NUM_POLYGON,                 //ポリゴン数
+			m_aVertex[i],            //配列の先頭アドレス
+			sizeof(VERTEX_2D)            //データの大きさ
+			);
 
-			//中身がなければ描画しない
-			if(ItemName == NULL || ItemID == 0)
-				continue;
+		//中身がなければ描画しない
+		if(ItemName == NULL || ItemID == 0)
+			continue;
 
-			// テキスト描画
-			m_Font->DrawText(NULL,ItemName,-1, &m_Pos[i], DT_LEFT, D3DCOLOR_ARGB(0xff, 0xff, 0x00, 0xff));
-		}
+		// テキスト描画
+		m_Font->DrawText(NULL,ItemName,-1, &m_Pos[i], DT_LEFT, D3DCOLOR_ARGB(0xff, 0xff, 0x00, 0xff));
+	}
 
-		//アイテム説明文の描画
-		m_Description.Draw(m_Item[CInventoryCursor::GetItemNum()].GetID());
+	//アイテム説明文の描画
+	CItem ItemData = m_pPlayerInventory->GetItem(m_pIItemWindowCursor->GetItemNum());
+	m_pDescription->Draw(ItemData.GetID());
 
 }
 //---------------------------------------------------------------------------------------
 //ポリゴン情報を埋める
 //---------------------------------------------------------------------------------------
-void CInventory::SetVertex()
+void CItemWindow::SetVertex()
 {
 	for(int i = 0;i < ITEM_NUM_MAX;i++)
 	{
 		//位置情報設定
-		m_aVertex[i][0].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (i + 1)					,0.0f);
-		m_aVertex[i][1].pos = D3DXVECTOR3((float)SCREEN_WIDTH				,(float)WINDOW_HEIGHT * (i + 1)					,0.0f);
-		m_aVertex[i][2].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (i + 1) + WINDOW_HEIGHT	,0.0f);
-		m_aVertex[i][3].pos = D3DXVECTOR3((float)SCREEN_WIDTH				,(float)WINDOW_HEIGHT * (i + 1) + WINDOW_HEIGHT	,0.0f);
+		m_aVertex[i][0].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (i + 1)					 + WINDOW_HEIGHT,0.0f);
+		m_aVertex[i][1].pos = D3DXVECTOR3((float)SCREEN_WIDTH				,(float)WINDOW_HEIGHT * (i + 1)					 + WINDOW_HEIGHT,0.0f);
+		m_aVertex[i][2].pos = D3DXVECTOR3((float)SCREEN_WIDTH - WINDOW_WIDHT,(float)WINDOW_HEIGHT * (i + 1) + WINDOW_HEIGHT	 + WINDOW_HEIGHT,0.0f);
+		m_aVertex[i][3].pos = D3DXVECTOR3((float)SCREEN_WIDTH				,(float)WINDOW_HEIGHT * (i + 1) + WINDOW_HEIGHT	 + WINDOW_HEIGHT,0.0f);
 
 		//パースペクティブ設定?
 		m_aVertex[i][0].rhw = 1.0f;
@@ -178,7 +211,7 @@ void CInventory::SetVertex()
 //---------------------------------------------------------------------------------------
 //フォント情報の設定
 //---------------------------------------------------------------------------------------
-void CInventory::SetFontPos()
+void CItemWindow::SetFontPos()
 {
 	for(int i = 0;i < ITEM_NUM_MAX;i++)
 	{
@@ -188,93 +221,34 @@ void CInventory::SetFontPos()
 		m_Pos[i].bottom	= (LONG)m_aVertex[i][2].pos.y;
 	}
 }
+
 //---------------------------------------------------------------------------------------
-//ストレージにアイテムをセット
+//メンバ変数のポインタを設定する
 //---------------------------------------------------------------------------------------
-bool CInventory::SetItem(CItem Item)
+void CItemWindow::SetPoiner()
 {
-	for(int i = 0;i < ITEM_NUM_MAX;i++)
-	{
-		//ストレージが空白の部分を探す
-		if(m_Item[i].GetID() == 0)
-		{
-			//アイテムデータをコピー
-			m_Item[i] = Item;
-
-
-			//効能の設定がされていなければ、自動的に設定する
-			if(Item.GetValue() == 0)
-			{
-				//効能を設定
-				m_Item[i].SetValue(rand()%10 + 5);
-			}
-			return true;
-		}
-	}
-	return false;
+	//プレイヤーへの持ち物へのポインタを取得する
+	CUnitManager*	pUnitManager = CUnitManager::GetPointer();
+	CUnit*			pPlayer = pUnitManager->GetPlayerPointer();
+	m_pPlayerInventory = pPlayer->GetInventory();
+	//ポインタの取得
+	m_pCommandWindow = CItemCommandWindow::GetPointer();
+	m_pDescription = CItemDescriptionFrame::GetPointer();
+	m_pIItemWindowCursor = CItemWindowCursor::GetPointer();
 }
 
 //---------------------------------------------------------------------------------------
 //描画フラグを外部からON/OFFする
 //---------------------------------------------------------------------------------------
-void CInventory::DrawFlgChange()
+void CItemWindow::DrawFlgChange(bool ChangeFlg)
 {
-	m_bDrawFlg = !m_bDrawFlg;
+	m_bDrawFlg = ChangeFlg;
 }
 
 //---------------------------------------------------------------------------------------
-//指定されたアイテムを消去
+//更新フラグを外部からON/OFFする
 //---------------------------------------------------------------------------------------
-void CInventory::DelInventory(int Receipt)
+void CItemWindow::UpdateFlgChange(bool ChangeFlg)
 {
-	//中身を初期化し、消去
-	//IDの初期化
-	m_Item[Receipt].SetID(0);
-
-	//名前の初期化
-	m_Item[Receipt].SetName(_T("0"));
-
-}
-//---------------------------------------------------------------------------------------
-//指定されたアイテムの効果ジャンルを返却する
-//---------------------------------------------------------------------------------------
-int CInventory::GetEffect(int Receipt)
-{
-	return m_Item[Receipt].GetType();
-}
-//---------------------------------------------------------------------------------------
-//指定されたアイテムの効能?を返却する
-//---------------------------------------------------------------------------------------
-int CInventory::GetEffectValue(int Receipt)
-{
-	//アイテムのIDによって効果を変更する
-	switch(m_Item[Receipt].GetID())
-	{
-		//林檎
-	case ITEM_APPLE:
-		//特に効果なし
-		return EFFECT_NON;
-		break;
-		//薬草
-	case ITEM_HERB:
-		//体力の回復
-		return m_Item[Receipt].GetValue();
-		break;
-		//剣
-	case ITEM_SWORD:
-		//攻撃力アップ
-		return m_Item[Receipt].GetValue();
-		break;
-		//盾
-	case ITEM_SHIELD:
-		//防御力アップ
-		return m_Item[Receipt].GetValue();
-		break;
-
-		//バグ検査用
-	default:
-		//効果なし
-		return EFFECT_NON;
-		break;
-	}
+	m_bUpdateFlg = ChangeFlg;
 }

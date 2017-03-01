@@ -19,36 +19,37 @@ private:
 	//変数宣言
 
 	//シングルトン
-	static ITEM_MAP *m_pItemManager;
+	static CItemManager* m_pItemManager;
+	ITEM_MAP *m_pItemMap;
 
 
-	static int		m_MakeItemNum;			//アイテムの次に割り振られるID
-	static bool		m_Delete;				//全アイテムデリートフラグ
+	int		m_MakeItemNum;			//アイテムの次に割り振られるID
+	bool		m_Delete;				//全アイテムデリートフラグ
 
 	//関数宣言
 	CItemManager();							//コンストラクタ
 	~CItemManager();						//デストラクタ
 public:
-	static void Init();						//初期化
-	static void Fin();						//終了処理
-	static void Update();					//更新
-	static void Draw();						//描画
+	void Init();						//初期化
+	void Fin();						//終了処理
+	void Update();					//更新
+	void Draw();						//描画
 
 	static void Create();					//アイテムマネージャーの作成
 	static void Delete();					//アイテムマネージャーの削除
 
-	static ITEM_MAP* GetPointer();		//マネージャーデバイスのポインタを渡す
+	static CItemManager* GetPointer();		//マネージャーデバイスのポインタを渡す
 
-	static void	CleatePermit(bool ChangeFlg) { m_Delete = ChangeFlg; }		//全アイテム削除フラグを倒す
-	static int	GetNextItemID() { return m_MakeItemNum;	}	//次に割り振られるIDを返す
-	static void NextItemID(int NextID) { m_MakeItemNum = NextID; }
+	void	CleatePermit(bool ChangeFlg) { m_Delete = ChangeFlg; }		//全アイテム削除フラグを倒す
+	int	GetNextItemID() { return m_MakeItemNum;	}	//次に割り振られるIDを返す
+	void NextItemID(int NextID) { m_MakeItemNum = NextID; }
 
 	//-----アイテム関連の操作-----
 	//アイテムを追加する
-	static void Add(int ItemID,CFieldItem* pItem);
+	void Add(int ItemID,CFieldItem* pItem);
 	//アイテムを削除する
-	static void Del(int ItemID);
+	void Del(int ItemID);
 	//アイテムを探索
-	static CFieldItem* Find(int ItemID);
+	CFieldItem* Find(int ItemID);
 };
 

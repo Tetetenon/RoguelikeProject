@@ -4,12 +4,18 @@
 #include "Unit.h"
 
 class CGameScene;
+class CMapObjManager;
+class CMapData;
+
 class CFieldObj :
 	public CMeshObj
 {
 private:
 	int m_ObjNumber;				//オブジェクトを一意に定める番号
 	bool m_bNearUnitFlg;			//自身の配列上での上にユニットが存在するか
+
+	CMapObjManager* m_pMapObjManager;
+	CMapData*		m_pMapData;
 public:
 	CFieldObj(CGameScene* pScene);		//コンストラクタ
 	virtual ~CFieldObj(void);		//デストラクタ
