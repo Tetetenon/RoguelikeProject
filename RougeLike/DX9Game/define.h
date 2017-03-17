@@ -109,7 +109,7 @@ const float JoyMoveCap = 0.5f;
 //ボタンの入力のインターバールタイム
 const float ButtonIntervalTime = 10.0f;
 
-#define DebugMode (false)
+#define DebugMode (true)
 
 #endif
 

@@ -126,6 +126,10 @@ void CEnemyGenerator::SumMakeEnemyNum()
 void CEnemyGenerator::SetMaxGenerator (int nMaxCount)
 {
 	m_MaxFieldEnemy = nMaxCount;
+
+	//デバッグ用
+	if (DebugMode)
+		m_MaxFieldEnemy = 0;
 }
 //---------------------------------------------------------------------------------------
 //エネミー生成数を再設定
@@ -141,6 +145,10 @@ void CEnemyGenerator::MakeEnemy ()
 {
 	//生成数を設定
 	int nMakeNum = rand()%8 + 2;
+
+	//デバッグ用
+	if (DebugMode)
+		nMakeNum = 0;
 
 	//階層数を取得
 	int Hierarchy = m_pMapData->GetHierarchieNum();

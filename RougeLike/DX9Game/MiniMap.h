@@ -10,7 +10,7 @@ class CMiniMap : public C2DTexture
 public:
 	enum
 	{
-		GRID_SIZE = 5,
+		GRID_SIZE = 3,
 		LINE_SPACE = 1,
 		GRID_NUM = MAP_SIZE,
 		POLYGON_WIDTH = GRID_SIZE * GRID_NUM + (GRID_NUM - 1) * LINE_SPACE,

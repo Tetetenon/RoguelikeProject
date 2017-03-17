@@ -31,6 +31,10 @@ bool CGameWindow::InitInstance()
 
 	//ウインドウのフルスクリーン成否
 	m_bWindow = false;
+	if (DebugMode)
+	{
+		m_bWindow = true;
+	}
 
 	::timeBeginPeriod(1);	// タイマの分解能を最小にセット
 

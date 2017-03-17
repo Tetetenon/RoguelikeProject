@@ -140,6 +140,9 @@ CMapData::CMapData(void)
 	D3DXCreateFont(pDevice,24,0,1,0,FALSE,SHIFTJIS_CHARSET,OUT_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH,NULL,&m_pFont);
 	//フォント描画位置を設定
 	SetFontPos();
+
+	//前回生成したマップパターンの初期化
+	m_nBackDividPattern = -99;
 }
 
 //---------------------------------------------------------------------------------------
@@ -512,18 +515,17 @@ void CMapData::MapGeneration()
 	//10階層移動したら、シーンをゲームクリアに遷移させる
 	if(m_nHierarchyNum > GameClearNum)
 	{
-		//ゲームのクリア状況をクリアに変更する
-		CGameScene::GameClearStateChange(GAME_CLEAR);
-
-		//ゲームメインを終了
-		m_pFade->ChangeState(FADEMODE_OUT);
-
-		//エネミーの生成数のリセット
-		m_pEnemyGerenator->ResetMakeEnemyNum();
-		//フィールドアイテム生成数のリセット
-		CItemGenerator::ResetMakeItemNum();
+	//	//ゲームのクリア状況をクリアに変更する
+	//	CGameScene::GameClearStateChange(GAME_CLEAR);
+	//
+	//	//ゲームメインを終了
+	//	m_pFade->ChangeState(FADEMODE_OUT);
+	//
+	//	//エネミーの生成数のリセット
+	//	m_pEnemyGerenator->ResetMakeEnemyNum();
+	//	//フィールドアイテム生成数のリセット
+	//	CItemGenerator::ResetMakeItemNum();
 	}
-
 }
 //---------------------------------------------------------------------------------------
 // マップの区画分け
@@ -534,7 +536,6 @@ void CMapData::DivideMap()
 	int RemainingZone_X = MAP_SIZE;
 	int RemainingZone_Z = MAP_SIZE;
 
-
 	//境界線を決定するときに使用
 	int BorderLineX = 0;
 	int BorderLineZ = 0;
@@ -543,19 +544,34 @@ void CMapData::DivideMap()
 	int OneRoomX = 0;
 	int OneRoomZ = 0;
 
+	//作成した区画の数を初期化する
+	m_CountMakeRoom = 0;
+
 	//３パターンの中から、ランダムに選択し、区画を分ける
-	m_nDividPattern = rand()%4;
+	m_nDividPattern = rand()% PATTERN_MAX;
+
+	//もし前の階で作成したパターンと同じ場合、選択しなおす
+	while (m_nDividPattern == m_nBackDividPattern)
+	{
+		m_nDividPattern = rand() % PATTERN_MAX;
+	}
+
 	if (m_nHierarchyNum == GameClearNum)
 	{
 		m_nDividPattern = 3;
 	}
 
+	//パターン情報を記録しておく
+	m_nBackDividPattern = m_nDividPattern;
+
+	m_nDividPattern = EQUALLY_DIVID;
+
 	switch(m_nDividPattern)
 	{
 		//一区画ずつ分ける
-	case 0:
+	case HEIGHT_NEXT_WIDTH:
 		//-----境界線を引く& 区画を作る-----
-		for(m_CountMakeRoom = 0;m_CountMakeRoom < ROOM_MAX_NUM;m_CountMakeRoom ++)
+		for(;m_CountMakeRoom < ROOM_MAX_NUM;m_CountMakeRoom ++)
 		{
 			//まだ区画を作れるだけの領域があるか確認
 			if(RemainingZone_X < SECTION_MAX_SIZE || RemainingZone_Z < SECTION_MAX_SIZE)
@@ -609,18 +625,18 @@ void CMapData::DivideMap()
 		}
 		break;
 
-		//全区画均等に当分
-	case 1:
+		//全区画均等に等分
+	case EQUALLY_DIVID:
 		{
-			int RoomNumX = (RemainingZone_X / SECTION_MAX_SIZE);
-			int RoomNumZ = (RemainingZone_Z / SECTION_MAX_SIZE);
+			int RoomNumX = (RemainingZone_X / SECTION_MIN_SIZE);
+			int RoomNumZ = (RemainingZone_Z / SECTION_MIN_SIZE);
 
 			//マップ上に作れる数を計算
 			OneRoomX = RemainingZone_X / RoomNumX;
 			OneRoomZ = RemainingZone_Z / RoomNumZ;
 
 			//区画位置を設定
-			for(m_CountMakeRoom= 0;m_CountMakeRoom < RoomNumX * RoomNumZ;m_CountMakeRoom++)
+			for(;m_CountMakeRoom < RoomNumX * RoomNumZ;m_CountMakeRoom++)
 			{
 				m_Section[m_CountMakeRoom].left = (m_CountMakeRoom % RoomNumX) * OneRoomX;
 				m_Section[m_CountMakeRoom].right = (m_CountMakeRoom % RoomNumX) * OneRoomX + OneRoomX;
@@ -632,7 +648,7 @@ void CMapData::DivideMap()
 		break;
 
 		//4分割
-	case 2:
+	case FOUR_DIVID:
 		{
 			int RoomNumX = (RemainingZone_X / SECTION_MAX_SIZE);
 			int RoomNumZ = (RemainingZone_Z / SECTION_MAX_SIZE);
@@ -642,7 +658,7 @@ void CMapData::DivideMap()
 			OneRoomZ = RemainingZone_Z / RoomNumZ;
 
 			//区画位置を設定
-			for(m_CountMakeRoom= 0;m_CountMakeRoom < RoomNumX * RoomNumZ;m_CountMakeRoom++)
+			for(;m_CountMakeRoom < RoomNumX * RoomNumZ;m_CountMakeRoom++)
 			{
 				m_Section[m_CountMakeRoom].left = (m_CountMakeRoom % RoomNumX) * OneRoomX;
 				m_Section[m_CountMakeRoom].right = (m_CountMakeRoom % RoomNumX) * OneRoomX + OneRoomX;
@@ -653,7 +669,7 @@ void CMapData::DivideMap()
 		}
 		break;
 		//大部屋
-	case 3:
+	case LARGE_ROOM:
 		{
 			m_Section[0].left		= 0;
 			m_Section[0].right	= MAP_SIZE;
@@ -662,7 +678,7 @@ void CMapData::DivideMap()
 			m_Section[0].bottom	= MAP_SIZE;
 
 			//生成した数を加算
-			m_CountMakeRoom = 1;
+			m_CountMakeRoom++;
 		}
 		break;
 	}
@@ -722,7 +738,7 @@ void CMapData::MakeRoom()
 		nMakeRoomPos_Y = rand()%(m_Section[i].bottom - nRoomSize_Y / 2);
 
 		//一定値以下にならない様に調整
-		while(m_Section[i].top >= (nMakeRoomPos_Y - nRoomSize_Y / 2) || m_Section[i].bottom <= (nMakeRoomPos_Y + nRoomSize_Y / 2) || nMakeRoomPos_Y < m_Section[i].top)
+		while(m_Section[i].top + 1 >= (nMakeRoomPos_Y - nRoomSize_Y / 2) || m_Section[i].bottom - 1 <= (nMakeRoomPos_Y + nRoomSize_Y / 2) || nMakeRoomPos_Y < m_Section[i].top)
 			nMakeRoomPos_Y = rand()%(m_Section[i].bottom - nRoomSize_Y / 2);
 
 		//部屋の設定
@@ -752,8 +768,6 @@ void CMapData::MakeRoot()
 {
 	bool bNeighbor_LeftAndRight;		//部屋が隣接している(左右で)
 	bool bNeighbor_UpAndDown;			//部屋が隣接している(上下で)
-	
-	int nBorderLine;					//境界線
 	
 	//隣接している区画を探す
 	for(int i = 0;i <= m_CountMakeRoom;i++)
@@ -795,81 +809,187 @@ void CMapData::MakeRoot()
 			//左右で隣接(i:右の部屋	j:左の部屋)
 			if(bNeighbor_LeftAndRight)
 			{
-				//通路の作成位置を区画の小さいほうに合わせる
-				int MiniSectionNumber = i;
-				if ((m_Room[i].bottom - m_Room[i].top) > (m_Room[j].bottom - m_Room[j].top))
-					MiniSectionNumber = j;
-
-				//右の部屋の通路のスタート位置
-				int RightRootStertPoint;
-
-				//左の部屋の通路のスタート位置
-				int LeftRootStertPoint;
-
-				//境界線位置を設定
-				nBorderLine = m_Section[i].right;
-	
-				//通路のスタート位置を右の部屋の右端から設定
-				bool bMakeFlgRight = false;
-				//既に通路入口が作られていないかチェックを行う
-				for (int k = m_Room[i].top; k <= m_Room[i].bottom; k++)
-				{
-					if (m_MapData[k][m_Room[i].right + 1].m_terrain == ROOT)
-					{
-						//既に通路入口が作られていた場合、その位置を利用する
-						RightRootStertPoint = k;
-						bMakeFlgRight = true;
-					}
-				}
-				//もしどこにも入口が作成されていない場合、新しく作る
-				if(!bMakeFlgRight)
-					RightRootStertPoint = rand()%(m_Room[i].bottom - m_Room[i].top) + m_Room[i].top;
-	
-				//通路のスタート位置を左の部屋の左側から設定
-				bool bMakeFlgLeft = false;
-				//既に通路入口が作られていないかチェックを行う
-				for (int k = m_Room[j].top; k <= m_Room[j].bottom; k++)
-				{
-					if (m_MapData[k][m_Room[j].left - 1].m_terrain == ROOT)
-					{
-						//既に通路入口が作られていた場合、その位置を利用する
-						LeftRootStertPoint = k;
-						bMakeFlgLeft = true;
-					}
-				}
-				//もしどこにも入口が作成されていない場合、新しく作る
-				if (!bMakeFlgLeft)
-					LeftRootStertPoint = rand()%(m_Room[j].bottom - m_Room[j].top) + m_Room[j].top;
-
-				//右の部屋から境界線まで通路を作成
-				for(int k = m_Room[i].right;k <= nBorderLine;k++)
-				{
-					m_MapData[RightRootStertPoint][k].m_terrain = ROOT;
-				}
-				
-				//左の部屋から境界線まで通路を作成
-				for(int k = m_Room[j].left;k >= nBorderLine;k--)
-				{
-					m_MapData[LeftRootStertPoint][k].m_terrain = ROOT;
-				}
-				
-	
-				//境界線を埋めて通路作成
-				for(int k = RightRootStertPoint;k != LeftRootStertPoint;)
-				{
-					m_MapData[k][nBorderLine].m_terrain = ROOT;
-				
-					//左の通路位置より作業位置が高ければ下げていく
-					if(k > LeftRootStertPoint)
-						k--;
-				
-					//左の通路位置より作業位置が低ければあげていく
-					if(k < LeftRootStertPoint)
-						k++;	
-				}
+				MekeRoomRoot(i,j,Horizon);
+			}
+			//上下で隣接(i:下の部屋j:上の部屋)
+			if (bNeighbor_UpAndDown)
+			{
+				MekeRoomRoot(i, j, Vectical);
 			}
 		}
 	}
+
+}
+//---------------------------------------------------------------------------------------
+// 指定された部屋をつなぐ通路を作成する(引数:部屋１、部屋２、方向、境界線)
+//---------------------------------------------------------------------------------------
+void CMapData::MekeRoomRoot(int i, int j, VectorFlg Vector)
+{
+	int nBorderLine;					//境界線
+	switch (Vector)
+	{
+	case CMapData::Vectical:
+	{
+		//通路の作成位置を区画の小さいほうに合わせる
+		int MiniSectionNumber_Verctical = i;
+
+		if ((m_Room[i].right - m_Room[i].left) > (m_Room[j].right - m_Room[j].left))
+			MiniSectionNumber_Verctical = j;
+
+		//下の部屋の通路のスタート位置
+		int BottomRootStertPoint;
+
+		//上の部屋の通路のスタート位置
+		int TopRootStertPoint;
+
+		//境界線位置を設定
+		nBorderLine = m_Section[i].top;
+
+		//通路のスタート位置を右の部屋の右端から設定
+		bool bMakeFlgBottom = false;
+		//既に通路入口が作られていないかチェックを行う
+		for (int k = m_Room[i].left; k <= m_Room[i].right; k++)
+		{
+			if (m_MapData[m_Room[i].top - 1][k].m_terrain == ROOT)
+			{
+				//既に通路入口が作られていた場合、その位置を利用する
+				TopRootStertPoint = k;
+				bMakeFlgBottom = true;
+			}
+		}
+		//もしどこにも入口が作成されていない場合、新しく作る
+		if (!bMakeFlgBottom)
+			TopRootStertPoint = rand() % (m_Room[i].right - m_Room[i].left) + m_Room[i].left;
+
+		//通路のスタート位置を左の部屋の左側から設定
+		bool bMakeFlgTop = false;
+
+		//既に通路入口が作られていないかチェックを行う
+		for (int k = m_Room[j].left; k <= m_Room[j].right; k++)
+		{
+			if (m_MapData[m_Room[j].bottom + 1][k].m_terrain == ROOT)
+			{
+				//既に通路入口が作られていた場合、その位置を利用する
+				BottomRootStertPoint = k;
+				bMakeFlgTop = true;
+			}
+		}
+		//もしどこにも入口が作成されていない場合、新しく作る
+		if (!bMakeFlgTop)
+			BottomRootStertPoint = rand() % (m_Room[j].right - m_Room[j].left) + m_Room[j].left;
+
+		//上の部屋から境界線まで通路を作成
+		for (int k = m_Room[j].bottom; k <= nBorderLine; k++)
+		{
+			m_MapData[k][BottomRootStertPoint].m_terrain = ROOT;
+		}
+
+		//下の部屋から境界線まで通路を作成
+		for (int k = m_Room[i].top; k >= nBorderLine; k--)
+		{
+			m_MapData[k][TopRootStertPoint].m_terrain = ROOT;
+		}
+
+
+		//境界線を埋めて通路作成
+		for (int k = BottomRootStertPoint; k != TopRootStertPoint;)
+		{
+			m_MapData[nBorderLine][k].m_terrain = ROOT;
+		
+			//左の通路位置より作業位置が高ければ下げていく
+			if (k > TopRootStertPoint)
+				k--;
+		
+			//左の通路位置より作業位置が低ければあげていく
+			if (k < TopRootStertPoint)
+				k++;
+		}
+	}
+		break;
+	case CMapData::Horizon:
+	{
+		//通路の作成位置を区画の小さいほうに合わせる
+		int MiniSectionNumber_Horizon = i;
+
+		if ((m_Room[i].bottom - m_Room[i].top) >(m_Room[j].bottom - m_Room[j].top))
+			MiniSectionNumber_Horizon = j;
+
+		//右の部屋の通路のスタート位置
+		int RightRootStertPoint;
+
+		//左の部屋の通路のスタート位置
+		int LeftRootStertPoint;
+
+		//境界線位置を設定
+		nBorderLine = m_Section[i].right;
+
+		//通路のスタート位置を右の部屋の右端から設定
+		bool bMakeFlgRight = false;
+		//既に通路入口が作られていないかチェックを行う
+		for (int k = m_Room[i].top; k <= m_Room[i].bottom; k++)
+		{
+			if (m_MapData[k][m_Room[i].right + 1].m_terrain == ROOT)
+			{
+				//既に通路入口が作られていた場合、その位置を利用する
+				RightRootStertPoint = k;
+				bMakeFlgRight = true;
+			}
+		}
+		//もしどこにも入口が作成されていない場合、新しく作る
+		if (!bMakeFlgRight)
+			RightRootStertPoint = rand() % (m_Room[i].bottom - m_Room[i].top) + m_Room[i].top;
+
+		//通路のスタート位置を左の部屋の左側から設定
+		bool bMakeFlgLeft = false;
+		//既に通路入口が作られていないかチェックを行う
+		for (int k = m_Room[j].top; k <= m_Room[j].bottom; k++)
+		{
+			if (m_MapData[k][m_Room[j].left - 1].m_terrain == ROOT)
+			{
+				//既に通路入口が作られていた場合、その位置を利用する
+				LeftRootStertPoint = k;
+				bMakeFlgLeft = true;
+			}
+		}
+		//もしどこにも入口が作成されていない場合、新しく作る
+		if (!bMakeFlgLeft)
+			LeftRootStertPoint = rand() % (m_Room[j].bottom - m_Room[j].top) + m_Room[j].top;
+
+		//右の部屋から境界線まで通路を作成
+		for (int k = m_Room[i].right; k <= nBorderLine; k++)
+		{
+			m_MapData[RightRootStertPoint][k].m_terrain = ROOT;
+		}
+
+		//左の部屋から境界線まで通路を作成
+		for (int k = m_Room[j].left; k >= nBorderLine; k--)
+		{
+			m_MapData[LeftRootStertPoint][k].m_terrain = ROOT;
+		}
+
+
+		//境界線を埋めて通路作成
+		for (int k = RightRootStertPoint; k != LeftRootStertPoint;)
+		{
+			m_MapData[k][nBorderLine].m_terrain = ROOT;
+
+			//左の通路位置より作業位置が高ければ下げていく
+			if (k > LeftRootStertPoint)
+				k--;
+
+			//左の通路位置より作業位置が低ければあげていく
+			if (k < LeftRootStertPoint)
+				k++;
+		}
+	}
+		break;
+	case CMapData::Max:
+		break;
+	default:
+		break;
+	}
+
+
 
 }
 //---------------------------------------------------------------------------------------
@@ -1248,25 +1368,37 @@ bool CMapData::CheckSectionOverRide(int Section1, int Section2, VectorFlg Vector
 	{
 		//横の隣接関係を確認する
 	case VectorFlg::Vectical:
-		//Section1の区画の一部がSection2の中に入っているか確認を行う
-		//一番上が入っているか確認
-		if ((m_Section[Section1].top >= m_Section[Section2].top) && (m_Section[Section1].top <= m_Section[Section2].bottom))
+		//Section1の位置がSection2と一致しているか確認を行う
+		if ((m_Section[Section1].top == m_Section[Section2].top) && (m_Section[Section1].bottom == m_Section[Section2].bottom))
 			//重なっている
 			return true;
-		//一番下が入っているか確認を行う
-		if ((m_Section[Section1].bottom >= m_Section[Section2].top) && (m_Section[Section1].bottom <= m_Section[Section2].bottom))
+		//Section1の区画の一部がSection2の中に入っているか確認を行う
+		if ((m_Section[Section1].top < m_Section[Section2].top) && (m_Section[Section1].bottom > m_Section[Section2].top))
+			//重なっている
+			return true;
+		//Section2の区画の一部がSection1の中に入っているか確認を行う
+		if ((m_Section[Section2].top < m_Section[Section1].top) && (m_Section[Section2].bottom > m_Section[Section1].top))
+			//重なっている
 			return true;
 
+		//重なっていなかった
+		return false;
 		//縦の隣接関係を確認する
 	case VectorFlg::Horizon:
-		//Section1の区画の一部がSection2の中に入っているか確認を行う
-		//一番上が入っているか確認
-		if ((m_Section[Section1].left >= m_Section[Section2].left) && (m_Section[Section1].left <= m_Section[Section2].right))
+		//Section1の位置がSection2と一致しているか確認を行う
+		if ((m_Section[Section1].left == m_Section[Section2].left) && (m_Section[Section1].right == m_Section[Section2].right))
 			//重なっている
 			return true;
-		//一番下が入っているか確認を行う
-		if ((m_Section[Section1].right >= m_Section[Section2].right) && (m_Section[Section1].right <= m_Section[Section2].right))
+		//Section1の区画の一部がSection2の中に入っているか確認を行う
+		if ((m_Section[Section1].left < m_Section[Section2].left) && (m_Section[Section1].right > m_Section[Section2].left))
+			//重なっている
 			return true;
+		//Section2の区画の一部がSection1の中に入っているか確認を行う
+		if ((m_Section[Section2].left < m_Section[Section1].left) && (m_Section[Section2].right > m_Section[Section1].left))
+			//重なっている
+			return true;
+		//重なっていなかった
+		return false;
 	default:
 		return false;
 	}

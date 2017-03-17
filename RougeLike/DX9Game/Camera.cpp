@@ -14,7 +14,7 @@
 #define CAMERA_POS_Z -15.0f
 
 //デバッグ用カメラ位置(元に戻すこと)
-#define DEBUG_CAMERA_POS_Y 120.0f
+#define DEBUG_CAMERA_POS_Y 160.0f
 #define DEBUG_CAMERA_POS_Z -1.0f
 
 #define LOOK_POS_X	0.0f

@@ -11,20 +11,39 @@ class CUnitManager;
 class CEnemyGenerator;
 
 //区画のサイズ
-#define SECTION_MIN_SIZE 8
-#define SECTION_MAX_SIZE 10
+#define SECTION_MIN_SIZE 14
+#define SECTION_MAX_SIZE 25
 
 //移動できる方向の数
 #define MOVEVEC 8
 
 //マップサイズ
-#define MAP_SIZE 30
+#define MAP_SIZE 50
 
 //生成できる部屋の最大数
 #define ROOM_MAX_NUM	(MAP_SIZE / SECTION_MIN_SIZE) * (MAP_SIZE / SECTION_MIN_SIZE)
 
 //家を建てられる空間のサイズ
 #define MakeHomeSize (6)
+
+//マップの生成方法
+enum MapGenerationPattern
+{
+	ROOM_FIRST = 0,							//部屋を先に作成する
+	ROOT_FIRST,									//通路を先に作成する
+	OUT_DATA_ROAD,							//外部からデータを受け取る
+	MAP_GENERATION_PATTERN_MAX,
+};
+
+//マップの区画生成パターン
+enum DividPattern
+{
+	HEIGHT_NEXT_WIDTH = 0,	//縦に区画を引いて、次に横に区画を引く
+	EQUALLY_DIVID,					//均等に等分する
+	FOUR_DIVID,						//四等分
+	LARGE_ROOM,					//大部屋
+	PATTERN_MAX,
+};
 
 //マップの状況
 enum Situation
@@ -103,9 +122,9 @@ private:
 
 	CUnitManager*			m_pUnitManager;
 	CEnemyGenerator*		m_pEnemyGerenator;
-	bool						m_bCheckFlg[MAP_SIZE][MAP_SIZE];			//確認が完了したか
-	int						m_nCost[MAP_SIZE][MAP_SIZE];				//現在地からの移動コスト
-	int						m_nScore[MAP_SIZE][MAP_SIZE];				//特定の位置から目標位置までのコスト
+	bool							m_bCheckFlg[MAP_SIZE][MAP_SIZE];			//確認が完了したか
+	int								m_nCost[MAP_SIZE][MAP_SIZE];				//現在地からの移動コスト
+	int								m_nScore[MAP_SIZE][MAP_SIZE];				//特定の位置から目標位置までのコスト
 
 	LPDIRECT3DVERTEXBUFFER9	m_pD3DVtxBuff;								//頂点バッファインタフェースへのポインタ
 	LPDIRECT3DINDEXBUFFER9	m_pD3DIdxBuff;								//インデックスバッファ
@@ -123,9 +142,10 @@ private:
 	int						m_nHierarchyNum;							//階層数を保持する
 
 	LPD3DXFONT				m_pFont;									//描画フォントの設定
-	RECT					m_FontDrawPos;								//フォントの描画位置を設定する
-	int						m_nDividPattern;							//生成するマップパターン
-	CFade*					m_pFade;
+	RECT						m_FontDrawPos;						//フォントの描画位置を設定する
+	int								m_nDividPattern;						//生成するマップパターン
+	int								m_nBackDividPattern;				//前の階層のパターンを保持する
+	CFade*						m_pFade;
 
 	AStar		m_AStarData[MAP_SIZE][MAP_SIZE];//A*アルゴリズムに使用する構造体
 	AStarList*	m_pAstarList;
@@ -197,6 +217,9 @@ public:
 
 	//通路を作成する
 	void MakeRoot();
+
+	//指定された部屋同士の通路を作成する
+	void MekeRoomRoot(int i,int j, VectorFlg Vector);
 
 	//階段の位置を決定する
 	void StairsSet();
