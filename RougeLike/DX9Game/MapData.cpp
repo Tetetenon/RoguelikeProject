@@ -454,14 +454,34 @@ void CMapData::MapGeneration()
 	//マップデータの初期化
 	AllInitMapData();
 
-	//マップの区画分け
-	DivideMap();
+	//マップの作り方を決定する
+	m_nMapMakePattern = rand() % MAP_GENERATION_PATTERN_MAX;
+	m_nMapMakePattern = ROOT_FIRST;
+	//パターンで生成方法を分岐
+	switch (m_nMapMakePattern)
+	{
+		//区画を作ってから通路を作成する
+	case ROOM_FIRST:
+		//マップの区画分け
+		DivideMap();
 
-	//区画内に部屋を作る
-	MakeRoom();
+		//区画内に部屋を作る
+		MakeRoom();
 
-	//部屋から部屋への通路を作成する
-	MakeRoot();
+		//部屋から部屋への通路を作成する
+		MakeRoot();
+		break;
+		//通路を作成してから部屋を配置する
+	case ROOT_FIRST:
+		//通路の作成
+		RootFirstMake();
+		//部屋の作成
+		RootUpRoom();
+		break;
+		//外部からデータを読み込む
+		break;
+	}
+
 
 	//最終階層以外ならば階段を作成
 	if (m_nHierarchyNum != GameClearNum)
@@ -563,8 +583,6 @@ void CMapData::DivideMap()
 
 	//パターン情報を記録しておく
 	m_nBackDividPattern = m_nDividPattern;
-
-	m_nDividPattern = EQUALLY_DIVID;
 
 	switch(m_nDividPattern)
 	{
@@ -1071,7 +1089,6 @@ int CMapData::GetRoomNumber(int nPosX,int nPosZ)
 			}
 		}
 	}
-
 	return ROOM_MAX_NUM;
 }
 //---------------------------------------------------------------------------------------
@@ -1462,4 +1479,135 @@ void CMapData::SetPointer()
 	m_pUnitManager = CUnitManager::GetPointer();
 	//エネミージェネレーターのポインタを取得
 	m_pEnemyGerenator = CEnemyGenerator::GetPointer();
+}
+//---------------------------------------------------------------------------------------
+//マップ上に通路を作成する
+//---------------------------------------------------------------------------------------
+void CMapData::RootFirstMake()
+{
+	//通路を作成する回数を設定する
+	int nRootMakeNum = rand() % 4 + 3;
+
+	for (int i = 0; i < nRootMakeNum; i++)
+	{
+		//通路を作る位置を決定する
+		int RootMapStartPostionX = 0;
+		int RootMapStartPostionZ = 0;
+
+		RootMapStartPostionX = rand() % (MAP_SIZE / 4) + 1;
+		RootMapStartPostionZ = rand() % (MAP_SIZE / 4) + 1;
+
+		//通路を作成する長さ
+		int nRootMakeLength = 0;
+
+		//1本の通路の曲がる回数
+		int nRootCurveNum = 0;
+
+		//マップ上左上から通路を作成する
+		while ((nRootCurveNum <= MAX_CURVE_NUM) && (rand()%5))
+		{
+			//-----横に通路を作成する-----
+			//長さを決定する
+			nRootMakeLength = rand() % (ROOT_MAX_SIZE * 2) - (ROOT_MAX_SIZE);
+
+			//作成開始位置が一定位置ならば、方向を制限する
+			//if(RootMapStartPostionX)
+				//ああああああああ
+			//長さが最小サイズ以上か確認
+			while (abs(nRootMakeLength) < ROOT_MIN_SIZE)
+			{
+				nRootMakeLength = rand() % (ROOT_MAX_SIZE * 2) - (ROOT_MAX_SIZE);
+			}
+			//マップの範囲外に出ない様に調整する
+			if ((RootMapStartPostionX + nRootMakeLength) >(MAP_SIZE - 2))
+			{
+				nRootMakeLength = (MAP_SIZE - 2) - RootMapStartPostionX;
+			}
+			if ((RootMapStartPostionX + nRootMakeLength) < 1)
+			{
+				nRootMakeLength = -(RootMapStartPostionX - 1);
+			}
+
+			//通路を作成する
+			SetPositionMakeRoot(RootMapStartPostionX, RootMapStartPostionZ, nRootMakeLength, Horizon);
+			//次の通路作成位置を設定
+			RootMapStartPostionX += nRootMakeLength;
+
+			//曲がった回数を加算
+			nRootCurveNum++;
+
+			//-----縦に通路を作成する-----
+			//長さを決定する
+			nRootMakeLength = rand() % (ROOT_MAX_SIZE * 2) - (ROOT_MAX_SIZE);
+			//長さが最小サイズ以上か確認
+			while (abs(nRootMakeLength) < ROOT_MIN_SIZE)
+			{
+				nRootMakeLength = rand() % (ROOT_MAX_SIZE * 2) - (ROOT_MAX_SIZE);
+			}
+			//マップの範囲外に出ない様に調整する
+			if ((RootMapStartPostionZ + nRootMakeLength) >(MAP_SIZE - 2))
+			{
+				nRootMakeLength = (MAP_SIZE - 2) - RootMapStartPostionZ;
+			}
+			if ((RootMapStartPostionZ + nRootMakeLength) < 1)
+			{
+				nRootMakeLength = -(RootMapStartPostionZ - 1);
+			}
+
+			//通路を作成する
+			SetPositionMakeRoot(RootMapStartPostionX, RootMapStartPostionZ, nRootMakeLength, Vectical);
+			//次の通路作成位置を設定
+			RootMapStartPostionZ += nRootMakeLength;
+
+			//曲がった回数を加算
+			nRootCurveNum++;
+		}
+	}
+}
+
+//---------------------------------------------------------------------------------------
+//指定された位置から指定した長さまで通路を作成する
+//---------------------------------------------------------------------------------------
+void CMapData::SetPositionMakeRoot(int StartPosX, int StartPosZ, int Length, VectorFlg Vector)
+{
+	//作成する方向で分岐させる
+	switch (Vector)
+	{
+		//縦方向に通路を作成する
+	case Vectical:
+		for (int i = 0; i < Length; i++)
+		{
+			m_MapData[StartPosZ + i][StartPosX].m_terrain = ROOT;
+		}
+		break;
+		//横方向に通路を作成する
+	case Horizon:
+		for (int i = 0; i < Length; i++)
+		{
+			m_MapData[StartPosZ][StartPosX + i].m_terrain = ROOT;
+		}
+		break;
+	}
+}
+
+//---------------------------------------------------------------------------------------
+//指定された位置から指定した長さまで通路を作成する
+//---------------------------------------------------------------------------------------
+void CMapData::RootUpRoom()
+{
+	m_Room[0].top = 10;
+	m_Room[0].bottom = 20;
+	m_Room[0].left = 10;
+	m_Room[0].right = 20;
+
+	//部屋を実際にマップ上に作成する
+	for (int j = m_Room[0].top; j < m_Room[0].bottom; j++)
+	{
+		for (int k = m_Room[0].left; k < m_Room[0].right; k++)
+		{
+			m_MapData[j][k].m_terrain = FLOOR;
+			m_MapData[j][k].m_roomnumber = 1;
+		}
+	}
+	m_CountMakeRoom = 1;
 }

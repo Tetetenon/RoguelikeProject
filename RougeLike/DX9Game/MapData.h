@@ -14,6 +14,13 @@ class CEnemyGenerator;
 #define SECTION_MIN_SIZE 14
 #define SECTION_MAX_SIZE 25
 
+//作成するルートの最大サイズ
+#define ROOT_MAX_SIZE 25
+#define ROOT_MIN_SIZE	5
+
+//通路の曲がる回数制限
+#define MAX_CURVE_NUM 10
+
 //移動できる方向の数
 #define MOVEVEC 8
 
@@ -143,6 +150,8 @@ private:
 
 	LPD3DXFONT				m_pFont;									//描画フォントの設定
 	RECT						m_FontDrawPos;						//フォントの描画位置を設定する
+
+	int								m_nMapMakePattern;				//マップの生成パターンを決める
 	int								m_nDividPattern;						//生成するマップパターン
 	int								m_nBackDividPattern;				//前の階層のパターンを保持する
 	CFade*						m_pFade;
@@ -274,5 +283,12 @@ public:
 
 	//メンバ変数のポインタを設定する
 	void SetPointer();
+
+	//マップ上で通路を先に作成する
+	void RootFirstMake();
+	//指定された位置から指定された長さまで通路を作成する
+	void SetPositionMakeRoot(int StartPosX,int StartPosZ,int Length,VectorFlg Vector);
+	//作成した通路上に部屋を作成する
+	void RootUpRoom();
 };
 
