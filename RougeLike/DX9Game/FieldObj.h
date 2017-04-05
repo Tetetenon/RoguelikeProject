@@ -1,7 +1,7 @@
 #pragma once
 
 #include "MeshObj.h"
-#include "Unit.h"
+#include "UnitManager.h"
 
 class CGameScene;
 class CMapObjManager;
@@ -14,8 +14,12 @@ private:
 	int m_ObjNumber;				//オブジェクトを一意に定める番号
 	bool m_bNearUnitFlg;			//自身の配列上での上にユニットが存在するか
 
-	CMapObjManager* m_pMapObjManager;
+	bool m_bDrawFlg;				//描画フラグ
+
+	CMapObjManager* m_pMapObjManager;	//自身のマネージャー
+	CUnitManager*	m_pUnitManager;		//ユニットマネージャー
 	CMapData*		m_pMapData;
+
 public:
 	CFieldObj(CGameScene* pScene);		//コンストラクタ
 	virtual ~CFieldObj(void);		//デストラクタ

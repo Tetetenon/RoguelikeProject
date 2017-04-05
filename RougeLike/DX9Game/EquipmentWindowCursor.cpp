@@ -154,7 +154,7 @@ void CEquipmentWindowCursor::Update()
 		m_nInterval = 0;
 	}
 	//横を選択した場合、アイテムウィンドウのほうへカーソル更新を移す
-	if (((CInput::GetKeyTrigger(DIK_D) || CInput::GetKeyTrigger(DIK_A) || abs(CInput::GetJoyAxis(0, JOY_X)) >= JoyMoveCap)) && m_nInterval >= ButtonIntervalTime)
+	if (((CInput::GetKeyTrigger(DIK_D) || CInput::GetKeyTrigger(DIK_A) || abs((long)CInput::GetJoyAxis(0, JOY_X)) >= JoyMoveCap)) && m_nInterval >= ButtonIntervalTime)
 	{
 		//アイテムウィンドウの更新
 		m_pItemWindow->UpdateFlgChange(true);

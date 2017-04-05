@@ -13,6 +13,10 @@ CMeshObj(Scene)
 	//ポインタを取得
 	m_pMapObjManager = CMapObjManager::GetPointer();
 	m_pMapData = CMapData::GetPointer();
+	m_pUnitManager = CUnitManager::GetPointer();
+
+	//描画フラグ初期化
+	m_bDrawFlg = true;
 
 	//IDの設定
 	m_uID = ID_MESHOOBJ;
@@ -39,6 +43,16 @@ CFieldObj::~CFieldObj(void)
 //---------------------------------------------------------------------------------------
 void CFieldObj::Update()
 {
+	//自身とプレイヤーの位置が離れていたら描画ふらぐを下げる
+	m_bDrawFlg = true;
+	int DistanceX = abs(m_nUnit_Pos_X - m_pUnitManager->GetPlayerPosX());
+	int DistanceZ = abs(m_nUnit_Pos_Z - m_pUnitManager->GetPlayerPosZ());
+
+	if ((DistanceZ > 8) || (DistanceX > 6))
+	{
+		m_bDrawFlg = false;
+	}
+
 	//マップ上で一番上のオブジェクトの場合、上にユニットがいるか確認する必要がないため、スル―
 	if (m_nUnit_Pos_Z <= 0)
 		return;
@@ -60,16 +74,22 @@ void CFieldObj::Update()
 //---------------------------------------------------------------------------------------
 void CFieldObj::Draw()
 {
-	m_pMesh->MaterialNoAlpha();
-	CMeshObj::Draw();
+	if (m_bDrawFlg)
+	{
+		m_pMesh->MaterialNoAlpha();
+		CMeshObj::Draw();
+	}
 }
 //---------------------------------------------------------------------------------------
 //半透明描画
 //---------------------------------------------------------------------------------------
 void CFieldObj::DrawAlpha()
 {
-	m_pMesh->MaterialAlpha();
-	CMeshObj::DrawAlpha();
+	if (m_bDrawFlg)
+	{
+		m_pMesh->MaterialAlpha();
+		CMeshObj::DrawAlpha();
+	}
 }
 
 //---------------------------------------------------------------------------------------

@@ -31,6 +31,7 @@ bool CGameWindow::InitInstance()
 
 	//ウインドウのフルスクリーン成否
 	m_bWindow = false;
+
 	if (DebugMode)
 	{
 		m_bWindow = true;

@@ -136,7 +136,8 @@ void CFieldItem::Generation(CMeshObj *pGeneration)
 	//アイテム設置予定場所が部屋の中かつ階段の上以外、アイテムがおいていない
 	while(!pFieldItem ->m_pMapData->CheckInTheRoom((int)pFieldItem ->m_Pos.x,(int)pFieldItem ->m_Pos.y)
 		|| pFieldItem ->m_pMapData->CheckStairs((int)pFieldItem ->m_Pos.x,(int)pFieldItem ->m_Pos.y)
-		|| pFieldItem ->m_pMapData->Get_ItemMapSituation((int)pFieldItem ->m_Pos.x,(int)pFieldItem ->m_Pos.y) != 0)
+		|| pFieldItem ->m_pMapData->Get_ItemMapSituation((int)pFieldItem ->m_Pos.x,(int)pFieldItem ->m_Pos.y) != 0
+		|| pFieldItem ->m_pMapData->Get_TerrainMapSituation((int)pFieldItem->m_Pos.x, (int)pFieldItem->m_Pos.y) != FLOOR)
 	{
 
 		//アイテムの位置情報の再設定

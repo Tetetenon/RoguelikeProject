@@ -11,8 +11,16 @@ class CUnitManager;
 class CEnemyGenerator;
 
 //区画のサイズ
-#define SECTION_MIN_SIZE 14
+#define SECTION_MIN_SIZE 12
 #define SECTION_MAX_SIZE 25
+
+//部屋の最大サイズ
+const int RoomMaxSize = 10;
+//部屋の最小サイズ
+const int RoomMinSize = 8;
+
+//部屋を生成する確率
+const int MakeRoomPercent = 100;
 
 //作成するルートの最大サイズ
 #define ROOT_MAX_SIZE 25
@@ -37,7 +45,7 @@ class CEnemyGenerator;
 enum MapGenerationPattern
 {
 	ROOM_FIRST = 0,							//部屋を先に作成する
-	ROOT_FIRST,									//通路を先に作成する
+	ROOT_FIRST,								//通路を先に作成する
 	OUT_DATA_ROAD,							//外部からデータを受け取る
 	MAP_GENERATION_PATTERN_MAX,
 };
@@ -45,9 +53,9 @@ enum MapGenerationPattern
 //マップの区画生成パターン
 enum DividPattern
 {
-	HEIGHT_NEXT_WIDTH = 0,	//縦に区画を引いて、次に横に区画を引く
-	EQUALLY_DIVID,					//均等に等分する
-	FOUR_DIVID,						//四等分
+	HEIGHT_NEXT_WIDTH = 0,		//縦に区画を引いて、次に横に区画を引く
+	EQUALLY_DIVID,				//均等に等分する
+	FOUR_DIVID,					//四等分
 	LARGE_ROOM,					//大部屋
 	PATTERN_MAX,
 };
@@ -129,9 +137,9 @@ private:
 
 	CUnitManager*			m_pUnitManager;
 	CEnemyGenerator*		m_pEnemyGerenator;
-	bool							m_bCheckFlg[MAP_SIZE][MAP_SIZE];			//確認が完了したか
-	int								m_nCost[MAP_SIZE][MAP_SIZE];				//現在地からの移動コスト
-	int								m_nScore[MAP_SIZE][MAP_SIZE];				//特定の位置から目標位置までのコスト
+	bool					m_bCheckFlg[MAP_SIZE][MAP_SIZE];			//確認が完了したか
+	int						m_nCost[MAP_SIZE][MAP_SIZE];				//現在地からの移動コスト
+	int						m_nScore[MAP_SIZE][MAP_SIZE];				//特定の位置から目標位置までのコスト
 
 	LPDIRECT3DVERTEXBUFFER9	m_pD3DVtxBuff;								//頂点バッファインタフェースへのポインタ
 	LPDIRECT3DINDEXBUFFER9	m_pD3DIdxBuff;								//インデックスバッファ
@@ -149,15 +157,18 @@ private:
 	int						m_nHierarchyNum;							//階層数を保持する
 
 	LPD3DXFONT				m_pFont;									//描画フォントの設定
-	RECT						m_FontDrawPos;						//フォントの描画位置を設定する
+	RECT					m_FontDrawPos;								//フォントの描画位置を設定する
 
-	int								m_nMapMakePattern;				//マップの生成パターンを決める
-	int								m_nDividPattern;						//生成するマップパターン
-	int								m_nBackDividPattern;				//前の階層のパターンを保持する
-	CFade*						m_pFade;
+	int						m_nMapMakePattern;							//マップの生成パターンを決める
+	int						m_nDividPattern;							//生成するマップパターン
+	int						m_nBackDividPattern;						//前の階層のパターンを保持する
+	CFade*					m_pFade;
 
-	AStar		m_AStarData[MAP_SIZE][MAP_SIZE];//A*アルゴリズムに使用する構造体
-	AStarList*	m_pAstarList;
+	//部屋の作成位置
+	D3DXVECTOR2				m_MakeRoomPoint[ROOM_MAX_NUM];
+
+	AStar					m_AStarData[MAP_SIZE][MAP_SIZE];//A*アルゴリズムに使用する構造体
+	AStarList*				m_pAstarList;
 
 	CMapData(void);										//コンストラクタ
 	~CMapData(void);									//デストラクタ
@@ -284,11 +295,15 @@ public:
 	//メンバ変数のポインタを設定する
 	void SetPointer();
 
+	//通路を先に作る場合のデータの初期化
+	void RootFirstMakeInit();
 	//マップ上で通路を先に作成する
 	void RootFirstMake();
 	//指定された位置から指定された長さまで通路を作成する
 	void SetPositionMakeRoot(int StartPosX,int StartPosZ,int Length,VectorFlg Vector);
 	//作成した通路上に部屋を作成する
 	void RootUpRoom();
+	//部屋の作成予定地周辺に別の作成予定地がないかチェックを行う
+	bool CheckMakeRoomPoint(int X,int Z);
 };
 

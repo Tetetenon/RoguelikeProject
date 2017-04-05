@@ -412,6 +412,8 @@ void CMapData:: Set_ItemMap(int PosX,int PosY,int Change)
 //---------------------------------------------------------------------------------------
 void CMapData::AllInitMapData()
 {
+	//部屋を作った数を初期化
+	m_CountMakeRoom = 0;
 	for(int i = 0;i < MAP_SIZE;i++)
 	{
 		for(int j = 0;j < MAP_SIZE;j++)
@@ -455,8 +457,16 @@ void CMapData::MapGeneration()
 	AllInitMapData();
 
 	//マップの作り方を決定する
-	m_nMapMakePattern = rand() % MAP_GENERATION_PATTERN_MAX;
+	//m_nMapMakePattern = rand() % MAP_GENERATION_PATTERN_MAX;
 	m_nMapMakePattern = ROOT_FIRST;
+	//m_nMapMakePattern = rand() % OUT_DATA_ROAD;
+
+	//最終階層ならば、マップの作り方固定
+	if (m_nHierarchyNum == GameClearNum)
+	{
+		m_nMapMakePattern = ROOM_FIRST;
+	}
+
 	//パターンで生成方法を分岐
 	switch (m_nMapMakePattern)
 	{
@@ -464,21 +474,22 @@ void CMapData::MapGeneration()
 	case ROOM_FIRST:
 		//マップの区画分け
 		DivideMap();
-
 		//区画内に部屋を作る
 		MakeRoom();
-
 		//部屋から部屋への通路を作成する
 		MakeRoot();
 		break;
 		//通路を作成してから部屋を配置する
 	case ROOT_FIRST:
+		//必要な変数を初期化する
+		RootFirstMakeInit();
 		//通路の作成
 		RootFirstMake();
 		//部屋の作成
 		RootUpRoom();
 		break;
 		//外部からデータを読み込む
+	case OUT_DATA_ROAD:
 		break;
 	}
 
@@ -531,20 +542,19 @@ void CMapData::MapGeneration()
 
 	}
 	
-	
 	//10階層移動したら、シーンをゲームクリアに遷移させる
-	if(m_nHierarchyNum > GameClearNum)
+	if(m_nHierarchyNum > GameClearNum && !DebugMode)
 	{
-	//	//ゲームのクリア状況をクリアに変更する
-	//	CGameScene::GameClearStateChange(GAME_CLEAR);
-	//
-	//	//ゲームメインを終了
-	//	m_pFade->ChangeState(FADEMODE_OUT);
-	//
-	//	//エネミーの生成数のリセット
-	//	m_pEnemyGerenator->ResetMakeEnemyNum();
-	//	//フィールドアイテム生成数のリセット
-	//	CItemGenerator::ResetMakeItemNum();
+		//ゲームのクリア状況をクリアに変更する
+		CGameScene::GameClearStateChange(GAME_CLEAR);
+	
+		//ゲームメインを終了
+		m_pFade->ChangeState(FADEMODE_OUT);
+	
+		//エネミーの生成数のリセット
+		m_pEnemyGerenator->ResetMakeEnemyNum();
+		//フィールドアイテム生成数のリセット
+		CItemGenerator::ResetMakeItemNum();
 	}
 }
 //---------------------------------------------------------------------------------------
@@ -1486,7 +1496,7 @@ void CMapData::SetPointer()
 void CMapData::RootFirstMake()
 {
 	//通路を作成する回数を設定する
-	int nRootMakeNum = rand() % 4 + 3;
+	int nRootMakeNum = rand() % 4 + 8;
 
 	for (int i = 0; i < nRootMakeNum; i++)
 	{
@@ -1494,8 +1504,8 @@ void CMapData::RootFirstMake()
 		int RootMapStartPostionX = 0;
 		int RootMapStartPostionZ = 0;
 
-		RootMapStartPostionX = rand() % (MAP_SIZE / 4) + 1;
-		RootMapStartPostionZ = rand() % (MAP_SIZE / 4) + 1;
+		RootMapStartPostionX = (rand() % ((MAP_SIZE - 2) / 2)) * 2 + 1;
+		RootMapStartPostionZ = (rand() % ((MAP_SIZE - 2) / 2)) * 2 + 1;
 
 		//通路を作成する長さ
 		int nRootMakeLength = 0;
@@ -1504,24 +1514,22 @@ void CMapData::RootFirstMake()
 		int nRootCurveNum = 0;
 
 		//マップ上左上から通路を作成する
-		while ((nRootCurveNum <= MAX_CURVE_NUM) && (rand()%5))
+		while ((nRootCurveNum <= MAX_CURVE_NUM))
 		{
 			//-----横に通路を作成する-----
 			//長さを決定する
-			nRootMakeLength = rand() % (ROOT_MAX_SIZE * 2) - (ROOT_MAX_SIZE);
+			nRootMakeLength = (rand() % (ROOT_MAX_SIZE / 2) - (rand() % (ROOT_MAX_SIZE / 2))) * 2;
 
-			//作成開始位置が一定位置ならば、方向を制限する
-			//if(RootMapStartPostionX)
-				//ああああああああ
 			//長さが最小サイズ以上か確認
 			while (abs(nRootMakeLength) < ROOT_MIN_SIZE)
 			{
-				nRootMakeLength = rand() % (ROOT_MAX_SIZE * 2) - (ROOT_MAX_SIZE);
+				nRootMakeLength = (rand() % (ROOT_MAX_SIZE / 2) - (rand() % (ROOT_MAX_SIZE / 2))) * 2;
 			}
+
 			//マップの範囲外に出ない様に調整する
-			if ((RootMapStartPostionX + nRootMakeLength) >(MAP_SIZE - 2))
+			if ((RootMapStartPostionX + nRootMakeLength) >(MAP_SIZE - 3))
 			{
-				nRootMakeLength = (MAP_SIZE - 2) - RootMapStartPostionX;
+				nRootMakeLength = (MAP_SIZE - 3) - RootMapStartPostionX;
 			}
 			if ((RootMapStartPostionX + nRootMakeLength) < 1)
 			{
@@ -1537,17 +1545,17 @@ void CMapData::RootFirstMake()
 			nRootCurveNum++;
 
 			//-----縦に通路を作成する-----
-			//長さを決定する
-			nRootMakeLength = rand() % (ROOT_MAX_SIZE * 2) - (ROOT_MAX_SIZE);
+			nRootMakeLength = (rand() % (ROOT_MAX_SIZE / 2) - (rand() % (ROOT_MAX_SIZE / 2))) * 2;
+
 			//長さが最小サイズ以上か確認
 			while (abs(nRootMakeLength) < ROOT_MIN_SIZE)
 			{
-				nRootMakeLength = rand() % (ROOT_MAX_SIZE * 2) - (ROOT_MAX_SIZE);
+				nRootMakeLength = (rand() % (ROOT_MAX_SIZE / 2) - (rand() % (ROOT_MAX_SIZE / 2))) * 2;
 			}
 			//マップの範囲外に出ない様に調整する
-			if ((RootMapStartPostionZ + nRootMakeLength) >(MAP_SIZE - 2))
+			if ((RootMapStartPostionZ + nRootMakeLength) >(MAP_SIZE - 3))
 			{
-				nRootMakeLength = (MAP_SIZE - 2) - RootMapStartPostionZ;
+				nRootMakeLength = (MAP_SIZE - 3) - RootMapStartPostionZ;
 			}
 			if ((RootMapStartPostionZ + nRootMakeLength) < 1)
 			{
@@ -1575,39 +1583,166 @@ void CMapData::SetPositionMakeRoot(int StartPosX, int StartPosZ, int Length, Vec
 	{
 		//縦方向に通路を作成する
 	case Vectical:
-		for (int i = 0; i < Length; i++)
+		if (Length > 0)
 		{
-			m_MapData[StartPosZ + i][StartPosX].m_terrain = ROOT;
+			for (int i = 0; i < Length; i++)
+			{
+				m_MapData[StartPosZ + i][StartPosX].m_terrain = ROOT;
+			}
+			int a = ROOM_MAX_NUM;
+			//部屋の作成数がいっぱいになっていない場合、部屋を確立で作成する
+			if (m_CountMakeRoom < ROOM_MAX_NUM)
+			{
+				//作成予定位置がほかの部屋とかぶっていないか確認
+				if (CheckMakeRoomPoint(StartPosX, StartPosZ + Length))
+				{
+					//かぶっていなければ部屋作成位置に設定
+					m_MakeRoomPoint[m_CountMakeRoom].x = StartPosX;
+					m_MakeRoomPoint[m_CountMakeRoom].y = StartPosZ + Length;
+
+					//部屋作成数を加算
+					m_CountMakeRoom++;
+				}
+			}
+		}
+		else
+		{
+			for (int i = Length; i <= 0; i++)
+			{
+				m_MapData[StartPosZ + i][StartPosX].m_terrain = ROOT;
+			}
+
+			//部屋の作成数がいっぱいになっていない場合、部屋を確立で作成する
+			if (m_CountMakeRoom < ROOM_MAX_NUM)
+			{
+				//作成予定位置がほかの部屋とかぶっていないか確認
+				if (CheckMakeRoomPoint(StartPosX, StartPosZ + Length))
+				{
+					//かぶっていなければ部屋作成位置に設定
+					m_MakeRoomPoint[m_CountMakeRoom].x = StartPosX;
+					m_MakeRoomPoint[m_CountMakeRoom].y = StartPosZ + Length;
+
+					//部屋作成数を加算
+					m_CountMakeRoom++;
+				}
+			}
 		}
 		break;
 		//横方向に通路を作成する
 	case Horizon:
-		for (int i = 0; i < Length; i++)
+		if (Length > 0)
 		{
-			m_MapData[StartPosZ][StartPosX + i].m_terrain = ROOT;
+			for (int i = 0; i < Length; i++)
+			{
+				m_MapData[StartPosZ][StartPosX + i].m_terrain = ROOT;
+			}
+
+			//部屋の作成数がいっぱいになっていない場合、部屋を確立で作成する
+			if (m_CountMakeRoom < ROOM_MAX_NUM)
+			{
+				//作成予定位置がほかの部屋とかぶっていないか確認
+				if (CheckMakeRoomPoint(StartPosX + Length, StartPosZ))
+				{
+					//かぶっていなければ部屋作成位置に設定
+					m_MakeRoomPoint[m_CountMakeRoom].x = StartPosX + Length;
+					m_MakeRoomPoint[m_CountMakeRoom].y = StartPosZ;
+
+					//部屋作成数を加算
+					m_CountMakeRoom++;
+				}
+			}
+		}
+		else
+		{
+			for (int i = Length; i <= 0; i++)
+			{
+				m_MapData[StartPosZ][StartPosX + i].m_terrain = ROOT;
+			}
+
+			//部屋の作成数がいっぱいになっていない場合、部屋を確立で作成する
+			if (m_CountMakeRoom < ROOM_MAX_NUM)
+			{
+				//作成予定位置がほかの部屋とかぶっていないか確認
+				if (CheckMakeRoomPoint(StartPosX + Length, StartPosZ))
+				{
+					//かぶっていなければ部屋作成位置に設定
+					m_MakeRoomPoint[m_CountMakeRoom].x = StartPosX + Length;
+					m_MakeRoomPoint[m_CountMakeRoom].y = StartPosZ;
+
+					//部屋作成数を加算
+					m_CountMakeRoom++;
+				}
+			}
 		}
 		break;
 	}
 }
 
 //---------------------------------------------------------------------------------------
-//指定された位置から指定した長さまで通路を作成する
+//通路上に部屋を作成する
 //---------------------------------------------------------------------------------------
 void CMapData::RootUpRoom()
 {
-	m_Room[0].top = 10;
-	m_Room[0].bottom = 20;
-	m_Room[0].left = 10;
-	m_Room[0].right = 20;
-
-	//部屋を実際にマップ上に作成する
-	for (int j = m_Room[0].top; j < m_Room[0].bottom; j++)
+	//作成予定の場所に部屋を立てる
+	for (int i = 0; i < m_CountMakeRoom; i++)
 	{
-		for (int k = m_Room[0].left; k < m_Room[0].right; k++)
+		//間取りの設定
+		m_Room[i].top		= m_MakeRoomPoint[i].y - ((rand()% (RoomMaxSize - RoomMinSize)) + RoomMinSize) / 2;
+		m_Room[i].bottom	= m_MakeRoomPoint[i].y + ((rand()% (RoomMaxSize - RoomMinSize)) + RoomMinSize) / 2;
+		m_Room[i].left		= m_MakeRoomPoint[i].x - ((rand()% (RoomMaxSize - RoomMinSize)) + RoomMinSize) / 2;
+		m_Room[i].right		= m_MakeRoomPoint[i].x + ((rand()% (RoomMaxSize - RoomMinSize)) + RoomMinSize) / 2;
+
+		//部屋を実際にマップ上に作成する
+		for (int j = m_Room[i].top; j < m_Room[i].bottom; j++)
 		{
-			m_MapData[j][k].m_terrain = FLOOR;
-			m_MapData[j][k].m_roomnumber = 1;
+			for (int k = m_Room[i].left; k < m_Room[i].right; k++)
+			{
+				m_MapData[j][k].m_terrain = FLOOR;
+				m_MapData[j][k].m_roomnumber = i + 1;
+			}
 		}
 	}
+}
+//---------------------------------------------------------------------------------------
+//部屋の作成予定地周辺に別の作成予定地がないかチェックを行う
+//---------------------------------------------------------------------------------------
+bool CMapData::CheckMakeRoomPoint(int X,int Z)
+{
+	//境界判定
+	if (X > (MAP_SIZE - RoomMaxSize)
+		|| Z > (MAP_SIZE - RoomMaxSize) 
+		|| X < RoomMaxSize || Z < RoomMaxSize)
+		return false;
+
+	for (int i = 0; i < m_CountMakeRoom; i++)
+	{
+		//作成予定地とほかの作成予定地が近すぎないかチェック
+		int DistanceX = abs(m_MakeRoomPoint[i].x - X);
+		int DistanceZ = abs(m_MakeRoomPoint[i].y - Z);
+
+		//部屋の位置がかぶりそうになった場合、偽を返す
+		if (DistanceX < RoomMaxSize && DistanceZ < RoomMaxSize)
+			return false;
+	}
+	//どの位置ともかぶらなければ正を返す
+	return true;
+}
+//---------------------------------------------------------------------------------------
+//通路を先に作る場合のデータの初期化
+//---------------------------------------------------------------------------------------
+void CMapData::RootFirstMakeInit()
+{
+
+	//部屋を作成する位置の初期化
+	for (int i = 0; i < ROOM_MAX_NUM; i++)
+	{
+		m_MakeRoomPoint[i].x = 0.0f;
+		m_MakeRoomPoint[i].y = 0.0f;
+	}
+
+	//必ず部屋を１つ作成する
+	m_MakeRoomPoint[0].x = MAP_SIZE / 2;
+	m_MakeRoomPoint[0].y = MAP_SIZE / 2;
+	//部屋作成数を初期化
 	m_CountMakeRoom = 1;
 }

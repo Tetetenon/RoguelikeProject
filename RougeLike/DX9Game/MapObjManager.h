@@ -20,7 +20,6 @@ class CMapObjManager
 private:
 
 	//変数
-
 	//マネージャークラス
 	static CMapObjManager* m_pMapObjManager;
 	FIELDOBJ_MAP*	m_pMapObjMap;

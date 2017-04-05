@@ -364,8 +364,8 @@ void CGameScene::UpdateObj()
 				switch (m_pMap->Get_TerrainMapSituation(i, j))
 				{
 				case WALL:
-						m_pFieldObjMaker->PutObj(MODEL_TREE, i, j);
-						break;
+					m_pFieldObjMaker->PutObj(MODEL_TREE, i, j);
+					break;
 				case STAIRS:
 					m_pFieldObjMaker->PutObj(MODEL_STAIRS, i, j);
 					break;
